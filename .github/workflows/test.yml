@@ -1,4 +1,4 @@
-name: libray-packaging
+name: library-packaging
 on:
   pull_request:
   push:
