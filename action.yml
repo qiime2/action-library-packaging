@@ -1,0 +1,16 @@
+name: 'QIIME 2 Library Packaging'
+description: 'Build, test, and distribute a QIIME 2 plugin conda package'
+inputs: 
+  recipe-path:
+    description: 'Path to recipe'
+    required: false
+    default: 'ci/recipe'
+  plugin-name:
+    description: 'Name of QIIME 2 plugin'
+    required: true
+  additional-tests:
+    description: 'Additional tests to run post-build'
+    required: false
+runs:
+  using: 'node12'
+  main: 'dist/index.js'

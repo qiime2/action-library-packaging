@@ -1,0 +1,25 @@
+name: libray-packaging
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - 'releases/*'
+
+jobs:
+  example-plugin:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    # Need to check the action out locally and build it prior to testing
+    - uses: actions/checkout@v1
+    - run: |
+        npm install
+        npm run all
+    - uses: ./
+      with: 
+        recipe-path: ./example
+        plugin-name: q2-nothing-to-see-here
+        additional-tests: pytest --pyargs q2_nothing_to_see_here

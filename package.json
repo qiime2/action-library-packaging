@@ -1,0 +1,27 @@
+{
+  "name": "action-library-packaging",
+  "version": "0.0.0",
+  "private": true,
+  "description": "build, test, and distribute QIIME 2 plugins",
+  "main": "lib/main.js",
+  "scripts": {
+    "build": "tsc",
+    "pack": "ncc build",
+    "all": "npm run build && npm run pack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qiime2/action-library-packaging.git"
+  },
+  "dependencies": {
+    "@actions/core": "^1.2.3",
+    "@actions/exec": "^1.0.3",
+    "@actions/github": "^2.1.1"
+  },
+  "devDependencies": {
+    "@actions/artifact": "^0.2.0",
+    "@actions/glob": "^0.1.0",
+    "@zeit/ncc": "^0.22.0",
+    "typescript": "^3.8.3"
+  }
+}
