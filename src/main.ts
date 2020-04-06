@@ -15,7 +15,7 @@ async function main(): Promise<void> {
     core.addPath(minicondaBinDir);
 
     // TODO: fix these hacks
-    core.addPath('../../_actions/thermokarst/busywork2_action_playground/master')
+    core.addPath('../../_actions/qiime2/action-library-packaging/alpha')
     core.addPath('.')
 
     const installMinicondaScript: string = await io.which('install_miniconda.sh', true)
