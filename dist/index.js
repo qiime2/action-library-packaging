@@ -3362,7 +3362,7 @@ function main() {
             const channels = '-c conda-forge -c bioconda -c qiime2 -c defaults';
             core.addPath(minicondaBinDir);
             // TODO: fix these hacks
-            core.addPath('../../_actions/qiime2/action-library-packaging/alpha');
+            core.addPath('../../_actions/qiime2/action-library-packaging/alpha1');
             core.addPath('.');
             const installMinicondaScript = yield io.which('install_miniconda.sh', true);
             yield exec.exec(`sh ${installMinicondaScript}`, [minicondaDir]);
