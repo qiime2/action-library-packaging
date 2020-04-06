@@ -3359,7 +3359,7 @@ function main() {
             const buildDir = `${homeDir}/built-package`;
             const minicondaDir = `${homeDir}/miniconda`;
             const minicondaBinDir = `${minicondaDir}/bin`;
-            const channels = '-c conda-forge -c bioconda -c qiime2 -c defaults';
+            const channels = '-c conda-forge -c bioconda -c qiime2-staging/label/r2020.5 -c defaults';
             core.addPath(minicondaBinDir);
             // TODO: fix these hacks
             core.addPath('../../_actions/qiime2/action-library-packaging/alpha1');
