@@ -10,7 +10,7 @@ async function main(): Promise<void> {
     const buildDir = `${homeDir}/built-package`
     const minicondaDir = `${homeDir}/miniconda`
     const minicondaBinDir = `${minicondaDir}/bin`
-    const channels = '-c conda-forge -c bioconda -c qiime2-staging/label/r2020.5 -c defaults'
+    const channels = '-c qiime2-staging/label/r2020.5 -c conda-forge -c bioconda -c defaults'
 
     core.addPath(minicondaBinDir);
 
