@@ -3390,8 +3390,10 @@ function main() {
             const additionalTests = core.getInput('additional-tests');
             if (additionalTests !== '') {
                 yield exec.exec(`conda create -n testing -c ${buildDir} ${channels} ${pluginName} pytest -y`);
-                // TODO: if tests fail this still reports a success
-                yield exec.exec(`conda run -n testing ${additionalTests}`);
+                const additionalTestsExitCode = yield exec.exec(`conda run -n testing ${additionalTests}`);
+                if (additionalTestsExitCode !== 0) {
+                    throw Error('additional tests failed');
+                }
             }
         }
         catch (error) {
