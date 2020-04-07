@@ -3347,6 +3347,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const temp = __importStar(__webpack_require__(731));
 const artifact = __importStar(__webpack_require__(214));
 const core = __importStar(__webpack_require__(470));
 const exec = __importStar(__webpack_require__(986));
@@ -3390,7 +3391,11 @@ function main() {
             const additionalTests = core.getInput('additional-tests');
             if (additionalTests !== '') {
                 yield exec.exec(`conda create -n testing -c ${buildDir} ${channels} ${pluginName} pytest -y`);
-                const additionalTestsExitCode = yield exec.exec(`source activate testing && ${additionalTests}`);
+                temp.track();
+                const stream = temp.createWriteStream({ suffix: '.sh' });
+                stream.write(`source activate testing && ${additionalTests}`);
+                stream.end();
+                const additionalTestsExitCode = yield exec.exec('bash', [stream.path]);
                 if (additionalTestsExitCode !== 0) {
                     throw Error('additional tests failed');
                 }
@@ -7647,6 +7652,13 @@ module.exports = require("events");
 
 /***/ }),
 
+/***/ 619:
+/***/ (function(module) {
+
+module.exports = require("constants");
+
+/***/ }),
+
 /***/ 621:
 /***/ (function(module) {
 
@@ -8162,6 +8174,327 @@ exports.SearchState = SearchState;
 
 /***/ }),
 
+/***/ 731:
+/***/ (function(module, exports, __webpack_require__) {
+
+var fs   = __webpack_require__(747),
+    path = __webpack_require__(622),
+    cnst = __webpack_require__(619);
+
+var rimraf     = __webpack_require__(787),
+    os         = __webpack_require__(87),
+    rimrafSync = rimraf.sync;
+
+/* HELPERS */
+
+var dir = path.resolve(os.tmpdir());
+
+var RDWR_EXCL = cnst.O_CREAT | cnst.O_TRUNC | cnst.O_RDWR | cnst.O_EXCL;
+
+var promisify = function(callback) {
+  if (typeof callback === 'function') {
+    return [undefined, callback];
+  }
+
+  var promiseCallback;
+  var promise = new Promise(function(resolve, reject) {
+    promiseCallback = function() {
+      var args = Array.from(arguments);
+      var err = args.shift();
+
+      process.nextTick(function() {
+        if (err) {
+          reject(err);
+        } else if (args.length === 1) {
+          resolve(args[0]);
+        } else {
+          resolve(args);
+        }
+      });
+    };
+  });
+
+  return [promise, promiseCallback];
+};
+
+var generateName = function(rawAffixes, defaultPrefix) {
+  var affixes = parseAffixes(rawAffixes, defaultPrefix);
+  var now = new Date();
+  var name = [affixes.prefix,
+              now.getFullYear(), now.getMonth(), now.getDate(),
+              '-',
+              process.pid,
+              '-',
+              (Math.random() * 0x100000000 + 1).toString(36),
+              affixes.suffix].join('');
+  return path.join(affixes.dir || dir, name);
+};
+
+var parseAffixes = function(rawAffixes, defaultPrefix) {
+  var affixes = {prefix: null, suffix: null};
+  if(rawAffixes) {
+    switch (typeof(rawAffixes)) {
+    case 'string':
+      affixes.prefix = rawAffixes;
+      break;
+    case 'object':
+      affixes = rawAffixes;
+      break;
+    default:
+      throw new Error("Unknown affix declaration: " + affixes);
+    }
+  } else {
+    affixes.prefix = defaultPrefix;
+  }
+  return affixes;
+};
+
+/* -------------------------------------------------------------------------
+ * Don't forget to call track() if you want file tracking and exit handlers!
+ * -------------------------------------------------------------------------
+ * When any temp file or directory is created, it is added to filesToDelete
+ * or dirsToDelete. The first time any temp file is created, a listener is
+ * added to remove all temp files and directories at exit.
+ */
+var tracking = false;
+var track = function(value) {
+  tracking = (value !== false);
+  return module.exports; // chainable
+};
+var exitListenerAttached = false;
+var filesToDelete = [];
+var dirsToDelete = [];
+
+function deleteFileOnExit(filePath) {
+  if (!tracking) return false;
+  attachExitListener();
+  filesToDelete.push(filePath);
+}
+
+function deleteDirOnExit(dirPath) {
+  if (!tracking) return false;
+  attachExitListener();
+  dirsToDelete.push(dirPath);
+}
+
+function attachExitListener() {
+  if (!tracking) return false;
+  if (!exitListenerAttached) {
+    process.addListener('exit', cleanupSync);
+    exitListenerAttached = true;
+  }
+}
+
+function cleanupFilesSync() {
+  if (!tracking) {
+    return false;
+  }
+  var count = 0;
+  var toDelete;
+  while ((toDelete = filesToDelete.shift()) !== undefined) {
+    rimrafSync(toDelete);
+    count++;
+  }
+  return count;
+}
+
+function cleanupFiles(callback) {
+  var p = promisify(callback);
+  var promise = p[0];
+  callback = p[1];
+
+  if (!tracking) {
+    callback(new Error("not tracking"));
+    return promise;
+  }
+  var count = 0;
+  var left = filesToDelete.length;
+  if (!left) {
+    callback(null, count);
+    return promise;
+  }
+  var toDelete;
+  var rimrafCallback = function(err) {
+    if (!left) {
+      // Prevent processing if aborted
+      return;
+    }
+    if (err) {
+      // This shouldn't happen; pass error to callback and abort
+      // processing
+      callback(err);
+      left = 0;
+      return;
+    } else {
+      count++;
+    }
+    left--;
+    if (!left) {
+      callback(null, count);
+    }
+  };
+  while ((toDelete = filesToDelete.shift()) !== undefined) {
+    rimraf(toDelete, rimrafCallback);
+  }
+  return promise;
+}
+
+function cleanupDirsSync() {
+  if (!tracking) {
+    return false;
+  }
+  var count = 0;
+  var toDelete;
+  while ((toDelete = dirsToDelete.shift()) !== undefined) {
+    rimrafSync(toDelete);
+    count++;
+  }
+  return count;
+}
+
+function cleanupDirs(callback) {
+  var p = promisify(callback);
+  var promise = p[0];
+  callback = p[1];
+
+  if (!tracking) {
+    callback(new Error("not tracking"));
+    return promise;
+  }
+  var count = 0;
+  var left = dirsToDelete.length;
+  if (!left) {
+    callback(null, count);
+    return promise;
+  }
+  var toDelete;
+  var rimrafCallback = function (err) {
+    if (!left) {
+      // Prevent processing if aborted
+      return;
+    }
+    if (err) {
+      // rimraf handles most "normal" errors; pass the error to the
+      // callback and abort processing
+      callback(err, count);
+      left = 0;
+      return;
+    } else {
+      count++;
+    }
+    left--;
+    if (!left) {
+      callback(null, count);
+    }
+  };
+  while ((toDelete = dirsToDelete.shift()) !== undefined) {
+    rimraf(toDelete, rimrafCallback);
+  }
+  return promise;
+}
+
+function cleanupSync() {
+  if (!tracking) {
+    return false;
+  }
+  var fileCount = cleanupFilesSync();
+  var dirCount  = cleanupDirsSync();
+  return {files: fileCount, dirs: dirCount};
+}
+
+function cleanup(callback) {
+  var p = promisify(callback);
+  var promise = p[0];
+  callback = p[1];
+
+  if (!tracking) {
+    callback(new Error("not tracking"));
+    return promise;
+  }
+  cleanupFiles(function(fileErr, fileCount) {
+    if (fileErr) {
+      callback(fileErr, {files: fileCount});
+    } else {
+      cleanupDirs(function(dirErr, dirCount) {
+        callback(dirErr, {files: fileCount, dirs: dirCount});
+      });
+    }
+  });
+  return promise;
+}
+
+/* DIRECTORIES */
+
+function mkdir(affixes, callback) {
+  var p = promisify(callback);
+  var promise = p[0];
+  callback = p[1];
+
+  var dirPath = generateName(affixes, 'd-');
+  fs.mkdir(dirPath, parseInt('0700', 8), function(err) {
+    if (!err) {
+      deleteDirOnExit(dirPath);
+    }
+    callback(err, dirPath);
+  });
+  return promise;
+}
+
+function mkdirSync(affixes) {
+  var dirPath = generateName(affixes, 'd-');
+  fs.mkdirSync(dirPath, parseInt('0700', 8));
+  deleteDirOnExit(dirPath);
+  return dirPath;
+}
+
+/* FILES */
+
+function open(affixes, callback) {
+  var p = promisify(callback);
+  var promise = p[0];
+  callback = p[1];
+
+  var filePath = generateName(affixes, 'f-');
+  fs.open(filePath, RDWR_EXCL, parseInt('0600', 8), function(err, fd) {
+    if (!err) {
+      deleteFileOnExit(filePath);
+    }
+    callback(err, {path: filePath, fd: fd});
+  });
+  return promise;
+}
+
+function openSync(affixes) {
+  var filePath = generateName(affixes, 'f-');
+  var fd = fs.openSync(filePath, RDWR_EXCL, parseInt('0600', 8));
+  deleteFileOnExit(filePath);
+  return {path: filePath, fd: fd};
+}
+
+function createWriteStream(affixes) {
+  var filePath = generateName(affixes, 's-');
+  var stream = fs.createWriteStream(filePath, {flags: RDWR_EXCL, mode: parseInt('0600', 8)});
+  deleteFileOnExit(filePath);
+  return stream;
+}
+
+/* EXPORTS */
+// Settings
+exports.dir               = dir;
+exports.track             = track;
+// Functions
+exports.mkdir             = mkdir;
+exports.mkdirSync         = mkdirSync;
+exports.open              = open;
+exports.openSync          = openSync;
+exports.path              = generateName;
+exports.cleanup           = cleanup;
+exports.cleanupSync       = cleanupSync;
+exports.createWriteStream = createWriteStream;
+
+
+/***/ }),
+
 /***/ 747:
 /***/ (function(module) {
 
@@ -8173,6 +8506,377 @@ module.exports = require("fs");
 /***/ (function(module) {
 
 module.exports = require("zlib");
+
+/***/ }),
+
+/***/ 787:
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+module.exports = rimraf
+rimraf.sync = rimrafSync
+
+var assert = __webpack_require__(357)
+var path = __webpack_require__(622)
+var fs = __webpack_require__(747)
+var glob = __webpack_require__(402)
+var _0666 = parseInt('666', 8)
+
+var defaultGlobOpts = {
+  nosort: true,
+  silent: true
+}
+
+// for EMFILE handling
+var timeout = 0
+
+var isWindows = (process.platform === "win32")
+
+function defaults (options) {
+  var methods = [
+    'unlink',
+    'chmod',
+    'stat',
+    'lstat',
+    'rmdir',
+    'readdir'
+  ]
+  methods.forEach(function(m) {
+    options[m] = options[m] || fs[m]
+    m = m + 'Sync'
+    options[m] = options[m] || fs[m]
+  })
+
+  options.maxBusyTries = options.maxBusyTries || 3
+  options.emfileWait = options.emfileWait || 1000
+  if (options.glob === false) {
+    options.disableGlob = true
+  }
+  options.disableGlob = options.disableGlob || false
+  options.glob = options.glob || defaultGlobOpts
+}
+
+function rimraf (p, options, cb) {
+  if (typeof options === 'function') {
+    cb = options
+    options = {}
+  }
+
+  assert(p, 'rimraf: missing path')
+  assert.equal(typeof p, 'string', 'rimraf: path should be a string')
+  assert.equal(typeof cb, 'function', 'rimraf: callback function required')
+  assert(options, 'rimraf: invalid options argument provided')
+  assert.equal(typeof options, 'object', 'rimraf: options should be object')
+
+  defaults(options)
+
+  var busyTries = 0
+  var errState = null
+  var n = 0
+
+  if (options.disableGlob || !glob.hasMagic(p))
+    return afterGlob(null, [p])
+
+  options.lstat(p, function (er, stat) {
+    if (!er)
+      return afterGlob(null, [p])
+
+    glob(p, options.glob, afterGlob)
+  })
+
+  function next (er) {
+    errState = errState || er
+    if (--n === 0)
+      cb(errState)
+  }
+
+  function afterGlob (er, results) {
+    if (er)
+      return cb(er)
+
+    n = results.length
+    if (n === 0)
+      return cb()
+
+    results.forEach(function (p) {
+      rimraf_(p, options, function CB (er) {
+        if (er) {
+          if ((er.code === "EBUSY" || er.code === "ENOTEMPTY" || er.code === "EPERM") &&
+              busyTries < options.maxBusyTries) {
+            busyTries ++
+            var time = busyTries * 100
+            // try again, with the same exact callback as this one.
+            return setTimeout(function () {
+              rimraf_(p, options, CB)
+            }, time)
+          }
+
+          // this one won't happen if graceful-fs is used.
+          if (er.code === "EMFILE" && timeout < options.emfileWait) {
+            return setTimeout(function () {
+              rimraf_(p, options, CB)
+            }, timeout ++)
+          }
+
+          // already gone
+          if (er.code === "ENOENT") er = null
+        }
+
+        timeout = 0
+        next(er)
+      })
+    })
+  }
+}
+
+// Two possible strategies.
+// 1. Assume it's a file.  unlink it, then do the dir stuff on EPERM or EISDIR
+// 2. Assume it's a directory.  readdir, then do the file stuff on ENOTDIR
+//
+// Both result in an extra syscall when you guess wrong.  However, there
+// are likely far more normal files in the world than directories.  This
+// is based on the assumption that a the average number of files per
+// directory is >= 1.
+//
+// If anyone ever complains about this, then I guess the strategy could
+// be made configurable somehow.  But until then, YAGNI.
+function rimraf_ (p, options, cb) {
+  assert(p)
+  assert(options)
+  assert(typeof cb === 'function')
+
+  // sunos lets the root user unlink directories, which is... weird.
+  // so we have to lstat here and make sure it's not a dir.
+  options.lstat(p, function (er, st) {
+    if (er && er.code === "ENOENT")
+      return cb(null)
+
+    // Windows can EPERM on stat.  Life is suffering.
+    if (er && er.code === "EPERM" && isWindows)
+      fixWinEPERM(p, options, er, cb)
+
+    if (st && st.isDirectory())
+      return rmdir(p, options, er, cb)
+
+    options.unlink(p, function (er) {
+      if (er) {
+        if (er.code === "ENOENT")
+          return cb(null)
+        if (er.code === "EPERM")
+          return (isWindows)
+            ? fixWinEPERM(p, options, er, cb)
+            : rmdir(p, options, er, cb)
+        if (er.code === "EISDIR")
+          return rmdir(p, options, er, cb)
+      }
+      return cb(er)
+    })
+  })
+}
+
+function fixWinEPERM (p, options, er, cb) {
+  assert(p)
+  assert(options)
+  assert(typeof cb === 'function')
+  if (er)
+    assert(er instanceof Error)
+
+  options.chmod(p, _0666, function (er2) {
+    if (er2)
+      cb(er2.code === "ENOENT" ? null : er)
+    else
+      options.stat(p, function(er3, stats) {
+        if (er3)
+          cb(er3.code === "ENOENT" ? null : er)
+        else if (stats.isDirectory())
+          rmdir(p, options, er, cb)
+        else
+          options.unlink(p, cb)
+      })
+  })
+}
+
+function fixWinEPERMSync (p, options, er) {
+  assert(p)
+  assert(options)
+  if (er)
+    assert(er instanceof Error)
+
+  try {
+    options.chmodSync(p, _0666)
+  } catch (er2) {
+    if (er2.code === "ENOENT")
+      return
+    else
+      throw er
+  }
+
+  try {
+    var stats = options.statSync(p)
+  } catch (er3) {
+    if (er3.code === "ENOENT")
+      return
+    else
+      throw er
+  }
+
+  if (stats.isDirectory())
+    rmdirSync(p, options, er)
+  else
+    options.unlinkSync(p)
+}
+
+function rmdir (p, options, originalEr, cb) {
+  assert(p)
+  assert(options)
+  if (originalEr)
+    assert(originalEr instanceof Error)
+  assert(typeof cb === 'function')
+
+  // try to rmdir first, and only readdir on ENOTEMPTY or EEXIST (SunOS)
+  // if we guessed wrong, and it's not a directory, then
+  // raise the original error.
+  options.rmdir(p, function (er) {
+    if (er && (er.code === "ENOTEMPTY" || er.code === "EEXIST" || er.code === "EPERM"))
+      rmkids(p, options, cb)
+    else if (er && er.code === "ENOTDIR")
+      cb(originalEr)
+    else
+      cb(er)
+  })
+}
+
+function rmkids(p, options, cb) {
+  assert(p)
+  assert(options)
+  assert(typeof cb === 'function')
+
+  options.readdir(p, function (er, files) {
+    if (er)
+      return cb(er)
+    var n = files.length
+    if (n === 0)
+      return options.rmdir(p, cb)
+    var errState
+    files.forEach(function (f) {
+      rimraf(path.join(p, f), options, function (er) {
+        if (errState)
+          return
+        if (er)
+          return cb(errState = er)
+        if (--n === 0)
+          options.rmdir(p, cb)
+      })
+    })
+  })
+}
+
+// this looks simpler, and is strictly *faster*, but will
+// tie up the JavaScript thread and fail on excessively
+// deep directory trees.
+function rimrafSync (p, options) {
+  options = options || {}
+  defaults(options)
+
+  assert(p, 'rimraf: missing path')
+  assert.equal(typeof p, 'string', 'rimraf: path should be a string')
+  assert(options, 'rimraf: missing options')
+  assert.equal(typeof options, 'object', 'rimraf: options should be object')
+
+  var results
+
+  if (options.disableGlob || !glob.hasMagic(p)) {
+    results = [p]
+  } else {
+    try {
+      options.lstatSync(p)
+      results = [p]
+    } catch (er) {
+      results = glob.sync(p, options.glob)
+    }
+  }
+
+  if (!results.length)
+    return
+
+  for (var i = 0; i < results.length; i++) {
+    var p = results[i]
+
+    try {
+      var st = options.lstatSync(p)
+    } catch (er) {
+      if (er.code === "ENOENT")
+        return
+
+      // Windows can EPERM on stat.  Life is suffering.
+      if (er.code === "EPERM" && isWindows)
+        fixWinEPERMSync(p, options, er)
+    }
+
+    try {
+      // sunos lets the root user unlink directories, which is... weird.
+      if (st && st.isDirectory())
+        rmdirSync(p, options, null)
+      else
+        options.unlinkSync(p)
+    } catch (er) {
+      if (er.code === "ENOENT")
+        return
+      if (er.code === "EPERM")
+        return isWindows ? fixWinEPERMSync(p, options, er) : rmdirSync(p, options, er)
+      if (er.code !== "EISDIR")
+        throw er
+
+      rmdirSync(p, options, er)
+    }
+  }
+}
+
+function rmdirSync (p, options, originalEr) {
+  assert(p)
+  assert(options)
+  if (originalEr)
+    assert(originalEr instanceof Error)
+
+  try {
+    options.rmdirSync(p)
+  } catch (er) {
+    if (er.code === "ENOENT")
+      return
+    if (er.code === "ENOTDIR")
+      throw originalEr
+    if (er.code === "ENOTEMPTY" || er.code === "EEXIST" || er.code === "EPERM")
+      rmkidsSync(p, options)
+  }
+}
+
+function rmkidsSync (p, options) {
+  assert(p)
+  assert(options)
+  options.readdirSync(p).forEach(function (f) {
+    rimrafSync(path.join(p, f), options)
+  })
+
+  // We only end up here once we got ENOTEMPTY at least once, and
+  // at this point, we are guaranteed to have removed all the kids.
+  // So, we know that it won't be ENOENT or ENOTDIR or anything else.
+  // try really hard to delete stuff on windows, because it has a
+  // PROFOUNDLY annoying habit of not closing handles promptly when
+  // files are deleted, resulting in spurious ENOTEMPTY errors.
+  var retries = isWindows ? 100 : 1
+  var i = 0
+  do {
+    var threw = true
+    try {
+      var ret = options.rmdirSync(p, options)
+      threw = false
+      return ret
+    } finally {
+      if (++i < retries && threw)
+        continue
+    }
+  } while (true)
+}
+
 
 /***/ }),
 

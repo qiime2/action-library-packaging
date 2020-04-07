@@ -1,3 +1,5 @@
+import * as temp from 'temp'
+
 import * as artifact from '@actions/artifact'
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
@@ -52,7 +54,13 @@ async function main(): Promise<void> {
     const additionalTests: string = core.getInput('additional-tests')
     if (additionalTests !== '') {
       await exec.exec(`conda create -n testing -c ${buildDir} ${channels} ${pluginName} pytest -y`)
-      const additionalTestsExitCode = await exec.exec(`source activate testing && ${additionalTests}`)
+
+      temp.track()
+      const stream = temp.createWriteStream({ suffix: '.sh' })
+      stream.write(`source activate testing && ${additionalTests}`)
+      stream.end()
+      const additionalTestsExitCode = await exec.exec('bash', [stream.path as string])
+
       if (additionalTestsExitCode !== 0) {
         throw Error('additional tests failed')
       }
