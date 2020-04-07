@@ -20,9 +20,5 @@ chmod +x miniconda.sh
 
 ./miniconda.sh -b -p $1
 
-conda init
-ls -lah $HOME
-source $HOME/.bashrc
-
 conda upgrade -n base -q -y -c defaults --override-channels conda
 conda install -n base -q -y -c defaults --override-channels conda-build conda-verify
