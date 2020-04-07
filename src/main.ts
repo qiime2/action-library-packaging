@@ -52,7 +52,7 @@ async function main(): Promise<void> {
     const additionalTests: string = core.getInput('additional-tests')
     if (additionalTests !== '') {
       await exec.exec(`conda create -n testing -c ${buildDir} ${channels} ${pluginName} pytest -y`)
-      const additionalTestsExitCode = await exec.exec(`conda run -n testing ${additionalTests}`)
+      const additionalTestsExitCode = await exec.exec(`conda activate testing && ${additionalTests}`)
       if (additionalTestsExitCode !== 0) {
         throw Error('additional tests failed')
       }
