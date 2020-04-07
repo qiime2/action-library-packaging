@@ -21,13 +21,17 @@ async function main(): Promise<void> {
     core.addPath('.')
 
     const installMinicondaScript: string = await io.which('install_miniconda.sh', true)
-    await exec.exec(`sh ${installMinicondaScript}`, [minicondaDir])
-    // TODO: how to error if the exec above fails?
+    const installMinicondaExitCode = await exec.exec(`sh ${installMinicondaScript}`, [minicondaDir])
+    if (installMinicondaExitCode !== 0) {
+      throw Error('miniconda install failed')
+    }
 
     const recipePath: string = core.getInput('recipe-path')
     const buildPackScript: string = await io.which('build_package.sh', true)
-    await exec.exec(`sh ${buildPackScript}`, [recipePath, buildDir, channels])
-    // TODO: how to error if the exec above fails?
+    const buildPackScriptExitCode = await exec.exec(`sh ${buildPackScript}`, [recipePath, buildDir, channels])
+    if (buildPackScriptExitCode !== 0) {
+      throw Error('package building failed')
+    }
 
     const filesGlobber: glob.Globber = await glob.create(`${buildDir}/*/**`)
     const files: string[] = await filesGlobber.glob()

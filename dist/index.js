@@ -3366,12 +3366,16 @@ function main() {
             core.addPath('../../_actions/qiime2/action-library-packaging/alpha1');
             core.addPath('.');
             const installMinicondaScript = yield io.which('install_miniconda.sh', true);
-            yield exec.exec(`sh ${installMinicondaScript}`, [minicondaDir]);
-            // TODO: how to error if the exec above fails?
+            const installMinicondaExitCode = yield exec.exec(`sh ${installMinicondaScript}`, [minicondaDir]);
+            if (installMinicondaExitCode !== 0) {
+                throw Error('miniconda install failed');
+            }
             const recipePath = core.getInput('recipe-path');
             const buildPackScript = yield io.which('build_package.sh', true);
-            yield exec.exec(`sh ${buildPackScript}`, [recipePath, buildDir, channels]);
-            // TODO: how to error if the exec above fails?
+            const buildPackScriptExitCode = yield exec.exec(`sh ${buildPackScript}`, [recipePath, buildDir, channels]);
+            if (buildPackScriptExitCode !== 0) {
+                throw Error('package building failed');
+            }
             const filesGlobber = yield glob.create(`${buildDir}/*/**`);
             const files = yield filesGlobber.glob();
             const pluginName = core.getInput('plugin-name');
