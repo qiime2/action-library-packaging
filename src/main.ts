@@ -26,6 +26,7 @@ async function main(): Promise<void> {
       throw Error('miniconda install failed')
     }
 
+    // Make a change so I can commit and see the tests
     const recipePath: string = core.getInput('recipe-path')
     const buildPackScript: string = await io.which('build_package.sh', true)
     const buildPackScriptExitCode = await exec.exec(`sh ${buildPackScript}`, [recipePath, buildDir, channels])
@@ -52,7 +53,7 @@ async function main(): Promise<void> {
     }
 
     const artifactClient = artifact.create()
-    const uploadResult = await artifactClient.uploadArtifact(arch[1], files, buildDir)    
+    const uploadResult = await artifactClient.uploadArtifact(arch[1], files, buildDir)
     core.debug(JSON.stringify(uploadResult))
 
     const additionalTests: string = core.getInput('additional-tests')
