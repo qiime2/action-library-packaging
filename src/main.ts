@@ -27,12 +27,19 @@ async function main(): Promise<void> {
     }
 
     const recipePath: string = core.getInput('recipe-path')
-    const buildPackScriptExitCode = await exec.exec('conda', ['build', channels, '--override-channels',
-                                                              '--output-folder', buildDir,
-                                                              '--no-anaconda-upload', recipePath])
+    const buildPackScript: string = await io.which('build_package.sh', true)
+    const buildPackScriptExitCode = await exec.exec(`sh ${buildPackScript}`, [recipePath, buildDir, channels])
     if (buildPackScriptExitCode !== 0) {
       throw Error('package building failed')
     }
+
+    // const recipePath: string = core.getInput('recipe-path')
+    // const buildPackScriptExitCode = await exec.exec('conda', ['build', channels, '--override-channels',
+    //                                                           '--output-folder', buildDir,
+    //                                                           '--no-anaconda-upload', recipePath])
+    // if (buildPackScriptExitCode !== 0) {
+    //   throw Error('package building failed')
+    // }
 
     const filesGlobber: glob.Globber = await glob.create(`${buildDir}/*/**`)
     const files: string[] = await filesGlobber.glob()
