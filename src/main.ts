@@ -27,7 +27,7 @@ async function main(): Promise<void> {
     }
 
     const recipePath: string = core.getInput('recipe-path')
-    const buildPackScriptExitCode = await exec.exec('conda build', [channels, '--override-channels',
+    const buildPackScriptExitCode = await exec.exec('conda build', ['-c qiime2-staging/label/r2020.6 -c conda-forge -c bioconda -c defaults', '--override-channels',
                                                                     '--output-folder', buildDir,
                                                                     '--no-anaconda-upload', recipePath])
     if (buildPackScriptExitCode !== 0) {
