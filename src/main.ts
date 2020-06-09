@@ -27,8 +27,8 @@ async function main(): Promise<void> {
     }
 
     const recipePath: string = core.getInput('recipe-path')
-    // const buildPackScript: string = await io.which('build_package.sh', true)
-    // const buildPackScriptExitCode = await exec.exec(`sh ${buildPackScript}`, [recipePath, buildDir, channels])
+    const buildPackScript: string = await io.which('build_package.sh', true)
+    await exec.exec(`sh ${buildPackScript}`)
     // if (buildPackScriptExitCode !== 0) {
     //   throw Error('package building failed')
     // }
