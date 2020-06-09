@@ -26,10 +26,17 @@ async function main(): Promise<void> {
       throw Error('miniconda install failed')
     }
 
-    // Make a change so I can commit and see the tests
     const recipePath: string = core.getInput('recipe-path')
-    const buildPackScript: string = await io.which('build_package.sh', true)
-    const buildPackScriptExitCode = await exec.exec(`sh ${buildPackScript}`, [recipePath, buildDir, channels])
+    // const buildPackScript: string = await io.which('build_package.sh', true)
+    // const buildPackScriptExitCode = await exec.exec(`sh ${buildPackScript}`, [recipePath, buildDir, channels])
+    // if (buildPackScriptExitCode !== 0) {
+    //   throw Error('package building failed')
+    // }
+
+    await exec.exec('sh set', ['-e', '+v'])
+    const buildPackScriptExitCode = await exec.exec('sh conda', ['build', channels, '--override-channels',
+                                                                 '--output-folder', buildDir,
+                                                                 '--no-anaconda-upload', recipePath])
     if (buildPackScriptExitCode !== 0) {
       throw Error('package building failed')
     }
