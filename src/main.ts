@@ -33,8 +33,8 @@ async function main(): Promise<void> {
     //   throw Error('package building failed')
     // }
 
-    // await exec.exec('sh set', ['-e', '+v'])i
-    const buildPackScriptExitCode = await exec.exec('sh conda', ['build', channels, '--override-channels',
+    await exec.exec('set', ['-e', '+v'])
+    const buildPackScriptExitCode = await exec.exec('conda', ['build', channels, '--override-channels',
                                                                  '--output-folder', buildDir,
                                                                  '--no-anaconda-upload', recipePath])
     if (buildPackScriptExitCode !== 0) {
