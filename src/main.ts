@@ -27,13 +27,6 @@ async function main(): Promise<void> {
     }
 
     const recipePath: string = core.getInput('recipe-path')
-    const buildPackScript: string = await io.which('build_package.sh', true)
-    await exec.exec(`sh ${buildPackScript}`)
-    // if (buildPackScriptExitCode !== 0) {
-    //   throw Error('package building failed')
-    // }
-
-    // await exec.exec('set', ['-e', '+v'])
     const buildPackScriptExitCode = await exec.exec('conda', ['build', channels, '--override-channels',
                                                               '--output-folder', buildDir,
                                                               '--no-anaconda-upload', recipePath])
