@@ -1,4 +1,5 @@
 import * as temp from 'temp'
+import * as navigator from 'navigator'
 
 import * as artifact from '@actions/artifact'
 import * as core from '@actions/core'
@@ -37,7 +38,7 @@ async function main(): Promise<void> {
       throw Error('Unsupported OS, must be Linux or Mac')
     }
 
-    await exec.exec('wget', ['-O', 'miniconda.sh', condaURL])
+    await exec.exec(`wget -O miniconda.sh ${condaURL}`)
     await exec.exec('chmod +x miniconda.sh')
 
     await exec.exec(`./miniconda.sh -b -p ${minicondaDir}`)
