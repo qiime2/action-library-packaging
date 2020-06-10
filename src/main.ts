@@ -21,12 +21,6 @@ async function main(): Promise<void> {
     core.addPath('../../_actions/qiime2/action-library-packaging/alpha1')
     core.addPath('.')
 
-    // const installMinicondaScript: string = await io.which('install_miniconda.sh', true)
-    // const installMinicondaExitCode = await exec.exec(`sh ${installMinicondaScript}`, [minicondaDir])
-    // if (installMinicondaExitCode !== 0) {
-    //   throw Error('miniconda install failed')
-    // }
-
     // Not sure exactly how to handle the miniconda install failed error. Could
     // Check value of var after every exec but that sure is tedious
     let condaURL = ''
