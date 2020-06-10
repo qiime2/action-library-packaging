@@ -20,11 +20,28 @@ async function main(): Promise<void> {
     core.addPath('../../_actions/qiime2/action-library-packaging/alpha1')
     core.addPath('.')
 
-    const installMinicondaScript: string = await io.which('install_miniconda.sh', true)
-    const installMinicondaExitCode = await exec.exec(`sh ${installMinicondaScript}`, [minicondaDir])
-    if (installMinicondaExitCode !== 0) {
-      throw Error('miniconda install failed')
+    // const installMinicondaScript: string = await io.which('install_miniconda.sh', true)
+    // const installMinicondaExitCode = await exec.exec(`sh ${installMinicondaScript}`, [minicondaDir])
+    // if (installMinicondaExitCode !== 0) {
+    //   throw Error('miniconda install failed')
+    // }
+
+    let condaURL = ''
+    if (navigator.appVersion.indexOf('Linux') != -1) {
+      condaURL = 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh'
+    } else if (navigator.appVersion.indexOf('Mac') != -1 ) {
+      condaURL = 'https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh'
+    } else {
+      throw Error('Unsupported OS, must be Linux or Mac')
     }
+
+    await exec.exec(`wget -O miniconda.sh ${condaURL}`)
+    await exec.exec('chmod +x miniconda.sh')
+
+    await exec.exec(`./miniconda.sh -b -p ${minicondaDir}`)
+
+    await exec.exec(`conda upgrade -n base -q -y -c defaults --override-channels conda`)
+    await exec.exec(`conda install -n base -q -y -c defaults --override-channels conda-build conda-verify`)
 
     const recipePath: string = core.getInput('recipe-path')
     const buildPackScriptExitCode = await exec.exec(`conda build ${channels}`, ['--override-channels',
