@@ -30,9 +30,9 @@ async function main(): Promise<void> {
     // Not sure exactly how to handle the miniconda install failed error. Could
     // Check value of var after every exec but that sure is tedious
     let condaURL = ''
-    if (os.platform === 'linux') {
+    if (os.platform() === 'linux') {
       condaURL = 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh'
-    } else if (os.platform === 'darwin' ) {
+    } else if (os.platform() === 'darwin' ) {
       condaURL = 'https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh'
     } else {
       throw Error('Unsupported OS, must be Linux or Mac')
