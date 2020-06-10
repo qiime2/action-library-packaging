@@ -21,8 +21,6 @@ async function main(): Promise<void> {
     core.addPath('../../_actions/qiime2/action-library-packaging/alpha1')
     core.addPath('.')
 
-    // Not sure exactly how to handle the miniconda install failed error. Could
-    // Check value of var after every exec but that sure is tedious
     let condaURL = ''
     if (os.platform() === 'linux') {
       condaURL = 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh'
@@ -38,7 +36,10 @@ async function main(): Promise<void> {
     await exec.exec(`./miniconda.sh -b -p ${minicondaDir}`)
 
     await exec.exec('conda upgrade -n base -q -y -c defaults --override-channels conda')
-    await exec.exec('conda install -n base -q -y -c defaults --override-channels conda-build conda-verify')
+    const installMinicondaExitCode = await exec.exec('conda install -n base -q -y -c defaults --override-channels conda-build conda-verify')
+    if (installMinicondaExitCode !== 0) {
+      throw Error('miniconda install failed')
+    }
 
     const recipePath: string = core.getInput('recipe-path')
     const buildPackScriptExitCode = await exec.exec(`conda build ${channels}`, ['--override-channels',
