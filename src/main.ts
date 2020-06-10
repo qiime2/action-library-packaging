@@ -42,8 +42,8 @@ async function main(): Promise<void> {
 
     await exec.exec(`./miniconda.sh -b -p ${minicondaDir}`)
 
-    await exec.exec(`conda upgrade -n base -q -y -c defaults --override-channels conda`)
-    await exec.exec(`conda install -n base -q -y -c defaults --override-channels conda-build conda-verify`)
+    await exec.exec('conda upgrade -n base -q -y -c defaults --override-channels conda')
+    await exec.exec('conda install -n base -q -y -c defaults --override-channels conda-build conda-verify')
 
     const recipePath: string = core.getInput('recipe-path')
     const buildPackScriptExitCode = await exec.exec(`conda build ${channels}`, ['--override-channels',
