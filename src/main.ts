@@ -1,5 +1,5 @@
 import * as temp from 'temp'
-import * as navigator from 'navigator'
+import * as os from 'os'
 
 import * as artifact from '@actions/artifact'
 import * as core from '@actions/core'
@@ -30,9 +30,9 @@ async function main(): Promise<void> {
     // Not sure exactly how to handle the miniconda install failed error. Could
     // Check value of var after every exec but that sure is tedious
     let condaURL = ''
-    if (navigator.appVersion.indexOf('Linux') !== -1) {
+    if (os.platform === 'linux') {
       condaURL = 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh'
-    } else if (navigator.appVersion.indexOf('Mac') !== -1 ) {
+    } else if (os.platform === 'darwin' ) {
       condaURL = 'https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh'
     } else {
       throw Error('Unsupported OS, must be Linux or Mac')
