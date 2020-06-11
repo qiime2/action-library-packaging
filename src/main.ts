@@ -14,7 +14,7 @@ class ExecOptions{
 // Maybe (if we can get it to work) we have a param for tacking on a new error
 // message
 async function execWrapper( commandLine: string,
-                      args?: string[] ): Promise<number> {
+                            args?: string[] ): Promise<number> {
     let myOutput = ''
     let myError = ''
 
