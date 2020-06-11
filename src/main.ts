@@ -59,12 +59,12 @@ async function main(): Promise<void> {
     }
 
     const recipePath: string = core.getInput('recipe-path')
-    const buildPackScriptExitCode = await exec.exec('conda', ['build', '-c', 'qiime2-staging/label/r2020.6',
+    const buildPackScriptExitCode = await exec.exec('conda', ['build', 'qiime2-staging/label/r2020.6',
                                                               '-c', 'conda-forge', '-c', 'bioconda',
                                                               '-c', 'defaults', '--override-channels',
                                                               '--output-folder', buildDir,
                                                               '--no-anaconda-upload', recipePath], options)
-    if (buildPackScriptExitCode !== 0) {
+    if (options.listeners.stderr !== '') {
       throw Error('package building failed')
     }
 
