@@ -44,7 +44,7 @@ async function main(): Promise<void> {
     let myOutput = '';
     let myError = '';
 
-    const options : ExecOptions = {};
+    const options = {};
     options.listeners = {
       stdout: (data: Buffer) => {
         myOutput += data.toString();
