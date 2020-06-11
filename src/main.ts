@@ -9,7 +9,6 @@ import * as io from '@actions/io'
 
 class Test{
   public listeners: object = {}
-  public cwd: string = ''
 }
 
 async function main(): Promise<void> {
@@ -58,7 +57,6 @@ async function main(): Promise<void> {
         myError += data.toString()
       }
     }
-    options.cwd = './lib'
 
     const recipePath: string = core.getInput('recipe-path')
     const buildPackScriptExitCode = await exec.exec('conda', ['build', '-c', 'qiime2-staging/label/r2020.6',
@@ -67,7 +65,7 @@ async function main(): Promise<void> {
                                                               '--output-folder', buildDir,
                                                               '--no-anaconda-upload', recipePath], options)
     if (buildPackScriptExitCode !== 0) {
-      throw Error(myError)
+      throw Error('package building failed')
     }
 
     const filesGlobber: glob.Globber = await glob.create(`${buildDir}/*/**`)
