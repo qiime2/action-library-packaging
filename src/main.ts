@@ -12,97 +12,102 @@ class Test{
 }
 
 async function main(): Promise<void> {
-  const homeDir: string | undefined = process.env.HOME
-  const buildDir = `${homeDir}/built-package`
-  const minicondaDir = `${homeDir}/miniconda`
-  const minicondaBinDir = `${minicondaDir}/bin`
+  try {
+    const homeDir: string | undefined = process.env.HOME
+    const buildDir = `${homeDir}/built-package`
+    const minicondaDir = `${homeDir}/miniconda`
+    const minicondaBinDir = `${minicondaDir}/bin`
 
-  core.addPath(minicondaBinDir);
+    core.addPath(minicondaBinDir);
 
-  // TODO: fix these hacks
-  core.addPath('../../_actions/qiime2/action-library-packaging/alpha1')
-  core.addPath('.')
+    // TODO: fix these hacks
+    core.addPath('../../_actions/qiime2/action-library-packaging/alpha1')
+    core.addPath('.')
 
-  let condaURL = ''
-  if (os.platform() === 'linux') {
-    condaURL = 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh'
-  } else if (os.platform() === 'darwin' ) {
-    condaURL = 'https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh'
-  } else {
-    throw Error('Unsupported OS, must be Linux or Mac')
-  }
-
-  await exec.exec('wget', ['-O', 'miniconda.sh', condaURL])
-  await exec.exec('chmod', ['+x', 'miniconda.sh'])
-
-  await exec.exec('./miniconda.sh', ['-b', '-p', minicondaDir])
-
-  await exec.exec('conda', ['upgrade', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda'])
-  const installMinicondaExitCode = await exec.exec('conda', ['install', '-n', 'base', '-q', '-y', '-c', 'defaults',
-                                                              '--override-channels', 'conda-build', 'conda-verify'])
-  if (installMinicondaExitCode !== 0) {
-    throw Error('miniconda install failed')
-  }
-
-  let myOutput = '';
-  let myError = '';
-
-  let options = new Test
-  options.listeners = {
-    stdout: (data: Buffer) => {
-      myOutput += data.toString()
-    },
-    stderr: (data: Buffer) => {
-      myError += data.toString()
+    let condaURL = ''
+    if (os.platform() === 'linux') {
+      condaURL = 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh'
+    } else if (os.platform() === 'darwin' ) {
+      condaURL = 'https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh'
+    } else {
+      throw Error('Unsupported OS, must be Linux or Mac')
     }
-  }
 
-  const recipePath: string = core.getInput('recipe-path')
-  const buildPackScriptExitCode = await exec.exec('conda', ['build', 'qiime2-staging/label/r2020.6',
-                                                            '-c', 'conda-forge', '-c', 'bioconda',
-                                                            '-c', 'defaults', '--override-channels',
-                                                            '--output-folder', buildDir,
-                                                            '--no-anaconda-upload', recipePath], options)
-  if (buildPackScriptExitCode !== 0) {
-    throw Error('package building failed')
-  }
+    await exec.exec('wget', ['-O', 'miniconda.sh', condaURL])
+    await exec.exec('chmod', ['+x', 'miniconda.sh'])
 
-  const filesGlobber: glob.Globber = await glob.create(`${buildDir}/*/**`)
-  const files: string[] = await filesGlobber.glob()
+    await exec.exec('./miniconda.sh', ['-b', '-p', minicondaDir])
 
-  const pluginName: string = core.getInput('plugin-name')
-  const artifactGlobber: glob.Globber = await glob.create(`${buildDir}/*/${pluginName}*`)
-  const artifactName: string[] = await artifactGlobber.glob()
-
-  if (artifactName === null || artifactName.length !== 1) {
-    throw Error(`Error finding base artifactName: ${JSON.stringify(artifactName)}`)
-  }
-
-  const regex: RegExp = new RegExp(`${buildDir}\/(.*?)\/${pluginName}`)
-  const arch: RegExpMatchArray | null = artifactName[0].match(regex)
-
-  if (arch === null) {
-    throw Error(`Error finding arch: ${JSON.stringify(arch)}.`)
-  }
-
-  const artifactClient = artifact.create()
-  const uploadResult = await artifactClient.uploadArtifact(arch[1], files, buildDir)
-  core.debug(JSON.stringify(uploadResult))
-
-  const additionalTests: string = core.getInput('additional-tests')
-  if (additionalTests !== '') {
-    await exec.exec('conda', ['create', '-n', 'testing', '-c', `${buildDir}`, '-c', 'qiime2-staging/label/r2020.6',
-                              '-c', 'conda-forge', '-c', 'bioconda', '-c', 'defaults', `${pluginName}`, 'pytest', '-y'])
-
-    temp.track()
-    const stream = temp.createWriteStream({ suffix: '.sh' })
-    stream.write(`source activate testing && ${additionalTests}`)
-    stream.end()
-    const additionalTestsExitCode = await exec.exec('bash', [stream.path as string])
-
-    if (additionalTestsExitCode !== 0) {
-      throw Error('additional tests failed')
+    await exec.exec('conda', ['upgrade', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda'])
+    const installMinicondaExitCode = await exec.exec('conda', ['install', '-n', 'base', '-q', '-y', '-c', 'defaults',
+                                                               '--override-channels', 'conda-build', 'conda-verify'])
+    if (installMinicondaExitCode !== 0) {
+      throw Error('miniconda install failed')
     }
+
+    let myOutput = ''
+    let myError = ''
+
+    let options = new Test
+    options.listeners = {
+      stdout: (data: Buffer) => {
+        myOutput += data.toString()
+      },
+      stderr: (data: Buffer) => {
+        myError += data.toString()
+      }
+    }
+
+    const recipePath: string = core.getInput('recipe-path')
+    const buildPackScriptExitCode = await exec.exec('conda', ['build', '-c', 'qiime2-staging/label/r2020.6',
+                                                              '-c', 'conda-forge', '-c', 'bioconda',
+                                                              '-c', 'defaults', '--override-channels',
+                                                              '--output-folder', buildDir,
+                                                              '--no-anaconda-upload', recipePath], options)
+    if (buildPackScriptExitCode !== 0) {
+      throw Error('package building failed')
+    }
+
+    const filesGlobber: glob.Globber = await glob.create(`${buildDir}/*/**`)
+    const files: string[] = await filesGlobber.glob()
+
+    const pluginName: string = core.getInput('plugin-name')
+    const artifactGlobber: glob.Globber = await glob.create(`${buildDir}/*/${pluginName}*`)
+    const artifactName: string[] = await artifactGlobber.glob()
+
+    if (artifactName === null || artifactName.length !== 1) {
+      throw Error(`Error finding base artifactName: ${JSON.stringify(artifactName)}`)
+    }
+
+    const regex: RegExp = new RegExp(`${buildDir}\/(.*?)\/${pluginName}`)
+    const arch: RegExpMatchArray | null = artifactName[0].match(regex)
+
+    if (arch === null) {
+      throw Error(`Error finding arch: ${JSON.stringify(arch)}.`)
+    }
+
+    const artifactClient = artifact.create()
+    const uploadResult = await artifactClient.uploadArtifact(arch[1], files, buildDir)
+    core.debug(JSON.stringify(uploadResult))
+
+    const additionalTests: string = core.getInput('additional-tests')
+    if (additionalTests !== '') {
+      await exec.exec('conda', ['create', '-n', 'testing', '-c', `${buildDir}`, '-c', 'qiime2-staging/label/r2020.6',
+                                '-c', 'conda-forge', '-c', 'bioconda', '-c', 'defaults', `${pluginName}`, 'pytest', '-y'])
+
+      temp.track()
+      const stream = temp.createWriteStream({ suffix: '.sh' })
+      stream.write(`source activate testing && ${additionalTests}`)
+      stream.end()
+      const additionalTestsExitCode = await exec.exec('bash', [stream.path as string])
+
+      if (additionalTestsExitCode !== 0) {
+        throw Error('additional tests failed')
+      }
+    }
+
+  } catch (error) {
+    core.setFailed(error.message);
   }
 }
 
