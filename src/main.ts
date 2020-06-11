@@ -75,7 +75,8 @@ async function main(): Promise<void> {
 
     const additionalTests: string = core.getInput('additional-tests')
     if (additionalTests !== '') {
-      await exec.exec(`conda create -n testing -c ${buildDir} ${channels} ${pluginName} pytest -y`)
+      await exec.exec('conda', ['create', '-n', 'testing', '-c', 'buildDir', '-c', 'qiime2-staging/label/r2020.6',
+                                '-c', 'conda-forge', '-c', 'bioconda', '-c', 'defaults', 'pluginName', 'pytest', '-y'])
 
       temp.track()
       const stream = temp.createWriteStream({ suffix: '.sh' })
