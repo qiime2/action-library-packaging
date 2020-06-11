@@ -36,7 +36,7 @@ async function main(): Promise<void> {
     await exec.exec('./miniconda.sh', ['-b', '-p', minicondaDir])
 
     await exec.exec('conda', ['upgrade', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda'])
-    const installMinicondaExitCode = await exec.exec('conda', ['n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda-build', 'conda-verify'])
+    const installMinicondaExitCode = await exec.exec('conda', ['-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda-build', 'conda-verify'])
     if (installMinicondaExitCode !== 0) {
       throw Error('miniconda install failed')
     }
