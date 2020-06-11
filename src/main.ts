@@ -7,7 +7,8 @@ import * as exec from '@actions/exec'
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
 
-class Test implements exec.ExecOptions{
+class Test{
+  public listeners: object = {}
 }
 
 async function main(): Promise<void> {
@@ -56,7 +57,6 @@ async function main(): Promise<void> {
         myError += data.toString();
       }
     };
-    options.cwd = './lib';
 
     const recipePath: string = core.getInput('recipe-path')
     const buildPackScriptExitCode = await exec.exec('conda', ['build', '-c', 'qiime2-staging/label/r2020.6',
