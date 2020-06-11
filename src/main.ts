@@ -65,7 +65,7 @@ async function main(): Promise<void> {
                                                               '--output-folder', buildDir,
                                                               '--no-anaconda-upload', recipePath], options)
     if (myError !== '') {
-      throw Error('package building failed')
+      throw Error(myError)
     }
 
     const filesGlobber: glob.Globber = await glob.create(`${buildDir}/*/**`)
