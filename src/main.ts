@@ -9,6 +9,7 @@ import * as io from '@actions/io'
 
 class Test{
   public listeners: object = {}
+  public cwd: string = ''
 }
 
 async function main(): Promise<void> {
@@ -57,14 +58,15 @@ async function main(): Promise<void> {
         myError += data.toString()
       }
     }
+    options.cwd = './lib'
 
     const recipePath: string = core.getInput('recipe-path')
-    const buildPackScriptExitCode = await exec.exec('conda', ['build', '-c', 'qiime2-staging/label/r2020.6',
+    const buildPackScriptExitCode = await exec.exec('conda', ['build', 'qiime2-staging/label/r2020.6',
                                                               '-c', 'conda-forge', '-c', 'bioconda',
                                                               '-c', 'defaults', '--override-channels',
                                                               '--output-folder', buildDir,
                                                               '--no-anaconda-upload', recipePath], options)
-    if (myError !== '') {
+    if (buildPackScriptExitCode !== 0) {
       throw Error(myError)
     }
 
