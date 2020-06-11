@@ -48,15 +48,15 @@ async function main(): Promise<void> {
     let myOutput = '';
     let myError = '';
 
-    let options = new Test;
+    let options = new Test
     options.listeners = {
       stdout: (data: Buffer) => {
-        myOutput += data.toString();
+        myOutput += data.toString()
       },
       stderr: (data: Buffer) => {
-        myError += data.toString();
+        myError += data.toString()
       }
-    };
+    }
 
     const recipePath: string = core.getInput('recipe-path')
     const buildPackScriptExitCode = await exec.exec('conda', ['build', '-c', 'qiime2-staging/label/r2020.6',
