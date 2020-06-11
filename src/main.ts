@@ -7,8 +7,28 @@ import * as exec from '@actions/exec'
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
 
-class Test{
+class ExecOptions{
   public listeners: object = {}
+}
+
+// Maybe (if we can get it to work) we have a param for tacking on a new error
+// message
+async function execWrapper( commandLine: string,
+                      args?: string[] ): Promise<number> {
+    let myOutput = ''
+    let myError = ''
+
+    let options = new ExecOptions
+    options.listeners = {
+      stdout: (data: Buffer) => {
+        myOutput += data.toString()
+      },
+      stderr: (data: Buffer) => {
+        myError += data.toString()
+      }
+    }
+
+    return await exec.exec( commandLine, args, options )
 }
 
 async function main(): Promise<void> {
@@ -33,37 +53,24 @@ async function main(): Promise<void> {
       throw Error('Unsupported OS, must be Linux or Mac')
     }
 
-    await exec.exec('wget', ['-O', 'miniconda.sh', condaURL])
-    await exec.exec('chmod', ['+x', 'miniconda.sh'])
+    await execWrapper('wget', ['-O', 'miniconda.sh', condaURL])
+    await execWrapper('chmod', ['+x', 'miniconda.sh'])
 
-    await exec.exec('./miniconda.sh', ['-b', '-p', minicondaDir])
+    await execWrapper('./miniconda.sh', ['-b', '-p', minicondaDir])
 
-    await exec.exec('conda', ['upgrade', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda'])
-    const installMinicondaExitCode = await exec.exec('conda', ['install', '-n', 'base', '-q', '-y', '-c', 'defaults',
-                                                               '--override-channels', 'conda-build', 'conda-verify'])
+    await execWrapper('conda', ['upgrade', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda'])
+    const installMinicondaExitCode = await execWrapper('conda', ['install', '-n', 'base', '-q', '-y', '-c', 'defaults',
+                                                       '--override-channels', 'conda-build', 'conda-verify'])
     if (installMinicondaExitCode !== 0) {
       throw Error('miniconda install failed')
     }
 
-    let myOutput = ''
-    let myError = ''
-
-    let options = new Test
-    options.listeners = {
-      stdout: (data: Buffer) => {
-        myOutput += data.toString()
-      },
-      stderr: (data: Buffer) => {
-        myError += data.toString()
-      }
-    }
-
     const recipePath: string = core.getInput('recipe-path')
-    const buildPackScriptExitCode = await exec.exec('conda', ['build', '-c', 'qiime2-staging/label/r2020.6',
+    const buildPackScriptExitCode = await execWrapper('conda', ['build', '-c', 'qiime2-staging/label/r2020.6',
                                                               '-c', 'conda-forge', '-c', 'bioconda',
                                                               '-c', 'defaults', '--override-channels',
                                                               '--output-folder', buildDir,
-                                                              '--no-anaconda-upload', recipePath], options)
+                                                              '--no-anaconda-upload', recipePath])
     if (buildPackScriptExitCode !== 0) {
       throw Error('package building failed')
     }
@@ -92,14 +99,14 @@ async function main(): Promise<void> {
 
     const additionalTests: string = core.getInput('additional-tests')
     if (additionalTests !== '') {
-      await exec.exec('conda', ['create', '-n', 'testing', '-c', `${buildDir}`, '-c', 'qiime2-staging/label/r2020.6',
+      await execWrapper('conda', ['create', '-n', 'testing', '-c', `${buildDir}`, '-c', 'qiime2-staging/label/r2020.6',
                                 '-c', 'conda-forge', '-c', 'bioconda', '-c', 'defaults', `${pluginName}`, 'pytest', '-y'])
 
       temp.track()
       const stream = temp.createWriteStream({ suffix: '.sh' })
       stream.write(`source activate testing && ${additionalTests}`)
       stream.end()
-      const additionalTestsExitCode = await exec.exec('bash', [stream.path as string])
+      const additionalTestsExitCode = await execWrapper('bash', [stream.path as string])
 
       if (additionalTestsExitCode !== 0) {
         throw Error('additional tests failed')
