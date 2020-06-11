@@ -13,8 +13,8 @@ class ExecOptions{
 
 // Maybe (if we can get it to work) we have a param for tacking on a new error
 // message
-async function execWrapper( commandLine: string,
-                            args?: string[] ): Promise<number> {
+async function execWrapper(commandLine: string,
+                           args?: string[]): Promise<number> {
     let myOutput = ''
     let myError = ''
 
@@ -67,10 +67,10 @@ async function main(): Promise<void> {
 
     const recipePath: string = core.getInput('recipe-path')
     const buildPackScriptExitCode = await execWrapper('conda', ['build', '-c', 'qiime2-staging/label/r2020.6',
-                                                              '-c', 'conda-forge', '-c', 'bioconda',
-                                                              '-c', 'defaults', '--override-channels',
-                                                              '--output-folder', buildDir,
-                                                              '--no-anaconda-upload', recipePath])
+                                                                '-c', 'conda-forge', '-c', 'bioconda',
+                                                                '-c', 'defaults', '--override-channels',
+                                                                '--output-folder', buildDir,
+                                                                '--no-anaconda-upload', recipePath])
     if (buildPackScriptExitCode !== 0) {
       throw Error('package building failed')
     }
@@ -100,7 +100,7 @@ async function main(): Promise<void> {
     const additionalTests: string = core.getInput('additional-tests')
     if (additionalTests !== '') {
       await execWrapper('conda', ['create', '-n', 'testing', '-c', `${buildDir}`, '-c', 'qiime2-staging/label/r2020.6',
-                                '-c', 'conda-forge', '-c', 'bioconda', '-c', 'defaults', `${pluginName}`, 'pytest', '-y'])
+                                  '-c', 'conda-forge', '-c', 'bioconda', '-c', 'defaults', `${pluginName}`, 'pytest', '-y'])
 
       temp.track()
       const stream = temp.createWriteStream({ suffix: '.sh' })
