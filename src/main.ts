@@ -64,7 +64,7 @@ async function main(): Promise<void> {
                                                               '-c', 'defaults', '--override-channels',
                                                               '--output-folder', buildDir,
                                                               '--no-anaconda-upload', recipePath], options)
-    if (options.listeners.stderr !== '') {
+    if (myError !== '') {
       throw Error('package building failed')
     }
 
