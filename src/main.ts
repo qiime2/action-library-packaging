@@ -44,7 +44,8 @@ async function main(): Promise<void> {
     let myOutput = '';
     let myError = '';
 
-    const options = {
+    let options = {};
+    options.listeners = {
       stdout: (data: Buffer) => {
         myOutput += data.toString();
       },
@@ -52,6 +53,7 @@ async function main(): Promise<void> {
         myError += data.toString();
       }
     };
+    options.cwd = './lib';
 
     const recipePath: string = core.getInput('recipe-path')
     const buildPackScriptExitCode = await exec.exec('conda', ['build', '-c', 'qiime2-staging/label/r2020.6',
