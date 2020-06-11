@@ -7,7 +7,7 @@ import * as exec from '@actions/exec'
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
 
-class Test implements ExecOptions{
+class Test implements exec.ExecOptions{
 }
 
 async function main(): Promise<void> {
