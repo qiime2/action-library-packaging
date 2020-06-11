@@ -28,7 +28,7 @@ async function execWrapper( commandLine: string,
       }
     }
 
-    return await exec.exec( commandLine, args, options )
+    return await exec.exec(commandLine, args, options)
 }
 
 async function main(): Promise<void> {
