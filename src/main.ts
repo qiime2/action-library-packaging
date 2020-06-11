@@ -61,7 +61,7 @@ async function main(): Promise<void> {
     options.cwd = './lib'
 
     const recipePath: string = core.getInput('recipe-path')
-    const buildPackScriptExitCode = await exec.exec('conda', ['build', '-c',g 'qiime2-staging/label/r2020.6',
+    const buildPackScriptExitCode = await exec.exec('conda', ['build', '-c', 'qiime2-staging/label/r2020.6',
                                                               '-c', 'conda-forge', '-c', 'bioconda',
                                                               '-c', 'defaults', '--override-channels',
                                                               '--output-folder', buildDir,
