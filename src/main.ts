@@ -3,9 +3,10 @@ import * as os from 'os'
 
 import * as artifact from '@actions/artifact'
 import * as core from '@actions/core'
-import * as exec from '@actions/exec'
+// import * as exec from '@actions/exec'
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
+const exec = require('@actions/exec')
 
 async function main(): Promise<void> {
   try {
