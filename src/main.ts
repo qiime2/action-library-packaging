@@ -13,7 +13,6 @@ async function main(): Promise<void> {
     const buildDir = `${homeDir}/built-package`
     const minicondaDir = `${homeDir}/miniconda`
     const minicondaBinDir = `${minicondaDir}/bin`
-    const channels = '-c qiime2-staging/label/r2020.6 -c conda-forge -c bioconda -c defaults'
 
     core.addPath(minicondaBinDir);
 
@@ -36,15 +35,17 @@ async function main(): Promise<void> {
     await exec.exec('./miniconda.sh', ['-b', '-p', minicondaDir])
 
     await exec.exec('conda', ['upgrade', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda'])
-    const installMinicondaExitCode = await exec.exec('conda', ['install', '-n', 'base', '-q', '-y', '-c', '--override-channels', 'conda-build', 'conda-verify'])
+    const installMinicondaExitCode = await exec.exec('conda', ['install', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda-build', 'conda-verify'])
     if (installMinicondaExitCode !== 0) {
       throw Error('miniconda install failed')
     }
 
     const recipePath: string = core.getInput('recipe-path')
-    const buildPackScriptExitCode = await exec.exec(`conda build ${channels}`, ['--override-channels',
-                                                                                '--output-folder', buildDir,
-                                                                                '--no-anaconda-upload', recipePath])
+    const buildPackScriptExitCode = await exec.exec('conda', ['build', '-c', 'qiime2-staging/label/r2020.6',
+                                                              '-c', 'conda-forge', '-c', 'bioconda',
+                                                              '-c', 'defaults', '--override-channels',
+                                                              '--output-folder', buildDir,
+                                                              '--no-anaconda-upload', recipePath])
     if (buildPackScriptExitCode !== 0) {
       throw Error('package building failed')
     }
