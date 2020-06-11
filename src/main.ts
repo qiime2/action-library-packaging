@@ -30,13 +30,13 @@ async function main(): Promise<void> {
       throw Error('Unsupported OS, must be Linux or Mac')
     }
 
-    await exec.exec(`wget -O miniconda.sh ${condaURL}`)
-    await exec.exec('chmod +x miniconda.sh')
+    await exec.exec('wget', ['-O', 'miniconda.sh', condaURL])
+    await exec.exec('chmod', ['+x', 'miniconda.sh'])
 
-    await exec.exec(`./miniconda.sh -b -p ${minicondaDir}`)
+    await exec.exec('./miniconda.sh', ['-b', '-p', minicondaDir])
 
-    await exec.exec('conda upgrade -n base -q -y -c defaults --override-channels conda')
-    const installMinicondaExitCode = await exec.exec('conda install -n base -q -y -c defaults --override-channels conda-build conda-verify')
+    await exec.exec('conda', ['upgrade', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda'])
+    const installMinicondaExitCode = await exec.exec('conda', ['install', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda-build', 'conda-verify'])
     if (installMinicondaExitCode !== 0) {
       throw Error('miniconda install failed')
     }
