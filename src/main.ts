@@ -7,6 +7,9 @@ import * as exec from '@actions/exec'
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
 
+class Test implements ExecOptions{
+}
+
 async function main(): Promise<void> {
   try {
     const homeDir: string | undefined = process.env.HOME
@@ -44,7 +47,7 @@ async function main(): Promise<void> {
     let myOutput = '';
     let myError = '';
 
-    let options = {};
+    let options = new Test;
     options.listeners = {
       stdout: (data: Buffer) => {
         myOutput += data.toString();
