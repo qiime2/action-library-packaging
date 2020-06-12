@@ -35,10 +35,7 @@ async function execWrapper(commandLine: string,
     return await exec.exec(commandLine, args, options)
 }
 
-async function main(): Promise<void> {
-  try {
-    const homeDir: string | undefined = process.env.HOME
-    const buildDir = `${homeDir}/built-package`
+async function installMiniconda(homeDir: string | undefined) {
     const minicondaDir = `${homeDir}/miniconda`
     const minicondaBinDir = `${minicondaDir}/bin`
 
@@ -59,12 +56,17 @@ async function main(): Promise<void> {
     await execWrapper('./miniconda.sh', ['-b', '-p', minicondaDir])
 
     await execWrapper('conda', ['upgrade', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda'])
+}
+
+async function installCondaBuild() {
     const installMinicondaExitCode = await execWrapper('conda', ['install', '-n', 'base', '-q', '-y', '-c', 'defaults',
                                                        '--override-channels', 'conda-build', 'conda-verify'])
     if (installMinicondaExitCode !== 0) {
       throw Error('miniconda install failed')
     }
+}
 
+async function buildQIIME2Package(buildDir: string) {
     const recipePath: string = core.getInput('recipe-path')
     const buildPackScriptExitCode = await execWrapper('conda', ['build', '-c', 'qiime2-staging/label/r2020.6',
                                                                 '-c', 'conda-forge', '-c', 'bioconda',
@@ -74,6 +76,16 @@ async function main(): Promise<void> {
     if (buildPackScriptExitCode !== 0) {
       throw Error('package building failed')
     }
+}
+
+async function main(): Promise<void> {
+  try {
+    const homeDir: string | undefined = process.env.HOME
+    const buildDir = `${homeDir}/built-package`
+
+    await installMiniconda(homeDir)
+    await installCondaBuild()
+    await buildQIIME2Package(buildDir)
 
     const filesGlobber: glob.Globber = await glob.create(`${buildDir}/*/**`)
     const files: string[] = await filesGlobber.glob()
