@@ -7,7 +7,7 @@ import * as exec from '@actions/exec'
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
 
-class ExecOptions{
+class ExecOptions {
   public listeners: object = {}
 }
 
