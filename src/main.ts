@@ -7,6 +7,10 @@ import * as exec from '@actions/exec'
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
 
+// Anything we pass as the optional 3rd param to exec.exec must implement the
+// ExecOptions interface here https://github.com/actions/toolkit/blob/master/packages/exec/src/interfaces.ts.
+// The only piece of that we actually need is the listeners, this class exists to
+// give us that.
 class ExecOptions {
   public listeners: object = {}
 }
