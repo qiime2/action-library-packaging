@@ -40,10 +40,6 @@ async function main(): Promise<void> {
 
     core.addPath(minicondaBinDir);
 
-    // TODO: fix these hacks
-    core.addPath('../../_actions/qiime2/action-library-packaging/alpha1')
-    core.addPath('.')
-
     let condaURL = ''
     if (os.platform() === 'linux') {
       condaURL = 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh'
