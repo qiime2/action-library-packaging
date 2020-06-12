@@ -35,12 +35,7 @@ async function execWrapper(commandLine: string,
     return await exec.exec(commandLine, args, options)
 }
 
-async function installMiniconda(homeDir: string | undefined) {
-    const minicondaDir = `${homeDir}/miniconda`
-    const minicondaBinDir = `${minicondaDir}/bin`
-
-    core.addPath(minicondaBinDir);
-
+async function getCondaURL(): Promise<string> {
     let condaURL = ''
     if (os.platform() === 'linux') {
       condaURL = 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh'
@@ -49,6 +44,15 @@ async function installMiniconda(homeDir: string | undefined) {
     } else {
       throw Error('Unsupported OS, must be Linux or Mac')
     }
+
+    return condaURL
+}
+
+async function installMiniconda(homeDir: string | undefined, condaURL: string) {
+    const minicondaDir = `${homeDir}/miniconda`
+    const minicondaBinDir = `${minicondaDir}/bin`
+
+    core.addPath(minicondaBinDir);
 
     await execWrapper('wget', ['-O', 'miniconda.sh', condaURL])
     await execWrapper('chmod', ['+x', 'miniconda.sh'])
@@ -83,7 +87,8 @@ async function main(): Promise<void> {
     const homeDir: string | undefined = process.env.HOME
     const buildDir = `${homeDir}/built-package`
 
-    await installMiniconda(homeDir)
+    let condaURL = await getCondaURL()
+    await installMiniconda(homeDir, condaURL)
     await installCondaBuild()
     await buildQIIME2Package(buildDir)
 
