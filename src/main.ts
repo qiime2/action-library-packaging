@@ -36,7 +36,7 @@ async function execWrapper(commandLine: string,
     try {
       return await exec.exec(commandLine, args, options)
     } catch (error) {
-      throw(errorMessage)
+      core.setFailed(error.message + `\n\n${errorMessage}`);
     }
 }
 
@@ -68,7 +68,7 @@ async function installMiniconda(homeDir: string | undefined, condaURL: string) {
 }
 
 async function installCondaBuild() {
-    const installMinicondaExitCode = await execWrapper('conda', ['install', 'base', '-q', '-y', '-c', 'defaults',
+    const installMinicondaExitCode = await execWrapper('conda', ['install', '-n', 'base', '-q', '-y', '-c', 'defaults',
                                                        '--override-channels', 'conda-build', 'conda-verify'],
                                                        'miniconda install failed')
 }
