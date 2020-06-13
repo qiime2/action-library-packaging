@@ -124,11 +124,7 @@ async function main(): Promise<void> {
       const stream = temp.createWriteStream({ suffix: '.sh' })
       stream.write(`source activate testing && ${additionalTests}`)
       stream.end()
-      const additionalTestsExitCode = await execWrapper('bash', [stream.path as string])
-
-      if (additionalTestsExitCode !== 0) {
-        throw Error('additional tests failed')
-      }
+      const additionalTestsExitCode = await execWrapper('bash', [stream.path as string], 'additional tests failed')
     }
 
   } catch (error) {
