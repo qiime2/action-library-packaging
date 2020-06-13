@@ -35,7 +35,7 @@ async function execWrapper(commandLine: string,
     return await exec.exec(commandLine, args, options)
 }
 
-async function getCondaURL(): Promise<string> {
+function getCondaURL(): string {
     let condaURL = ''
     if (os.platform() === 'linux') {
       condaURL = 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh'
@@ -87,7 +87,7 @@ async function main(): Promise<void> {
     const homeDir: string | undefined = process.env.HOME
     const buildDir = `${homeDir}/built-package`
 
-    let condaURL = await getCondaURL()
+    let condaURL = getCondaURL()
     await installMiniconda(homeDir, condaURL)
     await installCondaBuild()
     await buildQIIME2Package(buildDir)
