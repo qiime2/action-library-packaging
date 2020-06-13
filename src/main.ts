@@ -18,7 +18,8 @@ class ExecOptions {
 // Maybe (if we can get it to work) we have a param for tacking on a new error
 // message
 async function execWrapper(commandLine: string,
-                           args?: string[]): Promise<number> {
+                           args?: string[],
+                           error?: string): Promise<number> {
     let myOutput = ''
     let myError = ''
 
@@ -63,7 +64,7 @@ async function installMiniconda(homeDir: string | undefined, condaURL: string) {
 }
 
 async function installCondaBuild() {
-    const installMinicondaExitCode = await execWrapper('conda', ['install', '-n', 'base', '-q', '-y', '-c', 'defaults',
+    const installMinicondaExitCode = await execWrapper('conda', ['install', 'base', '-q', '-y', '-c', 'defaults',
                                                        '--override-channels', 'conda-build', 'conda-verify'])
     if (installMinicondaExitCode !== 0) {
       throw Error('miniconda install failed')
