@@ -19,7 +19,7 @@ class ExecOptions {
 // message
 async function execWrapper(commandLine: string,
                            args?: string[],
-                           errorMessage?: string): Promise<number> {
+                           errorMessage?: string) {
     let myOutput = ''
     let myError = ''
 
@@ -34,7 +34,7 @@ async function execWrapper(commandLine: string,
     }
 
     try {
-      return await exec.exec(commandLine, args, options)
+      await exec.exec(commandLine, args, options)
     } catch (error) {
       core.setFailed(error.message + `\n\n${errorMessage}`);
     }
@@ -79,10 +79,8 @@ async function buildQIIME2Package(buildDir: string) {
                                                                 '-c', 'conda-forge', '-c', 'bioconda',
                                                                 '-c', 'defaults', '--override-channels',
                                                                 '--output-folder', buildDir,
-                                                                '--no-anaconda-upload', recipePath])
-    if (buildPackScriptExitCode !== 0) {
-      throw Error('package building failed')
-    }
+                                                                '--no-anaconda-upload', recipePath],
+                                                                'package building failed')
 }
 
 async function main(): Promise<void> {
