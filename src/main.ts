@@ -19,7 +19,7 @@ class ExecOptions {
 // message
 async function execWrapper(commandLine: string,
                            args?: string[],
-                           error?: string): Promise<number> {
+                           errorMessage?: string): Promise<number> {
     let myOutput = ''
     let myError = ''
 
@@ -33,7 +33,11 @@ async function execWrapper(commandLine: string,
       }
     }
 
-    return await exec.exec(commandLine, args, options)
+    try {
+      return await exec.exec(commandLine, args, options)
+    } catch (error) {
+      throw(errorMessage)
+    }
 }
 
 function getCondaURL(): string {
@@ -65,10 +69,8 @@ async function installMiniconda(homeDir: string | undefined, condaURL: string) {
 
 async function installCondaBuild() {
     const installMinicondaExitCode = await execWrapper('conda', ['install', 'base', '-q', '-y', '-c', 'defaults',
-                                                       '--override-channels', 'conda-build', 'conda-verify'])
-    if (installMinicondaExitCode !== 0) {
-      throw Error('miniconda install failed')
-    }
+                                                       '--override-channels', 'conda-build', 'conda-verify'],
+                                                       'miniconda install failed')
 }
 
 async function buildQIIME2Package(buildDir: string) {
