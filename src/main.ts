@@ -7,29 +7,23 @@ import * as exec from '@actions/exec'
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
 
-// Anything we pass as the optional 3rd param to exec.exec must implement the
-// ExecOptions interface here https://github.com/actions/toolkit/blob/master/packages/exec/src/interfaces.ts.
-// The only piece of that we actually need is the listeners, this class exists to
-// give us that.
 class ExecOptions {
   public listeners: object = {}
 }
 
-// Maybe (if we can get it to work) we have a param for tacking on a new error
-// message
 async function execWrapper(commandLine: string,
                            args?: string[],
                            errorMessage?: string) {
-    let myOutput = ''
-    let myError = ''
+    let output = ''
+    let error = ''
 
     let options = new ExecOptions
     options.listeners = {
       stdout: (data: Buffer) => {
-        myOutput += data.toString()
+        output += data.toString()
       },
       stderr: (data: Buffer) => {
-        myError += data.toString()
+        error += data.toString()
       }
     }
 
@@ -73,25 +67,42 @@ async function installCondaBuild() {
                                                        'miniconda install failed')
 }
 
-async function buildQIIME2Package(buildDir: string) {
-    const recipePath: string = core.getInput('recipe-path')
-    const buildPackScriptExitCode = await execWrapper('conda', ['build', '-c', 'qiime2-staging/label/r2020.6',
-                                                                '-c', 'conda-forge', '-c', 'bioconda',
-                                                                '-c', 'defaults', '--override-channels',
-                                                                '--output-folder', buildDir,
-                                                                '--no-anaconda-upload', recipePath],
-                                                                'package building failed')
+function getQIIME2Channel(buildTarget: string) {
+  switch(buildTarget) {
+    case 'staging':
+      return 'qiime2-staging/label/r2020.6'
+ 
+    case 'release':
+    default:
+      return 'qiime2/label/r2020.6'
+  }
+}
+
+async function buildQIIME2Package(buildDir: string, recipePath: string, buildTarget: string) {
+    const q2Channel = getQIIME2Channel(buildTarget)
+    return await execWrapper('conda',
+      ['build',
+       '-c', q2Channel,
+       '-c', 'conda-forge',
+       '-c', 'bioconda',
+       '-c', 'defaults',
+       '--override-channels',
+       '--output-folder', buildDir,
+       '--no-anaconda-upload',
+       recipePath], 'package building failed')
 }
 
 async function main(): Promise<void> {
   try {
     const homeDir: string | undefined = process.env.HOME
     const buildDir = `${homeDir}/built-package`
+    const recipePath: string = core.getInput('recipe-path')
+    const buildTarget: string = core.getInput('build-target')
+    const condaURL = getCondaURL()
 
-    let condaURL = getCondaURL()
     await installMiniconda(homeDir, condaURL)
     await installCondaBuild()
-    await buildQIIME2Package(buildDir)
+    await buildQIIME2Package(buildDir, recipePath, buildTarget)
 
     const filesGlobber: glob.Globber = await glob.create(`${buildDir}/*/**`)
     const files: string[] = await filesGlobber.glob()

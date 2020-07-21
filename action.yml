@@ -8,6 +8,10 @@ inputs:
   plugin-name:
     description: 'Name of QIIME 2 plugin'
     required: true
+  build-target:
+    description: 'Target QIIME 2 release cycle: "release" or "staging"'
+    required: true
+    default: 'release'
   additional-tests:
     description: 'Additional tests to run post-build'
     required: false
