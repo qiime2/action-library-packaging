@@ -3348,34 +3348,92 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const temp = __importStar(__webpack_require__(731));
+const os = __importStar(__webpack_require__(87));
 const artifact = __importStar(__webpack_require__(214));
 const core = __importStar(__webpack_require__(470));
 const exec = __importStar(__webpack_require__(986));
 const glob = __importStar(__webpack_require__(281));
-const io = __importStar(__webpack_require__(1));
+// Anything we pass as the optional 3rd param to exec.exec must implement the
+// ExecOptions interface here https://github.com/actions/toolkit/blob/master/packages/exec/src/interfaces.ts.
+// The only piece of that we actually need is the listeners, this class exists to
+// give us that.
+class ExecOptions {
+    constructor() {
+        this.listeners = {};
+    }
+}
+// Maybe (if we can get it to work) we have a param for tacking on a new error
+// message
+function execWrapper(commandLine, args, errorMessage) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let myOutput = '';
+        let myError = '';
+        let options = new ExecOptions;
+        options.listeners = {
+            stdout: (data) => {
+                myOutput += data.toString();
+            },
+            stderr: (data) => {
+                myError += data.toString();
+            }
+        };
+        try {
+            yield exec.exec(commandLine, args, options);
+        }
+        catch (error) {
+            core.setFailed(error.message + `\n\n${errorMessage}`);
+        }
+    });
+}
+function getCondaURL() {
+    let condaURL = '';
+    if (os.platform() === 'linux') {
+        condaURL = 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh';
+    }
+    else if (os.platform() === 'darwin') {
+        condaURL = 'https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh';
+    }
+    else {
+        throw Error('Unsupported OS, must be Linux or Mac');
+    }
+    return condaURL;
+}
+function installMiniconda(homeDir, condaURL) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const minicondaDir = `${homeDir}/miniconda`;
+        const minicondaBinDir = `${minicondaDir}/bin`;
+        core.addPath(minicondaBinDir);
+        yield execWrapper('wget', ['-O', 'miniconda.sh', condaURL]);
+        yield execWrapper('chmod', ['+x', 'miniconda.sh']);
+        yield execWrapper('./miniconda.sh', ['-b', '-p', minicondaDir]);
+        yield execWrapper('conda', ['upgrade', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda']);
+    });
+}
+function installCondaBuild() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const installMinicondaExitCode = yield execWrapper('conda', ['install', '-n', 'base', '-q', '-y', '-c', 'defaults',
+            '--override-channels', 'conda-build', 'conda-verify'], 'miniconda install failed');
+    });
+}
+function buildQIIME2Package(buildDir) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const recipePath = core.getInput('recipe-path');
+        const buildPackScriptExitCode = yield execWrapper('conda', ['build', '-c', 'qiime2-staging/label/r2020.6',
+            '-c', 'conda-forge', '-c', 'bioconda',
+            '-c', 'defaults', '--override-channels',
+            '--output-folder', buildDir,
+            '--no-anaconda-upload', recipePath], 'package building failed');
+    });
+}
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const homeDir = process.env.HOME;
             const buildDir = `${homeDir}/built-package`;
-            const minicondaDir = `${homeDir}/miniconda`;
-            const minicondaBinDir = `${minicondaDir}/bin`;
-            const channels = '-c qiime2-staging/label/r2020.6 -c conda-forge -c bioconda -c defaults';
-            core.addPath(minicondaBinDir);
-            // TODO: fix these hacks
-            core.addPath('../../_actions/qiime2/action-library-packaging/alpha1');
-            core.addPath('.');
-            const installMinicondaScript = yield io.which('install_miniconda.sh', true);
-            const installMinicondaExitCode = yield exec.exec(`sh ${installMinicondaScript}`, [minicondaDir]);
-            if (installMinicondaExitCode !== 0) {
-                throw Error('miniconda install failed');
-            }
-            const recipePath = core.getInput('recipe-path');
-            const buildPackScript = yield io.which('build_package.sh', true);
-            const buildPackScriptExitCode = yield exec.exec(`sh ${buildPackScript}`, [recipePath, buildDir, channels]);
-            if (buildPackScriptExitCode !== 0) {
-                throw Error('package building failed');
-            }
+            let condaURL = getCondaURL();
+            yield installMiniconda(homeDir, condaURL);
+            yield installCondaBuild();
+            yield buildQIIME2Package(buildDir);
             const filesGlobber = yield glob.create(`${buildDir}/*/**`);
             const files = yield filesGlobber.glob();
             const pluginName = core.getInput('plugin-name');
@@ -3394,15 +3452,13 @@ function main() {
             core.debug(JSON.stringify(uploadResult));
             const additionalTests = core.getInput('additional-tests');
             if (additionalTests !== '') {
-                yield exec.exec(`conda create -n testing -c ${buildDir} ${channels} ${pluginName} pytest -y`);
+                yield execWrapper('conda', ['create', '-n', 'testing', '-c', `${buildDir}`, '-c', 'qiime2-staging/label/r2020.6',
+                    '-c', 'conda-forge', '-c', 'bioconda', '-c', 'defaults', `${pluginName}`, 'pytest', '-y']);
                 temp.track();
                 const stream = temp.createWriteStream({ suffix: '.sh' });
                 stream.write(`source activate testing && ${additionalTests}`);
                 stream.end();
-                const additionalTestsExitCode = yield exec.exec('bash', [stream.path]);
-                if (additionalTestsExitCode !== 0) {
-                    throw Error('additional tests failed');
-                }
+                const additionalTestsExitCode = yield execWrapper('bash', [stream.path], 'additional tests failed');
             }
         }
         catch (error) {
