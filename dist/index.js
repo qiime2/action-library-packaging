@@ -3353,28 +3353,22 @@ const artifact = __importStar(__webpack_require__(214));
 const core = __importStar(__webpack_require__(470));
 const exec = __importStar(__webpack_require__(986));
 const glob = __importStar(__webpack_require__(281));
-// Anything we pass as the optional 3rd param to exec.exec must implement the
-// ExecOptions interface here https://github.com/actions/toolkit/blob/master/packages/exec/src/interfaces.ts.
-// The only piece of that we actually need is the listeners, this class exists to
-// give us that.
 class ExecOptions {
     constructor() {
         this.listeners = {};
     }
 }
-// Maybe (if we can get it to work) we have a param for tacking on a new error
-// message
 function execWrapper(commandLine, args, errorMessage) {
     return __awaiter(this, void 0, void 0, function* () {
-        let myOutput = '';
-        let myError = '';
+        let output = '';
+        let error = '';
         let options = new ExecOptions;
         options.listeners = {
             stdout: (data) => {
-                myOutput += data.toString();
+                output += data.toString();
             },
             stderr: (data) => {
-                myError += data.toString();
+                error += data.toString();
             }
         };
         try {
@@ -3415,14 +3409,27 @@ function installCondaBuild() {
             '--override-channels', 'conda-build', 'conda-verify'], 'miniconda install failed');
     });
 }
-function buildQIIME2Package(buildDir) {
+function getQIIME2Channel(buildTarget) {
+    switch (buildTarget) {
+        case 'staging':
+            return 'qiime2-staging/label/r2020.6';
+        case 'release':
+        default:
+            return 'qiime2/label/r2020.6';
+    }
+}
+function buildQIIME2Package(buildDir, recipePath, buildTarget) {
     return __awaiter(this, void 0, void 0, function* () {
-        const recipePath = core.getInput('recipe-path');
-        const buildPackScriptExitCode = yield execWrapper('conda', ['build', '-c', 'qiime2-staging/label/r2020.6',
-            '-c', 'conda-forge', '-c', 'bioconda',
-            '-c', 'defaults', '--override-channels',
+        const q2Channel = getQIIME2Channel(buildTarget);
+        return yield execWrapper('conda', ['build',
+            '-c', q2Channel,
+            '-c', 'conda-forge',
+            '-c', 'bioconda',
+            '-c', 'defaults',
+            '--override-channels',
             '--output-folder', buildDir,
-            '--no-anaconda-upload', recipePath], 'package building failed');
+            '--no-anaconda-upload',
+            recipePath], 'package building failed');
     });
 }
 function main() {
@@ -3430,10 +3437,12 @@ function main() {
         try {
             const homeDir = process.env.HOME;
             const buildDir = `${homeDir}/built-package`;
-            let condaURL = getCondaURL();
+            const recipePath = core.getInput('recipe-path');
+            const buildTarget = core.getInput('build-target');
+            const condaURL = getCondaURL();
             yield installMiniconda(homeDir, condaURL);
             yield installCondaBuild();
-            yield buildQIIME2Package(buildDir);
+            yield buildQIIME2Package(buildDir, recipePath, buildTarget);
             const filesGlobber = yield glob.create(`${buildDir}/*/**`);
             const files = yield filesGlobber.glob();
             const pluginName = core.getInput('plugin-name');
