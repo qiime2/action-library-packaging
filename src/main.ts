@@ -6,6 +6,7 @@ import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
+import * as tc from '@actions/tool-cache'
 
 class ExecOptions {
   public listeners: object = {}
@@ -47,18 +48,25 @@ function getCondaURL(): string {
     return condaURL
 }
 
+// We probably want to cache the contents of minicondaDir?
+// https://github.com/actions/toolkit/tree/main/packages/tool-cache
 async function installMiniconda(homeDir: string | undefined, condaURL: string) {
     const minicondaDir = `${homeDir}/miniconda`
     const minicondaBinDir = `${minicondaDir}/bin`
 
     core.addPath(minicondaBinDir);
 
+    // Can we check the contents of the bindir here maybe? and load it if we have
+    // something cached
     await execWrapper('wget', ['-O', 'miniconda.sh', condaURL])
     await execWrapper('chmod', ['+x', 'miniconda.sh'])
 
     await execWrapper('./miniconda.sh', ['-b', '-p', minicondaDir])
 
     await execWrapper('conda', ['upgrade', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda'])
+
+    const cachedPath = await tc.cacheDir(minicondaBinDir)
+    core.addpath(cachedPath)
 }
 
 async function installCondaBuild() {
@@ -71,7 +79,7 @@ function getQIIME2Channel(buildTarget: string) {
   switch(buildTarget) {
     case 'staging':
       return 'qiime2-staging/label/r2020.8'
- 
+
     case 'release':
     default:
       return 'qiime2/label/r2020.6'
