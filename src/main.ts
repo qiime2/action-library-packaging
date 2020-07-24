@@ -66,7 +66,7 @@ async function installMiniconda(homeDir: string | undefined, condaURL: string) {
     await execWrapper('conda', ['upgrade', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda'])
 
     const cachedPath = await tc.cacheDir(minicondaBinDir)
-    core.addpath(cachedPath)
+    core.addPath(cachedPath)
 }
 
 async function installCondaBuild() {
