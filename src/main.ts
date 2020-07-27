@@ -58,8 +58,6 @@ async function installMiniconda(homeDir: string | undefined, condaURL: string) {
     const miniconda = tc.find('miniconda', '1')
     if(!miniconda)
     {
-      // Can we check the contents of the bindir here maybe? and load it if we have
-      // something cached
       await execWrapper('wget', ['-O', 'miniconda.sh', condaURL])
       await execWrapper('chmod', ['+x', 'miniconda.sh'])
 
