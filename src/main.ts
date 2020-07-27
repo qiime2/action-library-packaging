@@ -56,15 +56,17 @@ async function installMiniconda(homeDir: string | undefined, condaURL: string) {
 
     core.addPath(minicondaBinDir);
     const miniconda = tc.find('miniconda', '1')
+    if(!miniconda)
+    {
+      // Can we check the contents of the bindir here maybe? and load it if we have
+      // something cached
+      await execWrapper('wget', ['-O', 'miniconda.sh', condaURL])
+      await execWrapper('chmod', ['+x', 'miniconda.sh'])
 
-    // Can we check the contents of the bindir here maybe? and load it if we have
-    // something cached
-    await execWrapper('wget', ['-O', 'miniconda.sh', condaURL])
-    await execWrapper('chmod', ['+x', 'miniconda.sh'])
+      await execWrapper('./miniconda.sh', ['-b', '-p', minicondaDir])
 
-    await execWrapper('./miniconda.sh', ['-b', '-p', minicondaDir])
-
-    await execWrapper('conda', ['upgrade', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda'])
+      await execWrapper('conda', ['upgrade', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda'])
+    }
 
     const cachedPath = await tc.cacheDir(minicondaBinDir, 'miniconda', '1')
     core.addPath(cachedPath)
