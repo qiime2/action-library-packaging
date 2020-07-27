@@ -6,7 +6,7 @@ import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
-import * as tc from '@actions/tool-cache'
+// import * as tc from '@actions/tool-cache'
 
 class ExecOptions {
   public listeners: object = {}
@@ -54,7 +54,7 @@ async function installMiniconda(homeDir: string | undefined, condaURL: string) {
     const minicondaDir = `${homeDir}/miniconda`
     const minicondaBinDir = `${minicondaDir}/bin`
 
-    core.addPath(minicondaBinDir);
+    // core.addPath(minicondaBinDir);
 
     // Can we check the contents of the bindir here maybe? and load it if we have
     // something cached
@@ -65,8 +65,8 @@ async function installMiniconda(homeDir: string | undefined, condaURL: string) {
 
     await execWrapper('conda', ['upgrade', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda'])
 
-    const cachedPath = await tc.cacheDir(minicondaBinDir, 'miniconda', '1')
-    core.addPath(cachedPath)
+    // const cachedPath = await tc.cacheDir(minicondaBinDir, 'miniconda', '1')
+    // core.addPath(cachedPath)
 }
 
 async function installCondaBuild() {
