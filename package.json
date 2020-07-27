@@ -21,6 +21,7 @@
   "devDependencies": {
     "@actions/artifact": "^0.2.0",
     "@actions/glob": "^0.1.0",
+    "@actions/tool-cache": "^1.6.0",
     "@types/temp": "^0.8.34",
     "@zeit/ncc": "^0.22.0",
     "temp": "^0.9.1",
