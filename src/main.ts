@@ -54,7 +54,7 @@ async function installMiniconda(homeDir: string | undefined, condaURL: string) {
     const minicondaDir = `${homeDir}/miniconda`
     const minicondaBinDir = `${minicondaDir}/bin`
 
-    // core.addPath(minicondaBinDir);
+    core.addPath(minicondaBinDir);
 
     // Can we check the contents of the bindir here maybe? and load it if we have
     // something cached
