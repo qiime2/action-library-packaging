@@ -55,8 +55,7 @@ async function installMiniconda(homeDir: string | undefined, condaURL: string) {
     const minicondaBinDir = `${minicondaDir}/bin`
 
     core.addPath(minicondaBinDir);
-    // What does this even do? Their docs are so vague. Do I NEED a version?
-    const miniconda = tc.find('miniconda')
+    const miniconda = tc.find('miniconda', '1')
 
     // Can we check the contents of the bindir here maybe? and load it if we have
     // something cached
@@ -67,7 +66,7 @@ async function installMiniconda(homeDir: string | undefined, condaURL: string) {
 
     await execWrapper('conda', ['upgrade', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda'])
 
-    const cachedPath = await tc.cacheDir(minicondaBinDir, 'miniconda')
+    const cachedPath = await tc.cacheDir(minicondaBinDir, 'miniconda', '1')
     core.addPath(cachedPath)
 }
 
