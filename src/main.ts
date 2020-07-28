@@ -61,7 +61,7 @@ async function installMiniconda(homeDir: string | undefined, condaURL: string) {
     // core.addPath(cachedPath)
 
     const miniconda = tc.find('miniconda', '1', 'x64')
-    core.addPath(miniconda)
+    // core.addPath(miniconda)
     if(miniconda === '')
     {
       // throw Error('No cache')
