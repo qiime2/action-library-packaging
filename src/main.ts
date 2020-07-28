@@ -56,8 +56,9 @@ async function installMiniconda(homeDir: string | undefined, condaURL: string) {
 
     core.addPath(minicondaBinDir);
     const miniconda = tc.find('miniconda', '1')
-    if(!miniconda)
+    if(miniconda === '')
     {
+      throw Error('NOTHING FOUND')
       await execWrapper('wget', ['-O', 'miniconda.sh', condaURL])
       await execWrapper('chmod', ['+x', 'miniconda.sh'])
 
