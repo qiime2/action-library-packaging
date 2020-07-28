@@ -56,20 +56,21 @@ async function installMiniconda(homeDir: string | undefined, condaURL: string) {
 
     core.addPath(minicondaBinDir);
     const miniconda = tc.find('miniconda', '1', 'x64')
+    core.addPath(miniconda)
     if(miniconda === '')
     {
-      // throw Error('No cache')
+      throw Error('No cache')
       await execWrapper('wget', ['-O', 'miniconda.sh', condaURL])
       await execWrapper('chmod', ['+x', 'miniconda.sh'])
 
       await execWrapper('./miniconda.sh', ['-b', '-p', minicondaDir])
 
       await execWrapper('conda', ['upgrade', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda'])
-    }
 
-    const cachedPath = await tc.cacheDir(minicondaBinDir, 'miniconda', '1')
-    // throw Error(cachedPath)
-    core.addPath(cachedPath)
+      const cachedPath = await tc.cacheDir(minicondaBinDir, 'miniconda', '1')
+      // throw Error(cachedPath)
+      core.addPath(cachedPath)
+    }
 }
 
 async function installCondaBuild() {
