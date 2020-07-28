@@ -64,7 +64,7 @@ async function installMiniconda(homeDir: string | undefined, condaURL: string) {
     // core.addPath(miniconda)
     if(miniconda === '')
     {
-      // throw Error('No cache')
+      throw Error('No cache')
       await execWrapper('wget', ['-O', 'miniconda.sh', condaURL])
       await execWrapper('chmod', ['+x', 'miniconda.sh'])
 
