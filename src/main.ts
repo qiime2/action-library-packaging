@@ -70,11 +70,11 @@ async function installCondaBuild() {
 function getQIIME2Channel(buildTarget: string) {
   switch(buildTarget) {
     case 'staging':
-      return 'qiime2-staging/label/r2020.8'
- 
+      return 'qiime2-staging/label/r2020.11'
+
     case 'release':
     default:
-      return 'qiime2/label/r2020.6'
+      return 'qiime2/label/r2020.8'
   }
 }
 
