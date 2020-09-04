@@ -78,8 +78,7 @@ function getQIIME2Channel(buildTarget: string) {
   }
 }
 
-async function buildQIIME2Package(buildDir: string, recipePath: string, buildTarget: string) {
-    const q2Channel = getQIIME2Channel(buildTarget)
+async function buildQIIME2Package(buildDir: string, recipePath: string, q2Channel: string) {
     return await execWrapper('conda',
       ['build',
        '-c', q2Channel,
@@ -99,10 +98,11 @@ async function main(): Promise<void> {
     const recipePath: string = core.getInput('recipe-path')
     const buildTarget: string = core.getInput('build-target')
     const condaURL = getCondaURL()
+    const q2Channel = getQIIME2Channel(buildTarget)
 
     await installMiniconda(homeDir, condaURL)
     await installCondaBuild()
-    await buildQIIME2Package(buildDir, recipePath, buildTarget)
+    await buildQIIME2Package(buildDir, recipePath, q2Channel)
 
     const filesGlobber: glob.Globber = await glob.create(`${buildDir}/*/**`)
     const files: string[] = await filesGlobber.glob()
@@ -128,7 +128,7 @@ async function main(): Promise<void> {
 
     const additionalTests: string = core.getInput('additional-tests')
     if (additionalTests !== '') {
-      await execWrapper('conda', ['create', '-n', 'testing', '-c', `${buildDir}`, '-c', 'qiime2-staging/label/r2020.6',
+      await execWrapper('conda', ['create', '-n', 'testing', '-c', `${buildDir}`, '-c', q2Channel,
                                   '-c', 'conda-forge', '-c', 'bioconda', '-c', 'defaults', `${pluginName}`, 'pytest', '-y'])
 
       temp.track()
