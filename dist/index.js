@@ -3418,9 +3418,8 @@ function getQIIME2Channel(buildTarget) {
             return 'qiime2/label/r2020.8';
     }
 }
-function buildQIIME2Package(buildDir, recipePath, buildTarget) {
+function buildQIIME2Package(buildDir, recipePath, q2Channel) {
     return __awaiter(this, void 0, void 0, function* () {
-        const q2Channel = getQIIME2Channel(buildTarget);
         return yield execWrapper('conda', ['build',
             '-c', q2Channel,
             '-c', 'conda-forge',
@@ -3440,9 +3439,10 @@ function main() {
             const recipePath = core.getInput('recipe-path');
             const buildTarget = core.getInput('build-target');
             const condaURL = getCondaURL();
+            const q2Channel = getQIIME2Channel(buildTarget);
             yield installMiniconda(homeDir, condaURL);
             yield installCondaBuild();
-            yield buildQIIME2Package(buildDir, recipePath, buildTarget);
+            yield buildQIIME2Package(buildDir, recipePath, q2Channel);
             const filesGlobber = yield glob.create(`${buildDir}/*/**`);
             const files = yield filesGlobber.glob();
             const pluginName = core.getInput('plugin-name');
@@ -3461,7 +3461,7 @@ function main() {
             core.debug(JSON.stringify(uploadResult));
             const additionalTests = core.getInput('additional-tests');
             if (additionalTests !== '') {
-                yield execWrapper('conda', ['create', '-n', 'testing', '-c', `${buildDir}`, '-c', 'qiime2-staging/label/r2020.6',
+                yield execWrapper('conda', ['create', '-n', 'testing', '-c', `${buildDir}`, '-c', q2Channel,
                     '-c', 'conda-forge', '-c', 'bioconda', '-c', 'defaults', `${pluginName}`, 'pytest', '-y']);
                 temp.track();
                 const stream = temp.createWriteStream({ suffix: '.sh' });
