@@ -1,12 +1,12 @@
 name: 'QIIME 2 Library Packaging'
-description: 'Build, test, and distribute a QIIME 2 plugin conda package'
+description: 'Build, test, and distribute a QIIME 2 conda package'
 inputs:
   recipe-path:
     description: 'Path to recipe'
     required: false
     default: 'ci/recipe'
-  plugin-name:
-    description: 'Name of QIIME 2 plugin'
+  package-name:
+    description: 'Name of QIIME 2 package'
     required: true
   build-target:
     description: 'Target QIIME 2 release cycle: "release" or "staging"'

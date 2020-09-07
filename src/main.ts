@@ -92,9 +92,8 @@ async function buildQIIME2Package(buildDir: string, recipePath: string, q2Channe
        recipePath], 'package building failed')
 }
 
-async function updateLibrary() {
+async function updateLibrary(payload) {
     let client: http.HttpClient = new http.HttpClient()
-    let payload: any = {};
 
     try {
         let result: any = await client.postJson(
@@ -102,7 +101,6 @@ async function updateLibrary() {
             payload
         )
     } catch (error) {
-        core.info(error)
         core.setFailed(error.toString())
     }
 }
@@ -124,8 +122,8 @@ async function main(): Promise<void> {
     const filesGlobber: glob.Globber = await glob.create(`${buildDir}/*/**`)
     const files: string[] = await filesGlobber.glob()
 
-    const pluginName: string = core.getInput('plugin-name')
-    const artifactGlobber: glob.Globber = await glob.create(`${buildDir}/*/${pluginName}*`)
+    const packageName: string = core.getInput('package-name')
+    const artifactGlobber: glob.Globber = await glob.create(`${buildDir}/*/${packageName}*`)
     const artifactName: string[] = await artifactGlobber.glob()
 
     if (artifactName === null || artifactName.length !== 1) {
@@ -141,13 +139,12 @@ async function main(): Promise<void> {
 
     const artifactClient = artifact.create()
     const uploadResult = await artifactClient.uploadArtifact(arch[1], files, buildDir)
-    core.debug(JSON.stringify(uploadResult))
+
+    await execWrapper('conda', ['create', '-n', 'testing', '-c', `${buildDir}`, '-c', q2Channel,
+                                '-c', 'conda-forge', '-c', 'bioconda', '-c', 'defaults', `${pluginName}`, 'pytest', '-y'])
 
     const additionalTests: string = core.getInput('additional-tests')
     if (additionalTests !== '') {
-      await execWrapper('conda', ['create', '-n', 'testing', '-c', `${buildDir}`, '-c', q2Channel,
-                                  '-c', 'conda-forge', '-c', 'bioconda', '-c', 'defaults', `${pluginName}`, 'pytest', '-y'])
-
       temp.track()
       const stream = temp.createWriteStream({ suffix: '.sh' })
       stream.write(`source activate testing && ${additionalTests}`)
@@ -155,8 +152,16 @@ async function main(): Promise<void> {
       const additionalTestsExitCode = await execWrapper('bash', [stream.path as string], 'additional tests failed')
     }
 
-    // if (token !== '') {
-    updateLibrary()
+    // TODO: uncomment this guard
+    // if (token !== '' && process.env.GITHUB_EVENT_NAME !== 'pull_request') {
+    let payload: any = {
+        token,
+        version: 'unknown',
+        package_name: packageName,
+        repository: process.env.GITHUB_REPOSITORY,
+        run_id: process.env.GITHUB_RUN_ID,
+    }
+    updateLibrary(payload)
     // }
 
   } catch (error) {
