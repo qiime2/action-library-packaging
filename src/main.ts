@@ -95,13 +95,16 @@ async function buildQIIME2Package(buildDir: string, recipePath: string, q2Channe
 async function updateLibrary() {
     let client: http.HttpClient = new http.HttpClient()
     let payload: any = {};
-    let result: any = await client.postJson(
-        'https://library.qiime2.org/api/v1/packages/integrate/',
-        payload
-    ).catch(error => {
+
+    try {
+        let result: any = await client.postJson(
+            'https://library.qiime2.org/api/v1/packages/integrate/',
+            payload
+        )
+    } catch (error) {
         core.info(error)
         core.setFailed(error)
-    })
+    }
 }
 
 async function main(): Promise<void> {
