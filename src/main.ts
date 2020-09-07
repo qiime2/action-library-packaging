@@ -102,6 +102,8 @@ async function updateLibrary() {
 
     core.info(result)
 
+    core.setFailed(result)
+
     if (result.statusCode !== 200) {
         core.setFailed(result)
     }
@@ -113,6 +115,7 @@ async function main(): Promise<void> {
     const buildDir = `${homeDir}/built-package`
     const recipePath: string = core.getInput('recipe-path')
     const buildTarget: string = core.getInput('build-target')
+    const token: string = core.getInput('library-token')
     const condaURL = getCondaURL()
     const q2Channel = getQIIME2Channel(buildTarget)
 
@@ -154,7 +157,9 @@ async function main(): Promise<void> {
       const additionalTestsExitCode = await execWrapper('bash', [stream.path as string], 'additional tests failed')
     }
 
+    // if (token !== '') {
     updateLibrary()
+    // }
 
   } catch (error) {
     core.setFailed(error.message)
