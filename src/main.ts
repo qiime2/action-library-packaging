@@ -6,6 +6,7 @@ import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
+import * as http from '@actions/http-client'
 
 class ExecOptions {
   public listeners: object = {}
@@ -30,7 +31,7 @@ async function execWrapper(commandLine: string,
     try {
       await exec.exec(commandLine, args, options)
     } catch (error) {
-      core.setFailed(error.message + `\n\n${errorMessage}`);
+      core.setFailed(error.message + `\n\n${errorMessage}`)
     }
 }
 
@@ -51,7 +52,7 @@ async function installMiniconda(homeDir: string | undefined, condaURL: string) {
     const minicondaDir = `${homeDir}/miniconda`
     const minicondaBinDir = `${minicondaDir}/bin`
 
-    core.addPath(minicondaBinDir);
+    core.addPath(minicondaBinDir)
 
     await execWrapper('wget', ['-O', 'miniconda.sh', condaURL])
     await execWrapper('chmod', ['+x', 'miniconda.sh'])
@@ -89,6 +90,16 @@ async function buildQIIME2Package(buildDir: string, recipePath: string, q2Channe
        '--output-folder', buildDir,
        '--no-anaconda-upload',
        recipePath], 'package building failed')
+}
+
+async function updateLibary() {
+    let client: http.HttpClient = new http.HttpClient()
+    let payload: any = {};
+    let result: any = await client.postJson(
+        'https://library.qiime2.org/api/v1/packages/integrate/',
+        payload
+    )
+    core.info(result)
 }
 
 async function main(): Promise<void> {
@@ -138,9 +149,11 @@ async function main(): Promise<void> {
       const additionalTestsExitCode = await execWrapper('bash', [stream.path as string], 'additional tests failed')
     }
 
+    updateLibrary()
+
   } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed(error.message)
   }
 }
 
-main();
+main()
