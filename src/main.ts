@@ -98,15 +98,10 @@ async function updateLibrary() {
     let result: any = await client.postJson(
         'https://library.qiime2.org/api/v1/packages/integrate/',
         payload
-    )
-
-    core.info(result)
-
-    core.setFailed(result)
-
-    if (result.statusCode !== 200) {
-        core.setFailed(result)
-    }
+    ).catch(error => {
+        core.info(error)
+        core.setFailed(error)
+    })
 }
 
 async function main(): Promise<void> {
