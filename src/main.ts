@@ -99,7 +99,12 @@ async function updateLibrary() {
         'https://library.qiime2.org/api/v1/packages/integrate/',
         payload
     )
+
     core.info(result)
+
+    if (result.statusCode !== 200) {
+        core.setFailed(result)
+    }
 }
 
 async function main(): Promise<void> {
