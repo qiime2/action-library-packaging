@@ -92,7 +92,7 @@ async function buildQIIME2Package(buildDir: string, recipePath: string, q2Channe
        recipePath], 'package building failed')
 }
 
-async function updateLibary() {
+async function updateLibrary() {
     let client: http.HttpClient = new http.HttpClient()
     let payload: any = {};
     let result: any = await client.postJson(
