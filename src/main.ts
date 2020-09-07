@@ -92,7 +92,7 @@ async function buildQIIME2Package(buildDir: string, recipePath: string, q2Channe
        recipePath], 'package building failed')
 }
 
-async function updateLibrary(payload) {
+async function updateLibrary(payload: any) {
     let client: http.HttpClient = new http.HttpClient()
 
     try {
@@ -126,7 +126,7 @@ async function main(): Promise<void> {
     const artifactGlobber: glob.Globber = await glob.create(`${buildDir}/*/${packageName}*`)
     const artifactName: string[] = await artifactGlobber.glob()
 
-    core.info(artifactName)
+    core.info(artifactName[0])
 
     if (artifactName === null || artifactName.length !== 1) {
       throw Error(`Error finding base artifactName: ${JSON.stringify(artifactName)}`)
@@ -143,7 +143,7 @@ async function main(): Promise<void> {
     const uploadResult = await artifactClient.uploadArtifact(arch[1], files, buildDir)
 
     await execWrapper('conda', ['create', '-n', 'testing', '-c', `${buildDir}`, '-c', q2Channel,
-                                '-c', 'conda-forge', '-c', 'bioconda', '-c', 'defaults', `${pluginName}`, 'pytest', '-y'])
+                                '-c', 'conda-forge', '-c', 'bioconda', '-c', 'defaults', `${packageName}`, 'pytest', '-y'])
 
     const additionalTests: string = core.getInput('additional-tests')
     if (additionalTests !== '') {
