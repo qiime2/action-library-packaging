@@ -103,7 +103,7 @@ async function updateLibrary() {
         )
     } catch (error) {
         core.info(error)
-        core.setFailed(error)
+        core.setFailed(error.toString())
     }
 }
 
