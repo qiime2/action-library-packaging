@@ -126,11 +126,13 @@ async function main(): Promise<void> {
     const artifactGlobber: glob.Globber = await glob.create(`${buildDir}/*/${packageName}*`)
     const artifactName: string[] = await artifactGlobber.glob()
 
+    core.info(artifactName)
+
     if (artifactName === null || artifactName.length !== 1) {
       throw Error(`Error finding base artifactName: ${JSON.stringify(artifactName)}`)
     }
 
-    const regex: RegExp = new RegExp(`${buildDir}\/(.*?)\/${pluginName}`)
+    const regex: RegExp = new RegExp(`${buildDir}\/(.*?)\/${packageName}`)
     const arch: RegExpMatchArray | null = artifactName[0].match(regex)
 
     if (arch === null) {
