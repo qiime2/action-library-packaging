@@ -94,7 +94,7 @@ async function buildQIIME2Package(buildDir: string, recipePath: string, q2Channe
 
 async function updateLibrary(payload: any) {
     let urlEncodedDataPairs: any = []
-    for (name in payload) {
+    for (let name in payload) {
       urlEncodedDataPairs.push(`${encodeURIComponent(name)}=${encodeURIComponent(payload[name])}`)
     }
 
