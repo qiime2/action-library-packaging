@@ -96,7 +96,7 @@ async function updateLibrary(payload: any) {
     let client: http.HttpClient = new http.HttpClient()
 
     try {
-        let result: any = await client.postJson(
+        let result: any = await client.post(
             'https://library.qiime2.org/api/v1/packages/integrate/',
             payload
         )
