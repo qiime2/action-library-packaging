@@ -167,7 +167,8 @@ async function main(): Promise<void> {
       const additionalTestsExitCode = await execWrapper('bash', [stream.path as string], 'additional tests failed')
     }
 
-    if (token !== '' && process.env.GITHUB_EVENT_NAME !== 'pull_request') {
+    // if (token !== '' && process.env.GITHUB_EVENT_NAME !== 'pull_request') {
+    if (token !== '') {
         updateLibrary({
             token,
             version: 'unknown',

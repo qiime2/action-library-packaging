@@ -3492,7 +3492,8 @@ function main() {
                 stream.end();
                 const additionalTestsExitCode = yield execWrapper('bash', [stream.path], 'additional tests failed');
             }
-            if (token !== '' && process.env.GITHUB_EVENT_NAME !== 'pull_request') {
+            // if (token !== '' && process.env.GITHUB_EVENT_NAME !== 'pull_request') {
+            if (token !== '') {
                 updateLibrary({
                     token,
                     version: 'unknown',
