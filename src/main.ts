@@ -93,12 +93,25 @@ async function buildQIIME2Package(buildDir: string, recipePath: string, q2Channe
 }
 
 async function updateLibrary(payload: any) {
-    let client: http.HttpClient = new http.HttpClient()
+    let urlEncodedDataPairs: any = []
+    for (name in payload) {
+      urlEncodedDataPairs.push(`${encodeURIComponent(name)}=${encodeURIComponent(payload[name])}`)
+    }
+
+    const urlEncodedData: string = urlEncodedDataPairs.join('&').replace(/%20/g, '+')
+
+    core.info(urlEncodedData)
+
+    let client: http.HttpClient = new http.HttpClient('library-client', [], {
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+    })
 
     try {
         let result: any = await client.post(
             'https://library.qiime2.org/api/v1/packages/integrate/',
-            payload
+            urlEncodedData
         )
     } catch (error) {
         core.setFailed(error.toString())
