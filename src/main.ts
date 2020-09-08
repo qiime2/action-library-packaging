@@ -163,6 +163,8 @@ async function main(): Promise<void> {
         repository: process.env.GITHUB_REPOSITORY,
         run_id: process.env.GITHUB_RUN_ID,
     }
+
+    core.info(JSON.stringify(payload))
     updateLibrary(payload)
     // }
 
