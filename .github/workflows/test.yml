@@ -23,5 +23,5 @@ jobs:
     - uses: ./
       with:
         recipe-path: ./example
-        plugin-name: q2-nothing-to-see-here
+        package-name: q2-nothing-to-see-here
         additional-tests: pytest --pyargs q2_nothing_to_see_here
