@@ -48,6 +48,19 @@ function getCondaURL(): string {
     return condaURL
 }
 
+function getArtifactName(): string {
+    let artifactName = ''
+    if (os.platform() === 'linux') {
+      artifactName = 'linux-64'
+    } else if (os.platform() === 'darwin' ) {
+      artifactName = 'osx-64'
+    } else {
+      throw Error('Unsupported OS, must be Linux or Mac')
+    }
+
+    return artifactName
+}
+
 async function installMiniconda(homeDir: string | undefined, condaURL: string) {
     const minicondaDir = `${homeDir}/miniconda`
     const minicondaBinDir = `${minicondaDir}/bin`
@@ -167,14 +180,14 @@ async function main(): Promise<void> {
       const additionalTestsExitCode = await execWrapper('bash', [stream.path as string], 'additional tests failed')
     }
 
-    // if (token !== '' && process.env.GITHUB_EVENT_NAME !== 'pull_request') {
-    if (token !== '') {
+    if (token !== '' && process.env.GITHUB_EVENT_NAME !== 'pull_request') {
         updateLibrary({
             token,
             version: 'unknown',
             package_name: packageName,
             repository: process.env.GITHUB_REPOSITORY,
             run_id: process.env.GITHUB_RUN_ID,
+            artifact_name: getArtifactName(),
         })
     }
 
