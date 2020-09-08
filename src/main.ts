@@ -95,7 +95,7 @@ async function buildQIIME2Package(buildDir: string, recipePath: string, q2Channe
 async function updateLibrary(payload: any) {
     let urlEncodedDataPairs: any = []
     for (let name in payload) {
-      urlEncodedDataPairs.push(`${encodeURIComponent(name)}=${encodeURIComponent(payload[name])}`)
+        urlEncodedDataPairs.push(`${encodeURIComponent(name)}=${encodeURIComponent(payload[name])}`)
     }
 
     const urlEncodedData: string = urlEncodedDataPairs.join('&').replace(/%20/g, '+')
@@ -167,19 +167,15 @@ async function main(): Promise<void> {
       const additionalTestsExitCode = await execWrapper('bash', [stream.path as string], 'additional tests failed')
     }
 
-    // TODO: uncomment this guard
-    // if (token !== '' && process.env.GITHUB_EVENT_NAME !== 'pull_request') {
-    let payload: any = {
-        token,
-        version: 'unknown',
-        package_name: packageName,
-        repository: process.env.GITHUB_REPOSITORY,
-        run_id: process.env.GITHUB_RUN_ID,
+    if (token !== '' && process.env.GITHUB_EVENT_NAME !== 'pull_request') {
+        updateLibrary({
+            token,
+            version: 'unknown',
+            package_name: packageName,
+            repository: process.env.GITHUB_REPOSITORY,
+            run_id: process.env.GITHUB_RUN_ID,
+        })
     }
-
-    core.info(JSON.stringify(payload))
-    updateLibrary(payload)
-    // }
 
   } catch (error) {
     core.setFailed(error.message)
