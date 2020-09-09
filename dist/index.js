@@ -3452,7 +3452,6 @@ function updateLibrary(payload) {
             urlEncodedDataPairs.push(`${encodeURIComponent(name)}=${encodeURIComponent(payload[name])}`);
         }
         const urlEncodedData = urlEncodedDataPairs.join('&').replace(/%20/g, '+');
-        core.info(urlEncodedData);
         let client = new http.HttpClient('library-client', [], {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',

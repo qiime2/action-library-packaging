@@ -113,8 +113,6 @@ async function updateLibrary(payload: any) {
 
     const urlEncodedData: string = urlEncodedDataPairs.join('&').replace(/%20/g, '+')
 
-    core.info(urlEncodedData)
-
     let client: http.HttpClient = new http.HttpClient('library-client', [], {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
