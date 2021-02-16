@@ -109,7 +109,17 @@ async function main(): Promise<void> {
     await execWrapper('sudo', ['conda', 'upgrade', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda'])
     await execWrapper('sudo', ['conda', 'install', '-n', 'base', '-q', '-y', '-c', 'defaults',
                                '--override-channels', 'conda-build', 'conda-verify'], 'miniconda install failed')
-    await buildQIIME2Package(buildDir, recipePath, q2Channel)
+    await execWrapper('sudo',
+      ['conda',
+        'build',
+       '-c', q2Channel,
+       '-c', 'conda-forge',
+       '-c', 'bioconda',
+       '-c', 'defaults',
+       '--override-channels',
+       '--output-folder', buildDir,
+       '--no-anaconda-upload',
+       recipePath], 'package building failed')
 
     const filesGlobber: glob.Globber = await glob.create(`${buildDir}/*/**`)
     const files: string[] = await filesGlobber.glob()
