@@ -141,7 +141,7 @@ async function main(): Promise<void> {
     if (additionalTests !== '') {
       temp.track()
       const stream = temp.createWriteStream({ suffix: '.sh' })
-      stream.write(`conda activate ./testing && ${additionalTests}`)
+      stream.write(`source "$CONDA/etc/profile.d/conda.sh" && conda activate ./testing && ${additionalTests}`)
       stream.end()
       const additionalTestsExitCode = await execWrapper('bash', [stream.path as string], 'additional tests failed')
     }
