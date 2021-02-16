@@ -8,6 +8,18 @@ import * as glob from '@actions/glob'
 import * as io from '@actions/io'
 import * as http from '@actions/http-client'
 
+// Update the following function at release time
+function getQIIME2Channel(buildTarget: string) {
+  switch(buildTarget) {
+    case 'staging':
+      return 'https://packages.qiime2.org/qiime2/staging/2021.2'
+
+    case 'release':
+    default:
+      return 'qiime2/label/r2020.11'
+  }
+}
+
 class ExecOptions {
   public listeners: object = {}
 }
@@ -35,19 +47,6 @@ async function execWrapper(commandLine: string,
     }
 }
 
-function getCondaURL(): string {
-    let condaURL = ''
-    if (os.platform() === 'linux') {
-      condaURL = 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh'
-    } else if (os.platform() === 'darwin' ) {
-      condaURL = 'https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh'
-    } else {
-      throw Error('Unsupported OS, must be Linux or Mac')
-    }
-
-    return condaURL
-}
-
 function getArtifactName(): string {
     let artifactName = ''
     if (os.platform() === 'linux') {
@@ -59,50 +58,6 @@ function getArtifactName(): string {
     }
 
     return artifactName
-}
-
-async function installMiniconda(homeDir: string | undefined, condaURL: string) {
-    const minicondaDir = `${homeDir}/miniconda`
-    const minicondaBinDir = `${minicondaDir}/bin`
-
-    core.addPath(minicondaBinDir)
-
-    await execWrapper('wget', ['-q', '-O', 'miniconda.sh', condaURL])
-    await execWrapper('chmod', ['+x', 'miniconda.sh'])
-
-    await execWrapper('./miniconda.sh', ['-b', '-p', minicondaDir])
-
-    await execWrapper('conda', ['upgrade', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda'])
-}
-
-async function installCondaBuild() {
-    const installMinicondaExitCode = await execWrapper('conda', ['install', '-n', 'base', '-q', '-y', '-c', 'defaults',
-                                                       '--override-channels', 'conda-build', 'conda-verify'],
-                                                       'miniconda install failed')
-}
-
-function getQIIME2Channel(buildTarget: string) {
-  switch(buildTarget) {
-    case 'staging':
-      return 'https://packages.qiime2.org/qiime2/staging/2021.2'
-
-    case 'release':
-    default:
-      return 'qiime2/label/r2020.11'
-  }
-}
-
-async function buildQIIME2Package(buildDir: string, recipePath: string, q2Channel: string) {
-    return await execWrapper('conda',
-      ['build',
-       '-c', q2Channel,
-       '-c', 'conda-forge',
-       '-c', 'bioconda',
-       '-c', 'defaults',
-       '--override-channels',
-       '--output-folder', buildDir,
-       '--no-anaconda-upload',
-       recipePath], 'package building failed')
 }
 
 async function updateLibrary(payload: any) {
@@ -136,12 +91,42 @@ async function main(): Promise<void> {
     const recipePath: string = core.getInput('recipe-path')
     const buildTarget: string = core.getInput('build-target')
     const token: string = core.getInput('library-token')
-    const condaURL = getCondaURL()
     const q2Channel = getQIIME2Channel(buildTarget)
 
-    await installMiniconda(homeDir, condaURL)
-    await installCondaBuild()
-    await buildQIIME2Package(buildDir, recipePath, q2Channel)
+    // upgrade base conda
+    await execWrapper('sudo',
+      ['conda',
+       'upgrade',
+       '-n', 'base',
+       '-q',
+       '-y',
+       '-c', 'defaults',
+       '--override-channels',
+       'conda'])
+    // install conda-build and friends
+    await execWrapper('sudo',
+      ['conda',
+       'install',
+       '-n', 'base',
+       '-q',
+       '-y',
+       '-c', 'defaults',
+       '--override-channels',
+       'conda-build', 'conda-verify'],
+      'miniconda install failed')
+    // run conda-build
+    await execWrapper('sudo',
+      ['conda',
+       'build',
+       '-c', q2Channel,
+       '-c', 'conda-forge',
+       '-c', 'bioconda',
+       '-c', 'defaults',
+       '--override-channels',
+       '--output-folder', buildDir,
+       '--no-anaconda-upload',
+       recipePath],
+      'package building failed')
 
     const filesGlobber: glob.Globber = await glob.create(`${buildDir}/*/**`)
     const files: string[] = await filesGlobber.glob()
@@ -166,14 +151,24 @@ async function main(): Promise<void> {
     const artifactClient = artifact.create()
     const uploadResult = await artifactClient.uploadArtifact(arch[1], files, buildDir)
 
-    await execWrapper('conda', ['create', '-n', 'testing', '-c', `${buildDir}`, '-c', q2Channel,
-                                '-c', 'conda-forge', '-c', 'bioconda', '-c', 'defaults', `${packageName}`, 'pytest', '-y'])
+    await execWrapper('sudo',
+      ['conda',
+       'create',
+       '-q',
+       '-y',
+       '-p', './testing',
+       '-c', `${buildDir}`,
+       '-c', q2Channel,
+       '-c', 'conda-forge',
+       '-c', 'bioconda', '-c',
+       'defaults', `${packageName}`,
+       'pytest'])
 
     const additionalTests: string = core.getInput('additional-tests')
     if (additionalTests !== '') {
       temp.track()
       const stream = temp.createWriteStream({ suffix: '.sh' })
-      stream.write(`source activate testing && ${additionalTests}`)
+      stream.write(`source "$CONDA/etc/profile.d/conda.sh" && conda activate ./testing && ${additionalTests}`)
       stream.end()
       const additionalTestsExitCode = await execWrapper('bash', [stream.path as string], 'additional tests failed')
     }
