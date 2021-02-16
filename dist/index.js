@@ -3486,7 +3486,7 @@ function installMiniconda(homeDir, condaURL) {
         const minicondaDir = `${homeDir}/miniconda`;
         const minicondaBinDir = `${minicondaDir}/bin`;
         core.addPath(minicondaBinDir);
-        yield execWrapper('wget', ['-O', 'miniconda.sh', condaURL]);
+        yield execWrapper('wget', ['-q', '-O', 'miniconda.sh', condaURL]);
         yield execWrapper('chmod', ['+x', 'miniconda.sh']);
         yield execWrapper('./miniconda.sh', ['-b', '-p', minicondaDir]);
         yield execWrapper('conda', ['upgrade', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda']);

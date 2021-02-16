@@ -67,7 +67,7 @@ async function installMiniconda(homeDir: string | undefined, condaURL: string) {
 
     core.addPath(minicondaBinDir)
 
-    await execWrapper('wget', ['-O', 'miniconda.sh', condaURL])
+    await execWrapper('wget', ['-q', '-O', 'miniconda.sh', condaURL])
     await execWrapper('chmod', ['+x', 'miniconda.sh'])
 
     await execWrapper('./miniconda.sh', ['-b', '-p', minicondaDir])
