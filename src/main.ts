@@ -134,14 +134,14 @@ async function main(): Promise<void> {
     const artifactClient = artifact.create()
     const uploadResult = await artifactClient.uploadArtifact(arch[1], files, buildDir)
 
-    await execWrapper('conda', ['create', '-n', 'testing', '-c', `${buildDir}`, '-c', q2Channel,
+    await execWrapper('conda', ['create', '-q', '-p', './testing', '-c', `${buildDir}`, '-c', q2Channel,
                                 '-c', 'conda-forge', '-c', 'bioconda', '-c', 'defaults', `${packageName}`, 'pytest', '-y'])
 
     const additionalTests: string = core.getInput('additional-tests')
     if (additionalTests !== '') {
       temp.track()
       const stream = temp.createWriteStream({ suffix: '.sh' })
-      stream.write(`source activate testing && ${additionalTests}`)
+      stream.write(`conda activate ./testing && ${additionalTests}`)
       stream.end()
       const additionalTestsExitCode = await execWrapper('bash', [stream.path as string], 'additional tests failed')
     }
