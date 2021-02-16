@@ -76,7 +76,7 @@ async function installMiniconda(homeDir: string | undefined, condaURL: string) {
 }
 
 async function installCondaBuild() {
-    const installMinicondaExitCode = await execWrapper('conda', ['install', '-n', 'base', '-q', '-y', '-c', 'defaults',
+    const installMinicondaExitCode = await execWrapper('sudo', ['conda', 'install', '-n', 'base', '-q', '-y', '-c', 'defaults',
                                                        '--override-channels', 'conda-build', 'conda-verify'],
                                                        'miniconda install failed')
 }
