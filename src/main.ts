@@ -106,12 +106,31 @@ async function main(): Promise<void> {
     const token: string = core.getInput('library-token')
     const q2Channel = getQIIME2Channel(buildTarget)
 
-    await execWrapper('sudo', ['conda', 'upgrade', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda'])
-    await execWrapper('sudo', ['conda', 'install', '-n', 'base', '-q', '-y', '-c', 'defaults',
-                               '--override-channels', 'conda-build', 'conda-verify'], 'miniconda install failed')
+    // upgrade base conda
     await execWrapper('sudo',
       ['conda',
-        'build',
+       'upgrade',
+       '-n', 'base',
+       '-q',
+       '-y',
+       '-c', 'defaults',
+       '--override-channels',
+       'conda'])
+    // install conda-build and friends
+    await execWrapper('sudo',
+      ['conda',
+       'install',
+       '-n', 'base',
+       '-q',
+       '-y',
+       '-c', 'defaults',
+       '--override-channels',
+       'conda-build', 'conda-verify'],
+      'miniconda install failed')
+    // run conda-build
+    await execWrapper('sudo',
+      ['conda',
+       'build',
        '-c', q2Channel,
        '-c', 'conda-forge',
        '-c', 'bioconda',
@@ -119,7 +138,8 @@ async function main(): Promise<void> {
        '--override-channels',
        '--output-folder', buildDir,
        '--no-anaconda-upload',
-       recipePath], 'package building failed')
+       recipePath],
+      'package building failed')
 
     const filesGlobber: glob.Globber = await glob.create(`${buildDir}/*/**`)
     const files: string[] = await filesGlobber.glob()
@@ -144,8 +164,18 @@ async function main(): Promise<void> {
     const artifactClient = artifact.create()
     const uploadResult = await artifactClient.uploadArtifact(arch[1], files, buildDir)
 
-    await execWrapper('sudo', ['conda', 'create', '-q', '-p', './testing', '-c', `${buildDir}`, '-c', q2Channel,
-                                '-c', 'conda-forge', '-c', 'bioconda', '-c', 'defaults', `${packageName}`, 'pytest', '-y'])
+    await execWrapper('sudo',
+      ['conda',
+       'create',
+       '-q',
+       '-y',
+       '-p', './testing',
+       '-c', `${buildDir}`,
+       '-c', q2Channel,
+       '-c', 'conda-forge',
+       '-c', 'bioconda', '-c',
+       'defaults', `${packageName}`,
+       'pytest'])
 
     const additionalTests: string = core.getInput('additional-tests')
     if (additionalTests !== '') {
