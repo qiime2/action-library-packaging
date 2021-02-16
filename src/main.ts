@@ -60,8 +60,9 @@ function getQIIME2Channel(buildTarget: string) {
 }
 
 async function buildQIIME2Package(buildDir: string, recipePath: string, q2Channel: string) {
-    return await execWrapper('conda',
-      ['build',
+    return await execWrapper('sudo',
+      ['conda',
+        'build',
        '-c', q2Channel,
        '-c', 'conda-forge',
        '-c', 'bioconda',
