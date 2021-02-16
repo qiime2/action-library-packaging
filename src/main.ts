@@ -8,6 +8,18 @@ import * as glob from '@actions/glob'
 import * as io from '@actions/io'
 import * as http from '@actions/http-client'
 
+// Update the following function at release time
+function getQIIME2Channel(buildTarget: string) {
+  switch(buildTarget) {
+    case 'staging':
+      return 'https://packages.qiime2.org/qiime2/staging/2021.2'
+
+    case 'release':
+    default:
+      return 'qiime2/label/r2020.11'
+  }
+}
+
 class ExecOptions {
   public listeners: object = {}
 }
@@ -46,31 +58,6 @@ function getArtifactName(): string {
     }
 
     return artifactName
-}
-
-function getQIIME2Channel(buildTarget: string) {
-  switch(buildTarget) {
-    case 'staging':
-      return 'https://packages.qiime2.org/qiime2/staging/2021.2'
-
-    case 'release':
-    default:
-      return 'qiime2/label/r2020.11'
-  }
-}
-
-async function buildQIIME2Package(buildDir: string, recipePath: string, q2Channel: string) {
-    return await execWrapper('sudo',
-      ['conda',
-        'build',
-       '-c', q2Channel,
-       '-c', 'conda-forge',
-       '-c', 'bioconda',
-       '-c', 'defaults',
-       '--override-channels',
-       '--output-folder', buildDir,
-       '--no-anaconda-upload',
-       recipePath], 'package building failed')
 }
 
 async function updateLibrary(payload: any) {

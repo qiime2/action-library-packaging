@@ -3429,6 +3429,16 @@ const core = __importStar(__webpack_require__(470));
 const exec = __importStar(__webpack_require__(986));
 const glob = __importStar(__webpack_require__(281));
 const http = __importStar(__webpack_require__(539));
+// Update the following function at release time
+function getQIIME2Channel(buildTarget) {
+    switch (buildTarget) {
+        case 'staging':
+            return 'https://packages.qiime2.org/qiime2/staging/2021.2';
+        case 'release':
+        default:
+            return 'qiime2/label/r2020.11';
+    }
+}
 class ExecOptions {
     constructor() {
         this.listeners = {};
@@ -3455,19 +3465,6 @@ function execWrapper(commandLine, args, errorMessage) {
         }
     });
 }
-function getCondaURL() {
-    let condaURL = '';
-    if (os.platform() === 'linux') {
-        condaURL = 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh';
-    }
-    else if (os.platform() === 'darwin') {
-        condaURL = 'https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh';
-    }
-    else {
-        throw Error('Unsupported OS, must be Linux or Mac');
-    }
-    return condaURL;
-}
 function getArtifactName() {
     let artifactName = '';
     if (os.platform() === 'linux') {
@@ -3480,45 +3477,6 @@ function getArtifactName() {
         throw Error('Unsupported OS, must be Linux or Mac');
     }
     return artifactName;
-}
-function installMiniconda(homeDir, condaURL) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const minicondaDir = `${homeDir}/miniconda`;
-        const minicondaBinDir = `${minicondaDir}/bin`;
-        core.addPath(minicondaBinDir);
-        yield execWrapper('wget', ['-q', '-O', 'miniconda.sh', condaURL]);
-        yield execWrapper('chmod', ['+x', 'miniconda.sh']);
-        yield execWrapper('./miniconda.sh', ['-b', '-p', minicondaDir]);
-        yield execWrapper('conda', ['upgrade', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda']);
-    });
-}
-function installCondaBuild() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const installMinicondaExitCode = yield execWrapper('conda', ['install', '-n', 'base', '-q', '-y', '-c', 'defaults',
-            '--override-channels', 'conda-build', 'conda-verify'], 'miniconda install failed');
-    });
-}
-function getQIIME2Channel(buildTarget) {
-    switch (buildTarget) {
-        case 'staging':
-            return 'https://packages.qiime2.org/qiime2/staging/2021.2';
-        case 'release':
-        default:
-            return 'qiime2/label/r2020.11';
-    }
-}
-function buildQIIME2Package(buildDir, recipePath, q2Channel) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return yield execWrapper('conda', ['build',
-            '-c', q2Channel,
-            '-c', 'conda-forge',
-            '-c', 'bioconda',
-            '-c', 'defaults',
-            '--override-channels',
-            '--output-folder', buildDir,
-            '--no-anaconda-upload',
-            recipePath], 'package building failed');
-    });
 }
 function updateLibrary(payload) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -3548,11 +3506,36 @@ function main() {
             const recipePath = core.getInput('recipe-path');
             const buildTarget = core.getInput('build-target');
             const token = core.getInput('library-token');
-            const condaURL = getCondaURL();
             const q2Channel = getQIIME2Channel(buildTarget);
-            yield installMiniconda(homeDir, condaURL);
-            yield installCondaBuild();
-            yield buildQIIME2Package(buildDir, recipePath, q2Channel);
+            // upgrade base conda
+            yield execWrapper('sudo', ['conda',
+                'upgrade',
+                '-n', 'base',
+                '-q',
+                '-y',
+                '-c', 'defaults',
+                '--override-channels',
+                'conda']);
+            // install conda-build and friends
+            yield execWrapper('sudo', ['conda',
+                'install',
+                '-n', 'base',
+                '-q',
+                '-y',
+                '-c', 'defaults',
+                '--override-channels',
+                'conda-build', 'conda-verify'], 'miniconda install failed');
+            // run conda-build
+            yield execWrapper('sudo', ['conda',
+                'build',
+                '-c', q2Channel,
+                '-c', 'conda-forge',
+                '-c', 'bioconda',
+                '-c', 'defaults',
+                '--override-channels',
+                '--output-folder', buildDir,
+                '--no-anaconda-upload',
+                recipePath], 'package building failed');
             const filesGlobber = yield glob.create(`${buildDir}/*/**`);
             const files = yield filesGlobber.glob();
             const packageName = core.getInput('package-name');
@@ -3569,13 +3552,22 @@ function main() {
             }
             const artifactClient = artifact.create();
             const uploadResult = yield artifactClient.uploadArtifact(arch[1], files, buildDir);
-            yield execWrapper('conda', ['create', '-n', 'testing', '-c', `${buildDir}`, '-c', q2Channel,
-                '-c', 'conda-forge', '-c', 'bioconda', '-c', 'defaults', `${packageName}`, 'pytest', '-y']);
+            yield execWrapper('sudo', ['conda',
+                'create',
+                '-q',
+                '-y',
+                '-p', './testing',
+                '-c', `${buildDir}`,
+                '-c', q2Channel,
+                '-c', 'conda-forge',
+                '-c', 'bioconda', '-c',
+                'defaults', `${packageName}`,
+                'pytest']);
             const additionalTests = core.getInput('additional-tests');
             if (additionalTests !== '') {
                 temp.track();
                 const stream = temp.createWriteStream({ suffix: '.sh' });
-                stream.write(`source activate testing && ${additionalTests}`);
+                stream.write(`source "$CONDA/etc/profile.d/conda.sh" && conda activate ./testing && ${additionalTests}`);
                 stream.end();
                 const additionalTestsExitCode = yield execWrapper('bash', [stream.path], 'additional tests failed');
             }
