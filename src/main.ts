@@ -134,7 +134,7 @@ async function main(): Promise<void> {
     const artifactClient = artifact.create()
     const uploadResult = await artifactClient.uploadArtifact(arch[1], files, buildDir)
 
-    await execWrapper('conda', ['create', '-q', '-p', './testing', '-c', `${buildDir}`, '-c', q2Channel,
+    await execWrapper('sudo', ['conda', 'create', '-q', '-p', './testing', '-c', `${buildDir}`, '-c', q2Channel,
                                 '-c', 'conda-forge', '-c', 'bioconda', '-c', 'defaults', `${packageName}`, 'pytest', '-y'])
 
     const additionalTests: string = core.getInput('additional-tests')
