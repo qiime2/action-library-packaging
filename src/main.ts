@@ -136,10 +136,10 @@ async function main(): Promise<void> {
     const recipePath: string = core.getInput('recipe-path')
     const buildTarget: string = core.getInput('build-target')
     const token: string = core.getInput('library-token')
-    const condaURL = getCondaURL()
+    // const condaURL = getCondaURL()
     const q2Channel = getQIIME2Channel(buildTarget)
 
-    await installMiniconda(homeDir, condaURL)
+    // await installMiniconda(homeDir, condaURL)
     await installCondaBuild()
     await buildQIIME2Package(buildDir, recipePath, q2Channel)
 
