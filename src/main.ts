@@ -35,19 +35,6 @@ async function execWrapper(commandLine: string,
     }
 }
 
-function getCondaURL(): string {
-    let condaURL = ''
-    if (os.platform() === 'linux') {
-      condaURL = 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh'
-    } else if (os.platform() === 'darwin' ) {
-      condaURL = 'https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh'
-    } else {
-      throw Error('Unsupported OS, must be Linux or Mac')
-    }
-
-    return condaURL
-}
-
 function getArtifactName(): string {
     let artifactName = ''
     if (os.platform() === 'linux') {
@@ -59,26 +46,6 @@ function getArtifactName(): string {
     }
 
     return artifactName
-}
-
-async function installMiniconda(homeDir: string | undefined, condaURL: string) {
-    const minicondaDir = `${homeDir}/miniconda`
-    const minicondaBinDir = `${minicondaDir}/bin`
-
-    core.addPath(minicondaBinDir)
-
-    await execWrapper('wget', ['-q', '-O', 'miniconda.sh', condaURL])
-    await execWrapper('chmod', ['+x', 'miniconda.sh'])
-
-    await execWrapper('./miniconda.sh', ['-b', '-p', minicondaDir])
-
-    await execWrapper('conda', ['upgrade', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda'])
-}
-
-async function installCondaBuild() {
-    const installMinicondaExitCode = await execWrapper('sudo', ['conda', 'install', '-n', 'base', '-q', '-y', '-c', 'defaults',
-                                                       '--override-channels', 'conda-build', 'conda-verify'],
-                                                       'miniconda install failed')
 }
 
 function getQIIME2Channel(buildTarget: string) {
@@ -136,11 +103,11 @@ async function main(): Promise<void> {
     const recipePath: string = core.getInput('recipe-path')
     const buildTarget: string = core.getInput('build-target')
     const token: string = core.getInput('library-token')
-    // const condaURL = getCondaURL()
     const q2Channel = getQIIME2Channel(buildTarget)
 
-    // await installMiniconda(homeDir, condaURL)
-    await installCondaBuild()
+    await execWrapper('sudo', ['conda', 'upgrade', '-n', 'base', '-q', '-y', '-c', 'defaults', '--override-channels', 'conda'])
+    await execWrapper('sudo', ['conda', 'install', '-n', 'base', '-q', '-y', '-c', 'defaults',
+                               '--override-channels', 'conda-build', 'conda-verify'], 'miniconda install failed')
     await buildQIIME2Package(buildDir, recipePath, q2Channel)
 
     const filesGlobber: glob.Globber = await glob.create(`${buildDir}/*/**`)
