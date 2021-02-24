@@ -12,7 +12,7 @@ import * as http from '@actions/http-client'
 function getQIIME2Channel(buildTarget: string) {
   switch(buildTarget) {
     case 'staging':
-      return 'https://packages.qiime2.org/qiime2/staging/2021.2'
+      return 'https://packages.qiime2.org/qiime2/staging/2021.4'
 
     case 'release':
     default:
