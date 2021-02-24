@@ -16,7 +16,7 @@ function getQIIME2Channel(buildTarget: string) {
 
     case 'release':
     default:
-      return 'qiime2/label/r2020.11'
+      return 'qiime2/label/r2021.2'
   }
 }
 

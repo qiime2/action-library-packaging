@@ -3436,7 +3436,7 @@ function getQIIME2Channel(buildTarget) {
             return 'https://packages.qiime2.org/qiime2/staging/2021.2';
         case 'release':
         default:
-            return 'qiime2/label/r2020.11';
+            return 'qiime2/label/r2021.2';
     }
 }
 class ExecOptions {
