@@ -3433,7 +3433,7 @@ const http = __importStar(__webpack_require__(539));
 function getQIIME2Channel(buildTarget) {
     switch (buildTarget) {
         case 'staging':
-            return 'https://packages.qiime2.org/qiime2/staging/2021.4';
+            return 'https://packages.qiime2.org/qiime2/2021.4/staged';
         case 'release':
         default:
             return 'qiime2/label/r2021.2';
