@@ -33,18 +33,18 @@ async function execWrapper(commandLine: string,
     let options = new ExecOptions
     options.listeners = {
       stdout: (data: Buffer) => {
-        output += data.toString()
+        output += data.toString().trim()
       },
       stderr: (data: Buffer) => {
-        error += data.toString()
+        error += data.toString().trim()
       }
     }
 
-    try {
       await exec.exec(commandLine, args, options)
-    } catch (error) {
-      core.setFailed(error.message + `\n\n${errorMessage}`)
-    }
+      if (error) {
+        throw new Error(errorMessage)
+      }
+      return output
 }
 
 function getArtifactName(): string {
@@ -170,7 +170,7 @@ async function main(): Promise<void> {
       const stream = temp.createWriteStream({ suffix: '.sh' })
       stream.write(`source "$CONDA/etc/profile.d/conda.sh" && conda activate ./testing && ${additionalTests}`)
       stream.end()
-      const additionalTestsExitCode = await execWrapper('bash', [stream.path as string], 'additional tests failed')
+      await execWrapper('bash', [stream.path as string], 'additional tests failed')
     }
 
     if (token !== '' && process.env.GITHUB_EVENT_NAME !== 'pull_request') {

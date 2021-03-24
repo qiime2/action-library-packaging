@@ -3451,18 +3451,17 @@ function execWrapper(commandLine, args, errorMessage) {
         let options = new ExecOptions;
         options.listeners = {
             stdout: (data) => {
-                output += data.toString();
+                output += data.toString().trim();
             },
             stderr: (data) => {
-                error += data.toString();
+                error += data.toString().trim();
             }
         };
-        try {
-            yield exec.exec(commandLine, args, options);
+        yield exec.exec(commandLine, args, options);
+        if (error) {
+            throw new Error(errorMessage);
         }
-        catch (error) {
-            core.setFailed(error.message + `\n\n${errorMessage}`);
-        }
+        return output;
     });
 }
 function getArtifactName() {
@@ -3569,7 +3568,7 @@ function main() {
                 const stream = temp.createWriteStream({ suffix: '.sh' });
                 stream.write(`source "$CONDA/etc/profile.d/conda.sh" && conda activate ./testing && ${additionalTests}`);
                 stream.end();
-                const additionalTestsExitCode = yield execWrapper('bash', [stream.path], 'additional tests failed');
+                yield execWrapper('bash', [stream.path], 'additional tests failed');
             }
             if (token !== '' && process.env.GITHUB_EVENT_NAME !== 'pull_request') {
                 updateLibrary({
