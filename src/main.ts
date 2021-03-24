@@ -40,11 +40,9 @@ async function execWrapper(commandLine: string,
       }
     }
 
-    await exec.exec(commandLine, args, options)
+    const returnCode = await exec.exec(commandLine, args, options)
 
-    console.log(error);
-
-    if (error) {
+    if (returnCode != 0) {
       throw new Error(errorMessage)
     }
 
