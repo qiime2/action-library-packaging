@@ -40,11 +40,13 @@ async function execWrapper(commandLine: string,
       }
     }
 
-      await exec.exec(commandLine, args, options)
-      if (error) {
-        throw new Error(errorMessage)
-      }
-      return output
+    const returnCode = await exec.exec(commandLine, args, options)
+
+    if (returnCode != 0) {
+      throw new Error(errorMessage)
+    }
+
+    return output
 }
 
 function getArtifactName(): string {

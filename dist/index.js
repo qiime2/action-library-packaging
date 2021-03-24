@@ -3457,8 +3457,8 @@ function execWrapper(commandLine, args, errorMessage) {
                 error += data.toString().trim();
             }
         };
-        yield exec.exec(commandLine, args, options);
-        if (error) {
+        const returnCode = yield exec.exec(commandLine, args, options);
+        if (returnCode != 0) {
             throw new Error(errorMessage);
         }
         return output;
