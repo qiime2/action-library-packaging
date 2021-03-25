@@ -3432,9 +3432,20 @@ const http = __importStar(__webpack_require__(539));
 // Update the following function at release time
 function getQIIME2Channel(buildTarget) {
     switch (buildTarget) {
-        case 'staging':
+        case 'tested':
+            return 'https://packages.qiime2.org/qiime2/2021.4/tested';
+        case 'staged':
             return 'https://packages.qiime2.org/qiime2/2021.4/staged';
+        // TODO: remove
+        case 'staging':
+            core.warning('`staging` has been deprecated, please replace with `staged`');
+            return 'https://packages.qiime2.org/qiime2/2021.4/staged';
+        case 'released':
+            return 'qiime2/label/r2021.2';
+        // TODO: remove
         case 'release':
+            core.warning('`release` has been deprecated, please replace with `released`');
+            return 'qiime2/label/r2021.2';
         default:
             return 'qiime2/label/r2021.2';
     }

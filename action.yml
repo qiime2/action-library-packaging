@@ -9,7 +9,7 @@ inputs:
     description: 'Name of QIIME 2 package'
     required: true
   build-target:
-    description: 'Target QIIME 2 release cycle: "release" or "staging"'
+    description: 'Target QIIME 2 release cycle: "tested" or "staged" or "released"'
     required: true
     default: 'release'
   additional-tests:
