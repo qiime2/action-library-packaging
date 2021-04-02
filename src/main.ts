@@ -177,8 +177,11 @@ async function main(): Promise<void> {
        '-c', `${buildDir}`,
        '-c', q2Channel,
        '-c', 'conda-forge',
-       '-c', 'bioconda', '-c',
-       'defaults', `${packageName}`,
+       '-c', 'bioconda',
+       '-c', 'defaults',
+       '--override-channels',
+       '--strict-channel-priority',
+       `${packageName}`,
        'pytest'])
 
     const additionalTests: string = core.getInput('additional-tests')
