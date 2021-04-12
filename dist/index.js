@@ -3593,7 +3593,7 @@ function main() {
             const uploadResult = yield artifactClient.uploadArtifact(arch[1], files, buildDir);
             const envURL = getEnvFileURL(buildTarget);
             yield execWrapper('wget', ['-O', 'env.yml', envURL]);
-            yield execWrapper('sudo', ['conda', 'env', 'create', '-q', '-y', '-p', './testing', '--file', 'env.yml']);
+            yield execWrapper('sudo', ['conda', 'env', 'create', '-q', '-p', './testing', '--file', 'env.yml']);
             yield execWrapper('sudo', ['conda', 'install',
                 '-p', './testing',
                 '-c', `${buildDir}`,

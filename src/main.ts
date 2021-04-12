@@ -205,7 +205,7 @@ async function main(): Promise<void> {
     await execWrapper('wget', ['-O', 'env.yml', envURL])
 
     await execWrapper('sudo',
-      ['conda', 'env', 'create', '-q', '-y', '-p', './testing', '--file', 'env.yml'])
+      ['conda', 'env', 'create', '-q', '-p', './testing', '--file', 'env.yml'])
 
     await execWrapper('sudo',
       ['conda', 'install',
