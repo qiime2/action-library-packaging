@@ -210,6 +210,7 @@ async function main(): Promise<void> {
     await execWrapper('sudo',
       ['conda', 'install',
        '-p', './testing',
+       '-q', '-y',
        '-c', `${buildDir}`,
        '-c', 'conda-forge',
        '-c', 'bioconda',

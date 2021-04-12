@@ -3596,6 +3596,7 @@ function main() {
             yield execWrapper('sudo', ['conda', 'env', 'create', '-q', '-p', './testing', '--file', 'env.yml']);
             yield execWrapper('sudo', ['conda', 'install',
                 '-p', './testing',
+                '-q', '-y',
                 '-c', `${buildDir}`,
                 '-c', 'conda-forge',
                 '-c', 'bioconda',
