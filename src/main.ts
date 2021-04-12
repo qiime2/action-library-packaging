@@ -77,6 +77,39 @@ function getArtifactName(): string {
     return artifactName
 }
 
+function getEnvFileURL(buildTarget): string {
+  let platformName = ''
+  if (os.platform() === 'linux') {
+    platformName = 'linux'
+  } else if (os.platform() === 'darwin' ) {
+    platformName = 'osx'
+  } else {
+    throw Error('Unsupported OS, must be Linux or Mac')
+  }
+
+  switch(buildTarget) {
+    case 'tested':
+    case 'staged':
+      return `https://raw.githubusercontent.com/qiime2/environment-files/master/2021.4/staging/qiime2-latest-py38-${platformName}-conda.yml`
+
+    // TODO: remove
+    case 'staging':
+      core.warning('`staging` has been deprecated, please replace with `staged`')
+      return `https://raw.githubusercontent.com/qiime2/environment-files/master/2021.4/staging/qiime2-latest-py38-${platformName}-conda.yml`
+
+    case 'released':
+      return `https://raw.githubusercontent.com/qiime2/environment-files/master/2021.2/release/qiime2-latest-py36-${platformName}-conda.yml`
+
+    // TODO: remove
+    case 'release':
+      core.warning('`release` has been deprecated, please replace with `released`')
+      return `https://raw.githubusercontent.com/qiime2/environment-files/master/2021.2/release/qiime2-latest-py36-${platformName}-conda.yml`
+
+    default:
+      return `https://raw.githubusercontent.com/qiime2/environment-files/master/2021.2/release/qiime2-latest-py36-${platformName}-conda.yml`
+  }
+}
+
 async function updateLibrary(payload: any) {
     let urlEncodedDataPairs: any = []
     for (let name in payload) {
@@ -168,14 +201,16 @@ async function main(): Promise<void> {
     const artifactClient = artifact.create()
     const uploadResult = await artifactClient.uploadArtifact(arch[1], files, buildDir)
 
+    const envURL = getEnvFileURL(buildTarget)
+    await execWrapper('wget', ['-O', 'env.yml', envURL])
+
     await execWrapper('sudo',
-      ['conda',
-       'create',
-       '-q',
-       '-y',
+      ['conda', 'env', 'create', '-q', '-y', '-p', './testing', '--file', 'env.yml'])
+
+    await execWrapper('sudo',
+      ['conda', 'install',
        '-p', './testing',
        '-c', `${buildDir}`,
-       '-c', q2Channel,
        '-c', 'conda-forge',
        '-c', 'bioconda',
        '-c', 'defaults',
