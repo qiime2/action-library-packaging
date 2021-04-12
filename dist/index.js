@@ -3488,6 +3488,35 @@ function getArtifactName() {
     }
     return artifactName;
 }
+function getEnvFileURL(buildTarget) {
+    let platformName = '';
+    if (os.platform() === 'linux') {
+        platformName = 'linux';
+    }
+    else if (os.platform() === 'darwin') {
+        platformName = 'osx';
+    }
+    else {
+        throw Error('Unsupported OS, must be Linux or Mac');
+    }
+    switch (buildTarget) {
+        case 'tested':
+        case 'staged':
+            return `https://raw.githubusercontent.com/qiime2/environment-files/master/2021.4/staging/qiime2-latest-py38-${platformName}-conda.yml`;
+        // TODO: remove
+        case 'staging':
+            core.warning('`staging` has been deprecated, please replace with `staged`');
+            return `https://raw.githubusercontent.com/qiime2/environment-files/master/2021.4/staging/qiime2-latest-py38-${platformName}-conda.yml`;
+        case 'released':
+            return `https://raw.githubusercontent.com/qiime2/environment-files/master/2021.2/release/qiime2-latest-py36-${platformName}-conda.yml`;
+        // TODO: remove
+        case 'release':
+            core.warning('`release` has been deprecated, please replace with `released`');
+            return `https://raw.githubusercontent.com/qiime2/environment-files/master/2021.2/release/qiime2-latest-py36-${platformName}-conda.yml`;
+        default:
+            return `https://raw.githubusercontent.com/qiime2/environment-files/master/2021.2/release/qiime2-latest-py36-${platformName}-conda.yml`;
+    }
+}
 function updateLibrary(payload) {
     return __awaiter(this, void 0, void 0, function* () {
         let urlEncodedDataPairs = [];
@@ -3562,13 +3591,12 @@ function main() {
             }
             const artifactClient = artifact.create();
             const uploadResult = yield artifactClient.uploadArtifact(arch[1], files, buildDir);
-            yield execWrapper('sudo', ['conda',
-                'create',
-                '-q',
-                '-y',
+            const envURL = getEnvFileURL(buildTarget);
+            yield execWrapper('wget', ['-O', 'env.yml', envURL]);
+            yield execWrapper('sudo', ['conda', 'env', 'create', '-q', '-y', '-p', './testing', '--file', 'env.yml']);
+            yield execWrapper('sudo', ['conda', 'install',
                 '-p', './testing',
                 '-c', `${buildDir}`,
-                '-c', q2Channel,
                 '-c', 'conda-forge',
                 '-c', 'bioconda',
                 '-c', 'defaults',

@@ -77,7 +77,7 @@ function getArtifactName(): string {
     return artifactName
 }
 
-function getEnvFileURL(buildTarget): string {
+function getEnvFileURL(buildTarget: string): string {
   let platformName = ''
   if (os.platform() === 'linux') {
     platformName = 'linux'
