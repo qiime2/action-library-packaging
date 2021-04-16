@@ -208,6 +208,9 @@ async function main(): Promise<void> {
       ['conda', 'env', 'create', '-q', '-p', './testing', '--file', 'env.yml'])
 
     await execWrapper('sudo',
+      ['conda', 'uninstall', '-y', '-p', './testing', `${packageName}`])
+
+    await execWrapper('sudo',
       ['conda', 'install',
        '-p', './testing',
        '-q', '-y',

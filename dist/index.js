@@ -3594,6 +3594,7 @@ function main() {
             const envURL = getEnvFileURL(buildTarget);
             yield execWrapper('wget', ['-O', 'env.yml', envURL]);
             yield execWrapper('sudo', ['conda', 'env', 'create', '-q', '-p', './testing', '--file', 'env.yml']);
+            yield execWrapper('sudo', ['conda', 'uninstall', '-y', '-p', './testing', `${packageName}`]);
             yield execWrapper('sudo', ['conda', 'install',
                 '-p', './testing',
                 '-q', '-y',
