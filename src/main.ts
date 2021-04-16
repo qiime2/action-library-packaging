@@ -207,6 +207,15 @@ async function main(): Promise<void> {
     await execWrapper('sudo',
       ['conda', 'env', 'create', '-q', '-p', './testing', '--file', 'env.yml'])
 
+    const packageJSON = await execWrapper('sudo', 
+      ['conda', 'list', '-p', './testing', `^${packageName}$`, '--json'])
+    const packageParsed = JSON.parse(packageJSON)
+
+    if (packageParsed.length === 1) {
+      await execWrapper('sudo',
+        ['conda', 'uninstall', '-y', '-p', './testing', `${packageName}`])
+    }
+
     await execWrapper('sudo',
       ['conda', 'install',
        '-p', './testing',
