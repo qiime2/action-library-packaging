@@ -213,36 +213,33 @@ async function main(): Promise<void> {
         ['conda', 'list', '-p', './testing', `^${packageName}$`, '--json'])
       const packageParsed = JSON.parse(packageJSON)
 
-      switch(packageParsed.length) {
-        case 0:
-          await execWrapper('sudo',
-            ['conda', 'install',
-             '-p', './testing',
-             '-q', '-y',
-             '-c', `${buildDir}`,
-             '-c', 'conda-forge',
-             '-c', 'bioconda',
-             '-c', 'defaults',
-             '--override-channels',
-             '--strict-channel-priority',
-             `${packageName}`])
-
-        case 1:
-          await execWrapper('sudo',
-            ['conda', 'update',
-             '-p', './testing',
-             '-q', '-y',
-             '-c', `${buildDir}`,
-             '-c', 'conda-forge',
-             '-c', 'bioconda',
-             '-c', 'defaults',
-             '--override-channels',
-             '--strict-channel-priority',
-             '--force-reinstall',
-             `${packageName}`])
-
-        default:
-          throw Error('inconsistent env state')
+      if (packageParsed.length == 0) {
+        await execWrapper('sudo',
+          ['conda', 'install',
+           '-p', './testing',
+           '-q', '-y',
+           '-c', `${buildDir}`,
+           '-c', 'conda-forge',
+           '-c', 'bioconda',
+           '-c', 'defaults',
+           '--override-channels',
+           '--strict-channel-priority',
+           `${packageName}`])
+      } else if (packageParsed.length == 1) {
+        await execWrapper('sudo',
+          ['conda', 'update',
+           '-p', './testing',
+           '-q', '-y',
+           '-c', `${buildDir}`,
+           '-c', 'conda-forge',
+           '-c', 'bioconda',
+           '-c', 'defaults',
+           '--override-channels',
+           '--strict-channel-priority',
+           '--force-reinstall',
+           `${packageName}`])
+      } else {
+        throw Error('inconsistent env state')
       }
 
       await execWrapper('sudo',
