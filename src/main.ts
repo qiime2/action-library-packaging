@@ -89,6 +89,8 @@ function getEnvFileURL(buildTarget: string): string {
 
   switch(buildTarget) {
     case 'tested':
+      return `https://raw.githubusercontent.com/qiime2/environment-files/master/2021.4/test/qiime2-2021.4-py38-${platformName}-conda.yml`
+
     case 'staged':
       return `https://raw.githubusercontent.com/qiime2/environment-files/master/2021.4/staging/qiime2-2021.4-py38-${platformName}-conda.yml`
 
@@ -213,7 +215,7 @@ async function main(): Promise<void> {
         ['conda', 'list', '-p', './testing', `^${packageName}$`, '--json'])
       const packageParsed = JSON.parse(packageJSON)
 
-      if (packageParsed.length == 0) {
+      if (packageParsed.length === 0) {
         await execWrapper('sudo',
           ['conda', 'install',
            '-p', './testing',
@@ -225,7 +227,20 @@ async function main(): Promise<void> {
            '--override-channels',
            '--strict-channel-priority',
            `${packageName}`])
-      } else if (packageParsed.length == 1) {
+      } else if (packageParsed.length === 1) {
+        await execWrapper('sudo',
+          ['conda', 'update',
+           '-p', './testing',
+           '-q', '-y',
+           '-c', 'conda-forge',
+           '-c', 'bioconda',
+           '-c', 'defaults',
+           '--override-channels',
+           '--strict-channel-priority',
+           '--force-reinstall',
+           '--update-deps',
+           `${packageName}`])
+
         await execWrapper('sudo',
           ['conda', 'update',
            '-p', './testing',
