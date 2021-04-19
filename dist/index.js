@@ -3591,27 +3591,50 @@ function main() {
             }
             const artifactClient = artifact.create();
             const uploadResult = yield artifactClient.uploadArtifact(arch[1], files, buildDir);
-            const envURL = getEnvFileURL(buildTarget);
-            yield execWrapper('wget', ['-O', 'env.yml', envURL]);
-            yield execWrapper('sudo', ['conda', 'env', 'create', '-q', '-p', './testing', '--file', 'env.yml']);
-            const packageJSON = yield execWrapper('sudo', ['conda', 'list', '-p', './testing', `^${packageName}$`, '--json']);
-            const packageParsed = JSON.parse(packageJSON);
-            if (packageParsed.length === 1) {
-                yield execWrapper('sudo', ['conda', 'uninstall', '-y', '-p', './testing', `${packageName}`]);
-            }
-            yield execWrapper('sudo', ['conda', 'install',
-                '-p', './testing',
-                '-q', '-y',
-                '-c', `${buildDir}`,
-                '-c', 'conda-forge',
-                '-c', 'bioconda',
-                '-c', 'defaults',
-                '--override-channels',
-                '--strict-channel-priority',
-                `${packageName}`,
-                'pytest']);
             const additionalTests = core.getInput('additional-tests');
             if (additionalTests !== '') {
+                const envURL = getEnvFileURL(buildTarget);
+                yield execWrapper('wget', ['-O', 'env.yml', envURL]);
+                yield execWrapper('sudo', ['conda', 'env', 'create', '-q', '-p', './testing', '--file', 'env.yml']);
+                const packageJSON = yield execWrapper('sudo', ['conda', 'list', '-p', './testing', `^${packageName}$`, '--json']);
+                const packageParsed = JSON.parse(packageJSON);
+                if (packageParsed.length == 0) {
+                    yield execWrapper('sudo', ['conda', 'install',
+                        '-p', './testing',
+                        '-q', '-y',
+                        '-c', `${buildDir}`,
+                        '-c', 'conda-forge',
+                        '-c', 'bioconda',
+                        '-c', 'defaults',
+                        '--override-channels',
+                        '--strict-channel-priority',
+                        `${packageName}`]);
+                }
+                else if (packageParsed.length == 1) {
+                    yield execWrapper('sudo', ['conda', 'update',
+                        '-p', './testing',
+                        '-q', '-y',
+                        '-c', `${buildDir}`,
+                        '-c', 'conda-forge',
+                        '-c', 'bioconda',
+                        '-c', 'defaults',
+                        '--override-channels',
+                        '--strict-channel-priority',
+                        '--force-reinstall',
+                        `${packageName}`]);
+                }
+                else {
+                    throw Error('inconsistent env state');
+                }
+                yield execWrapper('sudo', ['conda', 'install',
+                    '-p', './testing',
+                    '-q', '-y',
+                    '-c', 'conda-forge',
+                    '-c', 'bioconda',
+                    '-c', 'defaults',
+                    '--override-channels',
+                    '--strict-channel-priority',
+                    'pytest']);
                 temp.track();
                 const stream = temp.createWriteStream({ suffix: '.sh' });
                 stream.write(`source "$CONDA/etc/profile.d/conda.sh" && conda activate ./testing && ${additionalTests}`);
