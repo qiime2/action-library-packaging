@@ -3501,6 +3501,7 @@ function getEnvFileURL(buildTarget) {
     }
     switch (buildTarget) {
         case 'tested':
+            return `https://raw.githubusercontent.com/qiime2/environment-files/master/2021.4/test/qiime2-2021.4-py38-${platformName}-conda.yml`;
         case 'staged':
             return `https://raw.githubusercontent.com/qiime2/environment-files/master/2021.4/staging/qiime2-2021.4-py38-${platformName}-conda.yml`;
         // TODO: remove
@@ -3598,7 +3599,7 @@ function main() {
                 yield execWrapper('sudo', ['conda', 'env', 'create', '-q', '-p', './testing', '--file', 'env.yml']);
                 const packageJSON = yield execWrapper('sudo', ['conda', 'list', '-p', './testing', `^${packageName}$`, '--json']);
                 const packageParsed = JSON.parse(packageJSON);
-                if (packageParsed.length == 0) {
+                if (packageParsed.length === 0) {
                     yield execWrapper('sudo', ['conda', 'install',
                         '-p', './testing',
                         '-q', '-y',
@@ -3610,7 +3611,18 @@ function main() {
                         '--strict-channel-priority',
                         `${packageName}`]);
                 }
-                else if (packageParsed.length == 1) {
+                else if (packageParsed.length === 1) {
+                    yield execWrapper('sudo', ['conda', 'update',
+                        '-p', './testing',
+                        '-q', '-y',
+                        '-c', 'conda-forge',
+                        '-c', 'bioconda',
+                        '-c', 'defaults',
+                        '--override-channels',
+                        '--strict-channel-priority',
+                        '--force-reinstall',
+                        '--update-deps',
+                        `${packageName}`]);
                     yield execWrapper('sudo', ['conda', 'update',
                         '-p', './testing',
                         '-q', '-y',
