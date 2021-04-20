@@ -237,7 +237,6 @@ async function main(): Promise<void> {
            '-c', 'defaults',
            '--override-channels',
            '--strict-channel-priority',
-           '--force-reinstall',
            '--update-deps',
            `${packageName}`])
 
