@@ -3620,7 +3620,6 @@ function main() {
                         '-c', 'defaults',
                         '--override-channels',
                         '--strict-channel-priority',
-                        '--force-reinstall',
                         '--update-deps',
                         `${packageName}`]);
                     yield execWrapper('sudo', ['conda', 'update',
