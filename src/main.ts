@@ -12,26 +12,16 @@ import * as http from '@actions/http-client'
 function getQIIME2Channel(buildTarget: string) {
   switch(buildTarget) {
     case 'tested':
-      return 'https://packages.qiime2.org/qiime2/2021.4/tested'
+      return 'https://packages.qiime2.org/qiime2/2021.8/tested'
 
     case 'staged':
-      return 'https://packages.qiime2.org/qiime2/2021.4/staged'
-
-    // TODO: remove
-    case 'staging':
-      core.warning('`staging` has been deprecated, please replace with `staged`')
-      return 'https://packages.qiime2.org/qiime2/2021.4/staged'
+      return 'https://packages.qiime2.org/qiime2/2021.8/staged'
 
     case 'released':
-      return 'qiime2/label/r2021.2'
-
-    // TODO: remove
-    case 'release':
-      core.warning('`release` has been deprecated, please replace with `released`')
-      return 'qiime2/label/r2021.2'
+      return 'qiime2/label/r2021.4'
 
     default:
-      return 'qiime2/label/r2021.2'
+      return 'qiime2/label/r2021.4'
   }
 }
 
@@ -89,26 +79,16 @@ function getEnvFileURL(buildTarget: string): string {
 
   switch(buildTarget) {
     case 'tested':
-      return `https://raw.githubusercontent.com/qiime2/environment-files/master/2021.4/test/qiime2-2021.4-py38-${platformName}-conda.yml`
+      return `https://raw.githubusercontent.com/qiime2/environment-files/master/2021.8/test/qiime2-2021.8-py38-${platformName}-conda.yml`
 
     case 'staged':
-      return `https://raw.githubusercontent.com/qiime2/environment-files/master/2021.4/staging/qiime2-2021.4-py38-${platformName}-conda.yml`
-
-    // TODO: remove
-    case 'staging':
-      core.warning('`staging` has been deprecated, please replace with `staged`')
-      return `https://raw.githubusercontent.com/qiime2/environment-files/master/2021.4/staging/qiime2-2021.4-py38-${platformName}-conda.yml`
+      return `https://raw.githubusercontent.com/qiime2/environment-files/master/2021.8/staging/qiime2-2021.8-py38-${platformName}-conda.yml`
 
     case 'released':
-      return `https://raw.githubusercontent.com/qiime2/environment-files/master/2021.2/release/qiime2-2021.2-py36-${platformName}-conda.yml`
-
-    // TODO: remove
-    case 'release':
-      core.warning('`release` has been deprecated, please replace with `released`')
-      return `https://raw.githubusercontent.com/qiime2/environment-files/master/2021.2/release/qiime2-2021.2-py36-${platformName}-conda.yml`
+      return `https://raw.githubusercontent.com/qiime2/environment-files/master/2021.4/release/qiime2-2021.4-py38-${platformName}-conda.yml`
 
     default:
-      return `https://raw.githubusercontent.com/qiime2/environment-files/master/2021.2/release/qiime2-2021.2-py36-${platformName}-conda.yml`
+      return `https://raw.githubusercontent.com/qiime2/environment-files/master/2021.4/release/qiime2-2021.4-py38-${platformName}-conda.yml`
   }
 }
 
