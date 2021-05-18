@@ -125,6 +125,7 @@ async function main(): Promise<void> {
     const token: string = core.getInput('library-token')
     const q2Channel = getQIIME2Channel(buildTarget)
 
+    // setup //
     // upgrade base conda
     await execWrapper('sudo',
       ['conda',
@@ -160,6 +161,7 @@ async function main(): Promise<void> {
        recipePath],
       'package building failed')
 
+    // build //
     const filesGlobber: glob.Globber = await glob.create(`${buildDir}/*/**`)
     const files: string[] = await filesGlobber.glob()
 
@@ -180,9 +182,11 @@ async function main(): Promise<void> {
       throw Error(`Error finding arch: ${JSON.stringify(arch)}.`)
     }
 
+    // artifact-caching //
     const artifactClient = artifact.create()
     const uploadResult = await artifactClient.uploadArtifact(arch[1], files, buildDir)
 
+    // testing //
     const additionalTests: string = core.getInput('additional-tests')
     if (additionalTests !== '') {
       const envURL = getEnvFileURL(buildTarget)
@@ -254,6 +258,7 @@ async function main(): Promise<void> {
       await execWrapper('bash', [stream.path as string], 'additional tests failed')
     }
 
+    // lib-token //
     if (token !== '' && process.env.GITHUB_EVENT_NAME !== 'pull_request') {
         updateLibrary({
             token,

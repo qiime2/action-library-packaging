@@ -22,18 +22,19 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - id: recipe-path
-      run: ${{ github.action_path }}/recipe.sh
+    - id: setup
+      run: ${{ github.action_path }}/setup.sh
       shell: bash
-    - id: package-name
-      run: ${{ github.action_path }}/package.sh
-      shell: bash
-    - id: build-target
+    - id: build
       run: ${{ github.action_path }}/build.sh
       shell: bash
-    - id: additional-tests
+    - id: artifact-caching
+      # run: const artifactClient = artifact.create()
+          #  const uploadResult = await artifactClient.uploadArtifact(arch[1], files, buildDir)
+      shell: bash
+    - id: testing
       run: ${{ github.action_path }}/testing.sh
       shell: bash
-    - id: library-token
-      run: ${{ github.action_path }}/library.sh
+    - id: lib-token
+      run: ${{ github.action_path }}/lib-token.sh
       shell: bash
