@@ -5,8 +5,6 @@ set -xev
 # set -e
 
 compgen -A variable
-echo $INPUT_RECIPEPATH
-echo $INPUT_recipe_path
 
 echo "BUILD_DIR=$BUILD_DIR" >> $GITHUB_ENV
 echo "RUNNER_OS=$RUNNER_OS" >> $GITHUB_ENV

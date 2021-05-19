@@ -4,6 +4,8 @@ set -xev
 # todo: uncomment when done developing
 # set -e
 
+compgen -A variable
+
 sudo conda build \
     -c $Q2_CHANNEL \
     -c conda-forge \
