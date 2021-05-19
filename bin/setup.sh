@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -xev
 
 # update the following at release time
 case "$INPUT_BUILD_TARGET" in
