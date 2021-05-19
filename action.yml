@@ -23,18 +23,18 @@ runs:
   using: "composite"
   steps:
     - id: setup
-      run: ${{ github.action_path }}/setup.sh
+      run: ${{ github.action_path }}/bin/setup.sh
       shell: bash
     - id: build
-      run: ${{ github.action_path }}/build.sh
+      run: ${{ github.action_path }}/bin/build.sh
       shell: bash
     - id: artifact-caching
       # run: const artifactClient = artifact.create()
           #  const uploadResult = await artifactClient.uploadArtifact(arch[1], files, buildDir)
       shell: bash
     - id: testing
-      run: ${{ github.action_path }}/testing.sh
+      run: ${{ github.action_path }}/bin/testing.sh
       shell: bash
     - id: lib-token
-      run: ${{ github.action_path }}/lib-token.sh
+      run: ${{ github.action_path }}/bin/lib-token.sh
       shell: bash

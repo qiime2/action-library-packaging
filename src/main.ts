@@ -125,42 +125,6 @@ async function main(): Promise<void> {
     const token: string = core.getInput('library-token')
     const q2Channel = getQIIME2Channel(buildTarget)
 
-    // setup //
-    // upgrade base conda
-    await execWrapper('sudo',
-      ['conda',
-       'upgrade',
-       '-n', 'base',
-       '-q',
-       '-y',
-       '-c', 'defaults',
-       '--override-channels',
-       'conda'])
-    // install conda-build and friends
-    await execWrapper('sudo',
-      ['conda',
-       'install',
-       '-n', 'base',
-       '-q',
-       '-y',
-       '-c', 'defaults',
-       '--override-channels',
-       'conda-build', 'conda-verify'],
-      'miniconda install failed')
-    // run conda-build
-    await execWrapper('sudo',
-      ['conda',
-       'build',
-       '-c', q2Channel,
-       '-c', 'conda-forge',
-       '-c', 'bioconda',
-       '-c', 'defaults',
-       '--override-channels',
-       '--output-folder', buildDir,
-       '--no-anaconda-upload',
-       recipePath],
-      'package building failed')
-
     // build //
     const filesGlobber: glob.Globber = await glob.create(`${buildDir}/*/**`)
     const files: string[] = await filesGlobber.glob()
