@@ -4,7 +4,7 @@ set -xev
 # TODO: uncomment when done developing
 # set -e
 
-compgen -A variable
+echo $INPUT_FOOBAR
 
 echo "BUILD_DIR=$BUILD_DIR" >> $GITHUB_ENV
 echo "RUNNER_OS=$RUNNER_OS" >> $GITHUB_ENV
@@ -25,11 +25,11 @@ case "$BUILD_TARGET" in
         ;;
 
     released)
-        Q2_CHANNEL='qiime2/label/2021.4'
+        Q2_CHANNEL='qiime2/label/r2021.4'
         ;;
 
     *)
-        Q2_CHANNEL='qiime2/label/2021.4'
+        Q2_CHANNEL='qiime2/label/r2021.4'
         ;;
 esac
 echo "Q2_CHANNEL=$Q2_CHANNEL" >> $GITHUB_ENV
