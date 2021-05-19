@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 # setup action variables
 # update the following at release time

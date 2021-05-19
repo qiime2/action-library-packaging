@@ -1,4 +1,5 @@
-#!/usr/bin/env bash    
+#!/usr/bin/env bash
+set -e
     
 # build
 # run conda-build
@@ -12,29 +13,18 @@ sudo conda build \
     --no-anaconda-upload \
     $RECIPE_PATH
 
+case "$RUNNER_OS" in
+    macOS)
+        ARTIFACT_NAME='osx-64'
+        ;;
 
-const filesGlobber: glob.Globber = await glob.create(`${buildDir}/*/**`)
-const files: string[] = await filesGlobber.glob()
-# ${buildDir} = $BUILD_DIR
-# searching for $BUILD_DIR environment variable
-# files-grep = grep $BUILD_DIR$
-# string[] = 
+    Linux)
+        ARTIFACT_NAME='linux-64'
+        ;;
 
+    *)
+        exit 1
+        ;;
+esac
 
-const artifactGlobber: glob.Globber = await glob.create(`${buildDir}/*/${packageName}*`)
-const artifactName: string[] = await artifactGlobber.glob()
-
-core.info(artifactName[0])
-
-if [ -z "artifactName" ] && [ artifactName.length -ne 1 ]; then
-printf '%s/n' "Error finding base artifactName: ${JSON.stringify(artifactName)}" >&2
-exit 1
-fi
-
-const regex: RegExp = new RegExp(`${buildDir}\/(.*?)\/${packageName}`)
-const arch: RegExpMatchArray | null = artifactName[0].match(regex)
-
-if [ -z arch ]; then
-printf '%s/n' "Error finding arch: ${JSON.stringify(arch)}." >&2
-exit 1
-fi
+echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV

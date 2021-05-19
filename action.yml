@@ -24,6 +24,7 @@ runs:
   # TODO: is this supported?
   env:
     BUILD_DIR: ${{ github.workspace }}/built-package
+    RUNNER_OS: ${{ runner.os }}
     # TODO: can we just look up the INPUTS_* directly?
     RECIPE_PATH: ${{ inputs.recipe-path }}
     PACKAGE_NAME: ${{ inputs.package-name }}
@@ -38,9 +39,10 @@ runs:
       run: ${{ github.action_path }}/bin/build.sh
       shell: bash
     - id: artifact-caching
-      # run: const artifactClient = artifact.create()
-          #  const uploadResult = await artifactClient.uploadArtifact(arch[1], files, buildDir)
-      shell: bash
+      uses: actions/upload-artifact@v2
+      with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: ${{ env.BUILD_DIR }}
     - id: testing
       run: ${{ github.action_path }}/bin/testing.sh
       shell: bash
