@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-set -e
+set -xev
+# todo: uncomment when done developing
+# set -e
 
     if (additionalTests !== '') {
       const envURL = getEnvFileURL(buildTarget)

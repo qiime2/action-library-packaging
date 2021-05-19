@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 set -xev
+# TODO: uncomment when done developing
+# set -e
 
 # update the following at release time
 case "$INPUT_BUILD_TARGET" in

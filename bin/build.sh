@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-set -e
+set -xev
+# todo: uncomment when done developing
+# set -e
 
 sudo conda build \
     -c $Q2_CHANNEL \
