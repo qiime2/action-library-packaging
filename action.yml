@@ -30,28 +30,17 @@ runs:
   #   ADDITIONAL_TESTS: ${{ inputs.additional-tests }}
   #   LIBRARY_TOKEN: ${{ inputs.library-token }}
   steps:
-    - id: setup
-      env:
-        # TODO: can we just look up the INPUTS_* directly?
-        BUILD_TARGET: ${{ inputs.build-target }}
-      run: ${{ github.action_path }}/bin/setup.sh
-      shell: bash
-    - id: build
-      env:
+    - env:
         BUILD_DIR: ${{ github.workspace }}/built-package
         RUNNER_OS: ${{ runner.os }}
-        # TODO: can we just look up the INPUTS_* directly?
-        RECIPE_PATH: ${{ inputs.recipe-path }}
-      run: ${{ github.action_path }}/bin/build.sh
+      run: ${{ github.action_path }}/bin/setup.sh
       shell: bash
-    - id: artifact-caching
-      uses: actions/upload-artifact@v2
-      with:
-          name: ${{ github.workspace }}/build-package
-          path: ${{ env.BUILD_DIR }}
-    # - id: testing
-    #   run: ${{ github.action_path }}/bin/testing.sh
+    - run: ${{ github.action_path }}/bin/build.sh
+      shell: bash
+    # TODO: figure this out...
+    # - run: ${{ github.action_path }}/bin/upload_artifact.sh
     #   shell: bash
-    # - id: lib-token
-    #   run: ${{ github.action_path }}/bin/lib-token.sh
+    # - run: ${{ github.action_path }}/bin/testing.sh
+    #   shell: bash
+    # - run: ${{ github.action_path }}/bin/lib-token.sh
     #   shell: bash
