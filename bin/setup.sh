@@ -4,6 +4,7 @@ set -xev
 # TODO: uncomment when done developing
 # set -e
 
+compgen -A variable
 echo $INPUT_RECIPEPATH
 echo $INPUT_recipe_path
 

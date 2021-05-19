@@ -4,9 +4,6 @@ set -xev
 # todo: uncomment when done developing
 # set -e
 
-# TODO: remove when done developing
-env
-
 sudo conda build \
     -c $Q2_CHANNEL \
     -c conda-forge \
