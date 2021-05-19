@@ -17,9 +17,6 @@ jobs:
     steps:
     # Need to check the action out locally and build it prior to testing
     - uses: actions/checkout@v2
-    - run: |
-        npm install
-        npm run all
     - uses: ./
       with:
         recipe-path: ./example
