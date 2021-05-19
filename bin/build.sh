@@ -15,7 +15,7 @@ sudo conda build \
     --override-channels \
     --output-folder $BUILD_DIR \
     --no-anaconda-upload \
-    $INPUT_RECIPE_PATH
+    $RECIPE_PATH
 
 case "$RUNNER_OS" in
     macOS)

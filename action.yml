@@ -21,18 +21,16 @@ inputs:
     default: ''
 runs:
   using: 'composite'
-  # env:
-  #   BUILD_DIR: ${{ github.workspace }}/built-package
-  #   RUNNER_OS: ${{ runner.os }}
-  #   RECIPE_PATH: ${{ inputs.recipe-path }}
-  #   PACKAGE_NAME: ${{ inputs.package-name }}
-  #   BUILD_TARGET: ${{ inputs.build-target }}
-  #   ADDITIONAL_TESTS: ${{ inputs.additional-tests }}
-  #   LIBRARY_TOKEN: ${{ inputs.library-token }}
   steps:
     - env:
+      # Note, don't forget to update setup.sh when changing env vars below
         BUILD_DIR: ${{ github.workspace }}/built-package
         RUNNER_OS: ${{ runner.os }}
+        RECIPE_PATH: ${{ inputs.recipe-path }}
+        PACKAGE_NAME: ${{ inputs.package-name }}
+        BUILD_TARGET: ${{ inputs.build-target }}
+        ADDITIONAL_TESTS: ${{ inputs.additional-tests }}
+        LIBRARY_TOKEN: ${{ inputs.library-token }}
       run: ${{ github.action_path }}/bin/setup.sh
       shell: bash
     - run: ${{ github.action_path }}/bin/build.sh
