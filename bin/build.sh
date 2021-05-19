@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
+
 set -e
-    
-# build
-# run conda-build
+
 sudo conda build \
-    -c q2Channel \
+    -c $Q2_CHANNEL \
     -c conda-forge \
     -c bioconda \
     -c defaults \

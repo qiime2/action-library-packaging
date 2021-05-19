@@ -11,7 +11,7 @@ inputs:
   build-target:
     description: 'Target QIIME 2 release cycle: "tested" or "staged" or "released"'
     required: true
-    default: 'release'
+    default: 'released'
   additional-tests:
     description: 'Additional tests to run post-build'
     required: false
@@ -20,32 +20,38 @@ inputs:
     required: true
     default: ''
 runs:
-  using: "composite"
-  # TODO: is this supported?
-  env:
-    BUILD_DIR: ${{ github.workspace }}/built-package
-    RUNNER_OS: ${{ runner.os }}
-    # TODO: can we just look up the INPUTS_* directly?
-    RECIPE_PATH: ${{ inputs.recipe-path }}
-    PACKAGE_NAME: ${{ inputs.package-name }}
-    BUILD_TARGET: ${{ inputs.build-target }}
-    ADDITIONAL_TESTS: ${{ inputs.additional-tests }}
-    LIBRARY_TOKEN: ${{ inputs.library-token }}
+  using: 'composite'
+  # env:
+  #   BUILD_DIR: ${{ github.workspace }}/built-package
+  #   RUNNER_OS: ${{ runner.os }}
+  #   RECIPE_PATH: ${{ inputs.recipe-path }}
+  #   PACKAGE_NAME: ${{ inputs.package-name }}
+  #   BUILD_TARGET: ${{ inputs.build-target }}
+  #   ADDITIONAL_TESTS: ${{ inputs.additional-tests }}
+  #   LIBRARY_TOKEN: ${{ inputs.library-token }}
   steps:
     - id: setup
+      env:
+        # TODO: can we just look up the INPUTS_* directly?
+        BUILD_TARGET: ${{ inputs.build-target }}
       run: ${{ github.action_path }}/bin/setup.sh
       shell: bash
     - id: build
+      env:
+        BUILD_DIR: ${{ github.workspace }}/built-package
+        RUNNER_OS: ${{ runner.os }}
+        # TODO: can we just look up the INPUTS_* directly?
+        RECIPE_PATH: ${{ inputs.recipe-path }}
       run: ${{ github.action_path }}/bin/build.sh
       shell: bash
     - id: artifact-caching
       uses: actions/upload-artifact@v2
       with:
-          name: ${{ env.ARTIFACT_NAME }}
+          name: ${{ github.workspace }}/build-package
           path: ${{ env.BUILD_DIR }}
-    - id: testing
-      run: ${{ github.action_path }}/bin/testing.sh
-      shell: bash
-    - id: lib-token
-      run: ${{ github.action_path }}/bin/lib-token.sh
-      shell: bash
+    # - id: testing
+    #   run: ${{ github.action_path }}/bin/testing.sh
+    #   shell: bash
+    # - id: lib-token
+    #   run: ${{ github.action_path }}/bin/lib-token.sh
+    #   shell: bash
