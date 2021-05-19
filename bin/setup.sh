@@ -4,6 +4,17 @@ set -xev
 # TODO: uncomment when done developing
 # set -e
 
+echo $INPUT_RECIPEPATH
+echo $INPUT_recipe_path
+
+echo "BUILD_DIR=$BUILD_DIR" >> $GITHUB_ENV
+echo "RUNNER_OS=$RUNNER_OS" >> $GITHUB_ENV
+echo "RECIPE_PATH=$RECIPE_PATH" >> $GITHUB_ENV
+echo "PACKAGE_NAME=$PACKAGE_NAME" >> $GITHUB_ENV
+echo "BUILD_TARGET=$BUILD_TARGET" >> $GITHUB_ENV
+echo "ADDITIONAL_TESTS=$ADDITIONAL_TESTS" >> $GITHUB_ENV
+echo "LIBRARY_TOKEN=$LIBRARY_TOKEN" >> $GITHUB_ENV
+
 # update the following at release time
 case "$BUILD_TARGET" in
     tested)
@@ -22,15 +33,7 @@ case "$BUILD_TARGET" in
         Q2_CHANNEL='qiime2/label/2021.4'
         ;;
 esac
-
 echo "Q2_CHANNEL=$Q2_CHANNEL" >> $GITHUB_ENV
-echo "BUILD_DIR=$BUILD_DIR" >> $GITHUB_ENV
-echo "RUNNER_OS=$RUNNER_OS" >> $GITHUB_ENV
-echo "RECIPE_PATH=$RECIPE_PATH" >> $GITHUB_ENV
-echo "PACKAGE_NAME=$PACKAGE_NAME" >> $GITHUB_ENV
-echo "BUILD_TARGET=$BUILD_TARGET" >> $GITHUB_ENV
-echo "ADDITIONAL_TESTS=$ADDITIONAL_TESTS" >> $GITHUB_ENV
-echo "LIBRARY_TOKEN=$LIBRARY_TOKEN" >> $GITHUB_ENV
 
 sudo conda upgrade -n base -q -y -c defaults --override-channels conda
 
