@@ -21,6 +21,15 @@ inputs:
     default: ''
 runs:
   using: "composite"
+  # TODO: is this supported?
+  env:
+    BUILD_DIR: ${{ github.workspace }}/built-package
+    # TODO: can we just look up the INPUTS_* directly?
+    RECIPE_PATH: ${{ inputs.recipe-path }}
+    PACKAGE_NAME: ${{ inputs.package-name }}
+    BUILD_TARGET: ${{ inputs.build-target }}
+    ADDITIONAL_TESTS: ${{ inputs.additional-tests }}
+    LIBRARY_TOKEN: ${{ inputs.library-token }}
   steps:
     - id: setup
       run: ${{ github.action_path }}/bin/setup.sh

@@ -8,23 +8,6 @@ import * as glob from '@actions/glob'
 import * as io from '@actions/io'
 import * as http from '@actions/http-client'
 
-// Update the following function at release time
-function getQIIME2Channel(buildTarget: string) {
-  switch(buildTarget) {
-    case 'tested':
-      return 'https://packages.qiime2.org/qiime2/2021.8/tested'
-
-    case 'staged':
-      return 'https://packages.qiime2.org/qiime2/2021.8/staged'
-
-    case 'released':
-      return 'qiime2/label/r2021.4'
-
-    default:
-      return 'qiime2/label/r2021.4'
-  }
-}
-
 class ExecOptions {
   public listeners: object = {}
 }
@@ -118,18 +101,21 @@ async function updateLibrary(payload: any) {
 
 async function main(): Promise<void> {
   try {
-    const homeDir: string | undefined = process.env.HOME
-    const buildDir = `${homeDir}/built-package`
-    const recipePath: string = core.getInput('recipe-path')
-    const buildTarget: string = core.getInput('build-target')
-    const token: string = core.getInput('library-token')
-    const q2Channel = getQIIME2Channel(buildTarget)
-
     // build //
+    // # run conda-build
+    // sudo conda build \
+    //     -c q2Channel \
+    //     -c conda-forge \
+    //     -c bioconda \
+    //     -c defaults \
+    //     --override-channels \
+    //     --output-folder $BUILD_DIR \
+    //     --no-anaconda-upload \
+    //     $RECIPE_PATH
+
     const filesGlobber: glob.Globber = await glob.create(`${buildDir}/*/**`)
     const files: string[] = await filesGlobber.glob()
 
-    const packageName: string = core.getInput('package-name')
     const artifactGlobber: glob.Globber = await glob.create(`${buildDir}/*/${packageName}*`)
     const artifactName: string[] = await artifactGlobber.glob()
 
@@ -151,7 +137,6 @@ async function main(): Promise<void> {
     const uploadResult = await artifactClient.uploadArtifact(arch[1], files, buildDir)
 
     // testing //
-    const additionalTests: string = core.getInput('additional-tests')
     if (additionalTests !== '') {
       const envURL = getEnvFileURL(buildTarget)
       await execWrapper('wget', ['-O', 'env.yml', envURL])
