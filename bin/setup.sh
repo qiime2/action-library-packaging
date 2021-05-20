@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 
-set -xev
-# TODO: uncomment when done developing
-# set -e
-
-echo $INPUT_FOOBAR
+set -e
 
 echo "BUILD_DIR=$BUILD_DIR" >> $GITHUB_ENV
 echo "RUNNER_OS=$RUNNER_OS" >> $GITHUB_ENV

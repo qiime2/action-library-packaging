@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 
-set -xev
-# todo: uncomment when done developing
-# set -e
-
-compgen -A variable
+set -e
 
 sudo conda build \
     -c $Q2_CHANNEL \
@@ -18,16 +14,14 @@ sudo conda build \
 
 case "$RUNNER_OS" in
     macOS)
-        ARTIFACT_NAME='osx-64'
+        echo "ARTIFACT_NAME=osx-64" >> $GITHUB_ENV
         ;;
 
     Linux)
-        ARTIFACT_NAME='linux-64'
+        echo "ARTIFACT_NAME=linux-64" >> $GITHUB_ENV
         ;;
 
     *)
         exit 1
         ;;
 esac
-
-echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
