@@ -26,14 +26,19 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - run: |
-        echo "BUILD_DIR=${{ github.workspace }}/built-package" >> $GITHUB_ENV
-        echo "RUNNER_OS=${{ runner.os }}" >> $GITHUB_ENV
-        echo "RECIPE_PATH=${{ inputs.recipe-path }}" >> $GITHUB_ENV
-        echo "PACKAGE_NAME=${{ inputs.package-name }}" >> $GITHUB_ENV
-        echo "BUILD_TARGET=${{ inputs.build-target }}" >> $GITHUB_ENV
-        echo "ADDITIONAL_TESTS=${{ inputs.additional-tests }}" >> $GITHUB_ENV
-        echo "LIBRARY_TOKEN=${{ library-token }}" >> $GITHUB_ENV
+    - run: echo "BUILD_DIR=${{ github.workspace }}/built-package" >> $GITHUB_ENV
+      shell: bash
+    - run: echo "RUNNER_OS=${{ runner.os }}" >> $GITHUB_ENV
+      shell: bash
+    - run: echo "RECIPE_PATH=${{ inputs.recipe-path }}" >> $GITHUB_ENV
+      shell: bash
+    - run: echo "PACKAGE_NAME=${{ inputs.package-name }}" >> $GITHUB_ENV
+      shell: bash
+    - run: echo "BUILD_TARGET=${{ inputs.build-target }}" >> $GITHUB_ENV
+      shell: bash
+    - run: echo "ADDITIONAL_TESTS=${{ inputs.additional-tests }}" >> $GITHUB_ENV
+      shell: bash
+    - run: echo "LIBRARY_TOKEN=${{ inputs.library-token }}" >> $GITHUB_ENV
       shell: bash
     - run: ${{ github.action_path }}/bin/setup.sh
       shell: bash
