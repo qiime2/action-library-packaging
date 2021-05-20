@@ -41,10 +41,8 @@ runs:
     # action steps
     - run: ${{ github.action_path }}/bin/setup.sh
       shell: bash
-    # TODO: uncomment when done developing
-    # - run: ${{ github.action_path }}/bin/build.sh
-    #   shell: bash
-    # TODO: figure this out...
+    - run: ${{ github.action_path }}/bin/build.sh
+      shell: bash
     - run: node --unhandled-rejections=strict ${{ github.action_path }}/bin/artifact-upload/script.js
       shell: bash
     # TODO: uncomment when done developing
