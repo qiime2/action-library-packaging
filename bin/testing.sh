@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
-set -xev
-# todo: uncomment when done developing
-# set -e
+set -e
 
 if [[ -z $ADDITIONAL_TESTS ]]
 then
