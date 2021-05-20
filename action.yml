@@ -42,14 +42,15 @@ runs:
     # action steps
     - run: ${{ github.action_path }}/bin/setup.sh
       shell: bash
-    # TODO: uncomment when done develop
+    # TODO: uncomment when done developing
     # - run: ${{ github.action_path }}/bin/build.sh
     #   shell: bash
     # TODO: figure this out...
     # - run: ${{ github.action_path }}/bin/upload_artifact.sh
     #   shell: bash
-    # TODO: uncomment when done develop
+    # TODO: uncomment when done developing
     # - run: ${{ github.action_path }}/bin/testing.sh
     #   shell: bash
-    - run: ${{ github.action_path }}/bin/library.sh
-      shell: bash
+    # TODO: uncomment when done developing
+    # - run: ${{ github.action_path }}/bin/library.sh
+    #   shell: bash

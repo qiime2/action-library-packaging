@@ -2,6 +2,8 @@
 
 set -e
 
+echo "::group::testing.sh"
+
 if [[ -z $ADDITIONAL_TESTS ]]
 then
     # TODO: log msg
@@ -69,3 +71,5 @@ sudo conda install \
 source "$CONDA/etc/profile.d/conda.sh"
 conda activate ./testing
 $ADDITIONAL_TESTS
+
+echo "::endgroup::"

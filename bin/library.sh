@@ -1,17 +1,14 @@
 #!/usr/bin/env bash
 
-set -xev
-# todo: uncomment when done developing
-# set -e
+set -e
 
-# TODO: uncomment
-# if [[ -z $LIBRARY_TOKEN || $GITHUB_EVENT_NAME -eq "pull_request" ]]
-# then
-#     # TODO: log msg
-#     exit 0
-# fi
+echo "::group::library.sh"
 
-env | sort
+if [[ -z $LIBRARY_TOKEN || $GITHUB_EVENT_NAME -eq "pull_request" ]]
+then
+    # TODO: log msg
+    exit 0
+fi
 
 # --fail-with-body is what we need, but that version of curl isn't on GH runners, yet
 resp=$(curl \
@@ -33,3 +30,5 @@ then
     echo $resp
     exit 1
 fi
+
+echo "::endgroup::"
