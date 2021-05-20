@@ -47,7 +47,7 @@ runs:
     # TODO: figure this out...
     # - run: ${{ github.action_path }}/bin/upload_artifact.sh
     #   shell: bash
-    # - run: ${{ github.action_path }}/bin/testing.sh
-    #   shell: bash
+    - run: ${{ github.action_path }}/bin/testing.sh
+      shell: bash
     # - run: ${{ github.action_path }}/bin/lib-token.sh
     #   shell: bash
