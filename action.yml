@@ -1,10 +1,6 @@
 name: 'QIIME 2 Library Packaging'
 description: 'Build, test, and distribute a QIIME 2 conda package'
 inputs:
-  fooBar:
-    description: 'lorem ipsum'
-    required: false
-    default: 'baz'
   recipe-path:
     description: 'Path to recipe'
     required: false
