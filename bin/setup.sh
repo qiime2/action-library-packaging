@@ -3,6 +3,7 @@
 set -e
 
 env | sort
+less $GITHUB_ENV
 
 echo "::group::setup.sh"
 
