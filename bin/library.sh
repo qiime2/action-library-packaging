@@ -11,13 +11,25 @@ set -xev
 #     exit 0
 # fi
 
-curl \
-  --fail-with-body \
-  -d "token=$LIBRARY_TOKEN" \
-  -d "version=unknown" \
-  -d "package_name=$PACKAGE_NAME" \
-  -d "repository=$GITHUB_REPOSITORY" \
-  -d "run_id=$GITHUB_RUN_ID" \
-  -d "artifact_name=$ARTIFACT_NAME" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -X POST https://library.qiime2.org/api/v1/packages/integrate/
+resp=$(curl \
+  # --fail-with-body is what we need, but it isn't on GH runners, yet
+  # --fail-with-body \
+  --fail \
+  --silent \
+  --include \
+  -data "token=$LIBRARY_TOKEN" \
+  -data "version=unknown" \
+  -data "package_name=$PACKAGE_NAME" \
+  -data "repository=$GITHUB_REPOSITORY" \
+  -data "run_id=$GITHUB_RUN_ID" \
+  -data "artifact_name=$ARTIFACT_NAME" \
+  --header "Content-Type: application/x-www-form-urlencoded" \
+  --request POST https://library.qiime2.org/api/v1/packages/integrate/
+)
+
+code=$(echo $resp | grep HTTP | awk '{print $2}' )
+if [[ $code -ne 200 ]]
+then
+    echo $resp
+    exit 1
+fi
