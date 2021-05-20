@@ -4,7 +4,7 @@ set -xev
 # todo: uncomment when done developing
 # set -e
 
-if [ -z $ADDITIONAL_TESTS ]
+if [[ -z $ADDITIONAL_TESTS ]]
 then
     exit 0
 fi
@@ -15,7 +15,7 @@ sudo conda env create -q -p ./testing --file env.yml
 
 PACKAGE_LENGTH=`sudo conda list -p ./testing "^${PACKAGE_NAME}$" --json | jq length`
 
-if [ $PACKAGE_LENGTH -eq 0 ]
+if [[ $PACKAGE_LENGTH -eq 0 ]]
 then
 sudo conda install \
     -p ./testing \
@@ -27,7 +27,7 @@ sudo conda install \
     --override-channels \
     --strict-channel-priority \
     $PACKAGE_NAME
-elif [ $PACKAGE_LENGTH -eq 1 ]
+elif [[ $PACKAGE_LENGTH -eq 1 ]]
 then
 sudo conda update \
     -p ./testing \
