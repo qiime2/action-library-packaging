@@ -2,6 +2,8 @@ const artifact = require('@actions/artifact');
 const glob = require('@actions/glob');
 const core = require('@actions/core');
 
+console.log(process.env);
+
 async function artifactUpload() {
     try {
         const filesGlobber = await glob.create(`${process.env.BUILD_DIR}/*/**`);
