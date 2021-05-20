@@ -45,7 +45,7 @@ runs:
     # - run: ${{ github.action_path }}/bin/build.sh
     #   shell: bash
     # TODO: figure this out...
-    - run: node ${{ github.action_path }}/bin/artifact/script.js
+    - run: node ${{ github.action_path }}/bin/artifact-upload/script.js
       shell: bash
     # TODO: uncomment when done developing
     # - run: ${{ github.action_path }}/bin/testing.sh
