@@ -1,42 +1,3 @@
-import * as temp from 'temp'
-import * as os from 'os'
-
-import * as artifact from '@actions/artifact'
-import * as core from '@actions/core'
-import * as exec from '@actions/exec'
-import * as glob from '@actions/glob'
-import * as io from '@actions/io'
-import * as http from '@actions/http-client'
-
-class ExecOptions {
-  public listeners: object = {}
-}
-
-async function execWrapper(commandLine: string,
-                           args?: string[],
-                           errorMessage?: string) {
-    let output = ''
-    let error = ''
-
-    let options = new ExecOptions
-    options.listeners = {
-      stdout: (data: Buffer) => {
-        output += data.toString().trim()
-      },
-      stderr: (data: Buffer) => {
-        error += data.toString().trim()
-      }
-    }
-
-    const returnCode = await exec.exec(commandLine, args, options)
-
-    if (returnCode != 0) {
-      throw new Error(errorMessage)
-    }
-
-    return output
-}
-
 function getArtifactName(): string {
     let artifactName = ''
     if (os.platform() === 'linux') {
@@ -101,37 +62,6 @@ async function updateLibrary(payload: any) {
 
 async function main(): Promise<void> {
   try {
-    // build //
-    // # run conda-build
-    // sudo conda build \
-    //     -c q2Channel \
-    //     -c conda-forge \
-    //     -c bioconda \
-    //     -c defaults \
-    //     --override-channels \
-    //     --output-folder $BUILD_DIR \
-    //     --no-anaconda-upload \
-    //     $RECIPE_PATH
-
-    const filesGlobber: glob.Globber = await glob.create(`${buildDir}/*/**`)
-    const files: string[] = await filesGlobber.glob()
-
-    const artifactGlobber: glob.Globber = await glob.create(`${buildDir}/*/${packageName}*`)
-    const artifactName: string[] = await artifactGlobber.glob()
-
-    core.info(artifactName[0])
-
-    if (artifactName === null || artifactName.length !== 1) {
-      throw Error(`Error finding base artifactName: ${JSON.stringify(artifactName)}`)
-    }
-
-    const regex: RegExp = new RegExp(`${buildDir}\/(.*?)\/${packageName}`)
-    const arch: RegExpMatchArray | null = artifactName[0].match(regex)
-
-    if (arch === null) {
-      throw Error(`Error finding arch: ${JSON.stringify(arch)}.`)
-    }
-
     // artifact-caching //
     const artifactClient = artifact.create()
     const uploadResult = await artifactClient.uploadArtifact(arch[1], files, buildDir)
