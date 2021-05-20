@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
 set -e
+
+echo "::group::setup.sh"
+
 # update the following at release time
 DEV_CYCLE=2021.8
 REL_CYCLE=2021.4
@@ -17,6 +20,7 @@ case "$RUNNER_OS" in
         ;;
 
     *)
+        # TODO: log error msg
         exit 1
         ;;
 esac
@@ -48,3 +52,5 @@ echo "ENV_URL=$ENV_URL" >> $GITHUB_ENV
 sudo conda upgrade -n base -q -y -c defaults --override-channels conda
 
 sudo conda install -n base -q -y -c defaults --override-channels conda-build conda-verify
+
+echo "::endgroup::"

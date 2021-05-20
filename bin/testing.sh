@@ -4,6 +4,7 @@ set -e
 
 if [[ -z $ADDITIONAL_TESTS ]]
 then
+    # TODO: log msg
     exit 0
 fi
 
@@ -50,6 +51,8 @@ sudo conda update \
     --force-reinstall \
     $PACKAGE_NAME
 else
+    # TODO: log error msg
+    # echo "::error ::Something went wrong"
     exit 1
 fi
 

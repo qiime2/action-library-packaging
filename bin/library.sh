@@ -4,10 +4,12 @@ set -xev
 # todo: uncomment when done developing
 # set -e
 
-if [[ -z $LIBRARY_TOKEN || $GITHUB_EVENT_NAME -eq "pull_request" ]]
-then
-    exit 0
-fi
+# TODO: uncomment
+# if [[ -z $LIBRARY_TOKEN || $GITHUB_EVENT_NAME -eq "pull_request" ]]
+# then
+#     # TODO: log msg
+#     exit 0
+# fi
 
 curl \
   -d "token=$LIBRARY_TOKEN" \
