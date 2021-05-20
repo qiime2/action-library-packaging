@@ -22,6 +22,7 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    # variable setup
     - run: echo "BUILD_DIR=${{ github.workspace }}/built-package" >> $GITHUB_ENV
       shell: bash
     - run: echo "RUNNER_OS=${{ runner.os }}" >> $GITHUB_ENV
@@ -34,8 +35,11 @@ runs:
       shell: bash
     - run: echo "ADDITIONAL_TESTS=${{ inputs.additional-tests }}" >> $GITHUB_ENV
       shell: bash
+    # TODO: is this value masked correctly?
     - run: echo "LIBRARY_TOKEN=${{ inputs.library-token }}" >> $GITHUB_ENV
       shell: bash
+
+    # action steps
     - run: ${{ github.action_path }}/bin/setup.sh
       shell: bash
     - run: ${{ github.action_path }}/bin/build.sh
