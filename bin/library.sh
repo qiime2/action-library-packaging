@@ -11,10 +11,8 @@ set -xev
 #     exit 0
 # fi
 
+# --fail-with-body is what we need, but that version of curl isn't on GH runners, yet
 resp=$(curl \
-  # --fail-with-body is what we need, but it isn't on GH runners, yet
-  # --fail-with-body \
-  --fail \
   --silent \
   --include \
   -data "token=$LIBRARY_TOKEN" \
