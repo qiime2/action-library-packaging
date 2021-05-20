@@ -12,7 +12,7 @@ set -xev
 # fi
 
 curl \
-  --fail \
+  --fail-with-body \
   -d "token=$LIBRARY_TOKEN" \
   -d "version=unknown" \
   -d "package_name=$PACKAGE_NAME" \
