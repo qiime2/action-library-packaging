@@ -100,7 +100,6 @@ typings/
 .dynamodb/
 
 # Temporary folders
-tmp/
 temp/
 
 ### Python ###
