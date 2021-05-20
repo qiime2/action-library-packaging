@@ -2,6 +2,8 @@
 
 set -e
 
+env | sort
+
 echo "::group::setup.sh"
 
 # update the following at release time
