@@ -35,7 +35,6 @@ runs:
       shell: bash
     - run: echo "ADDITIONAL_TESTS=${{ inputs.additional-tests }}" >> $GITHUB_ENV
       shell: bash
-    # TODO: is this value masked correctly?
     - run: echo "LIBRARY_TOKEN=${{ inputs.library-token }}" >> $GITHUB_ENV
       shell: bash
 
@@ -46,8 +45,8 @@ runs:
     # - run: ${{ github.action_path }}/bin/build.sh
     #   shell: bash
     # TODO: figure this out...
-    # - run: ${{ github.action_path }}/bin/upload_artifact.sh
-    #   shell: bash
+    - run: node ${{ github.action_path }}/bin/artifact/script.js
+      shell: bash
     # TODO: uncomment when done developing
     # - run: ${{ github.action_path }}/bin/testing.sh
     #   shell: bash
