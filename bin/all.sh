@@ -15,10 +15,10 @@ export BUILD_DIR=${GITHUB_WORKSPACE}/built-package
 # TODO: When composite actions are supported, replace vars below with
 # Github env vars using input.var syntax
 export RECIPE_PATH="$(env | sed -n 's/^INPUT_RECIPE-PATH=\(.*\)/\1/p')"
-export PACKAGE_NAME="${INPUT_PACKAGE-NAME}"
-export BUILD_TARGET="${INPUT_BUILD-TARGET}"
-export ADDITIONAL_TESTS="${INPUT_ADDITIONAL-TESTS}"
-export LIBRARY_TOKEN="${INPUT_LIBRARY-TOKEN}"
+export PACKAGE_NAME="$(env | sed -n 's/^INPUT_PACKAGE-NAME=\(.*\)/\1/p')"
+export BUILD_TARGET="$(env | sed -n 's/^INPUT_BUILD-TARGET=\(.*\)/\1/p')"
+export ADDITIONAL_TESTS="$(env | sed -n 's/^INPUT_ADDITIONAL-TESTS=\(.*\)/\1/p')"
+export LIBRARY_TOKEN="$(env | sed -n 's/^INPUT_LIBRARY-TOKEN=\(.*\)/\1/p')"
 
 case "$RUNNER_OS" in
     macOS)
@@ -65,6 +65,6 @@ export ENV_URL=${ENV_URL}
 # action steps
 bash bin/setup.sh
 bash bin/build.sh
-node --unhandled-rejections=strict artifact-upload/script.js
+node --unhandled-rejections=strict bin/artifact-upload/script.js
 bash bin/testing.sh
 bash bin/library.sh
