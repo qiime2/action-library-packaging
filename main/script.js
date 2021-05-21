@@ -3,7 +3,7 @@ const core = require('@actions/core');
 
 async function main() {
     try {
-        await exec.exec('bash ../bin/all.sh');
+        await exec.exec('bash ./bin/all.sh');
     } catch (error) {
         core.setFailed(error.message);
     }
