@@ -14,7 +14,7 @@ REL_CYCLE=2021.4
 export BUILD_DIR=${GITHUB_WORKSPACE}/built-package
 # TODO: When composite actions are supported, replace vars below with
 # Github env vars using input.var syntax
-export RECIPE_PATH="${INPUT_RECIPE-PATH}"
+export RECIPE_PATH="$(env | sed -n 's/^INPUT_RECIPE-PATH=\(.*\)/\1/p')"
 export PACKAGE_NAME="${INPUT_PACKAGE-NAME}"
 export BUILD_TARGET="${INPUT_BUILD-TARGET}"
 export ADDITIONAL_TESTS="${INPUT_ADDITIONAL-TESTS}"
