@@ -20,34 +20,5 @@ inputs:
     required: true
     default: ''
 runs:
-  using: 'composite'
-  steps:
-    # variable setup
-    - run: echo "BUILD_DIR=${{ github.workspace }}/built-package" >> $GITHUB_ENV
-      shell: bash
-    - run: echo "RUNNER_OS=${{ runner.os }}" >> $GITHUB_ENV
-      shell: bash
-    - run: echo "RECIPE_PATH=${{ inputs.recipe-path }}" >> $GITHUB_ENV
-      shell: bash
-    - run: echo "PACKAGE_NAME=${{ inputs.package-name }}" >> $GITHUB_ENV
-      shell: bash
-    - run: echo "BUILD_TARGET=${{ inputs.build-target }}" >> $GITHUB_ENV
-      shell: bash
-    - run: echo "ADDITIONAL_TESTS=${{ inputs.additional-tests }}" >> $GITHUB_ENV
-      shell: bash
-    - run: echo "LIBRARY_TOKEN=${{ inputs.library-token }}" >> $GITHUB_ENV
-      shell: bash
-
-    # action steps
-    - run: ${{ github.action_path }}/bin/setup.sh
-      shell: bash
-    - run: ${{ github.action_path }}/bin/build.sh
-      shell: bash
-    - run: node --unhandled-rejections=strict ${{ github.action_path }}/bin/artifact-upload/script.js
-      shell: bash
-    # TODO: uncomment when done developing
-    # - run: ${{ github.action_path }}/bin/testing.sh
-    #   shell: bash
-    # TODO: uncomment when done developing
-    # - run: ${{ github.action_path }}/bin/library.sh
-    #   shell: bash
+  using: 'node12'
+  main: 'main/script.js'

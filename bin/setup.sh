@@ -11,6 +11,22 @@ echo "::group::setup.sh"
 DEV_CYCLE=2021.8
 REL_CYCLE=2021.4
 
+# variable setup
+# - run: echo "BUILD_DIR=${{ github.workspace }}/built-package" >> $GITHUB_ENV
+#     shell: bash
+# - run: echo "RUNNER_OS=${{ runner.os }}" >> $GITHUB_ENV
+#     shell: bash
+# - run: echo "RECIPE_PATH=${{ inputs.recipe-path }}" >> $GITHUB_ENV
+#   shell: bash
+# - run: echo "PACKAGE_NAME=${{ inputs.package-name }}" >> $GITHUB_ENV
+#   shell: bash
+# - run: echo "BUILD_TARGET=${{ inputs.build-target }}" >> $GITHUB_ENV
+#   shell: bash
+# - run: echo "ADDITIONAL_TESTS=${{ inputs.additional-tests }}" >> $GITHUB_ENV
+#   shell: bash
+# - run: echo "LIBRARY_TOKEN=${{ inputs.library-token }}" >> $GITHUB_ENV
+#   shell: bash
+
 case "$RUNNER_OS" in
     macOS)
         echo "ARTIFACT_NAME=osx-64" >> $GITHUB_ENV
