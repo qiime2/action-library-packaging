@@ -11,31 +11,26 @@ echo "::group::setup.sh"
 DEV_CYCLE=2021.8
 REL_CYCLE=2021.4
 
-# variable setup
-# - run: echo "BUILD_DIR=${{ github.workspace }}/built-package" >> $GITHUB_ENV
-#     shell: bash
-# - run: echo "RUNNER_OS=${{ runner.os }}" >> $GITHUB_ENV
-#     shell: bash
-# - run: echo "RECIPE_PATH=${{ inputs.recipe-path }}" >> $GITHUB_ENV
-#   shell: bash
-# - run: echo "PACKAGE_NAME=${{ inputs.package-name }}" >> $GITHUB_ENV
-#   shell: bash
-# - run: echo "BUILD_TARGET=${{ inputs.build-target }}" >> $GITHUB_ENV
-#   shell: bash
-# - run: echo "ADDITIONAL_TESTS=${{ inputs.additional-tests }}" >> $GITHUB_ENV
-#   shell: bash
-# - run: echo "LIBRARY_TOKEN=${{ inputs.library-token }}" >> $GITHUB_ENV
-#   shell: bash
+# TODO: When composite actions are supported, replace vars below with
+# Github env vars using github.workspace and runner.os syntax
+export BUILD_DIR=${GITHUB_WORKSPACE}/built-package
+# TODO: When composite actions are supported, replace vars below with
+# Github env vars using input.var syntax
+export RECIPE_PATH=${INPUT_RECIPE-PATH}
+export PACKAGE_NAME=${INPUT_PACKAGE-NAME}
+export BUILD_TARGET=${INPUT_BUILD-TARGET}
+export ADDITIONAL_TESTS=${INPUT_ADDITIONAL-TESTS}
+export LIBRARY_TOKEN=${INPUT_LIBRARY-TOKEN}
 
 case "$RUNNER_OS" in
     macOS)
-        echo "ARTIFACT_NAME=osx-64" >> $GITHUB_ENV
-        PLATFORM="osx"
+        export ARTIFACT_NAME=osx-64
+        export PLATFORM="osx"
         ;;
 
     Linux)
-        echo "ARTIFACT_NAME=linux-64" >> $GITHUB_ENV
-        PLATFORM="linux"
+        export ARTIFACT_NAME=linux-64
+        export PLATFORM="linux"
         ;;
 
     *)
@@ -65,8 +60,8 @@ case "$BUILD_TARGET" in
         ENV_URL="https://raw.githubusercontent.com/qiime2/environment-files/master/${REL_CYCLE}/release/qiime2-${REL_CYCLE}-py38-${PLATFORM}-conda.yml"
         ;;
 esac
-echo "Q2_CHANNEL=$Q2_CHANNEL" >> $GITHUB_ENV
-echo "ENV_URL=$ENV_URL" >> $GITHUB_ENV
+export Q2_CHANNEL=${Q2_CHANNEL}
+export ENV_URL=${ENV_URL}
 
 sudo conda upgrade -n base -q -y -c defaults --override-channels conda
 
