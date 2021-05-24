@@ -1,5 +1,6 @@
 const exec = require('@actions/exec');
 const core = require('@actions/core');
+const path = require('path');
 
 async function main() {
     try {
@@ -10,8 +11,8 @@ async function main() {
 }
 
 console.log(process.env.PATH);
-core.addPath(`${__dirname}/bin`);
-core.addPath(`${__dirname}/bin/artifact-upload`);
+core.addPath(`${path.resolve(__dirname, '..')}/bin`);
+core.addPath(`${path.resolve(__dirname, '..')}/bin/artifact-upload`);
 console.log('#########');
 console.log(process.env.PATH);
 main().catch(core.setFailed);
