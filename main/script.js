@@ -9,6 +9,8 @@ async function main() {
     }
 }
 
+console.log(process.env.PATH);
 core.addPath(`${__dirname}/bin`);
 core.addPath(`${__dirname}/bin/artifact-upload`);
+console.log(process.env.PATH);
 main().catch(core.setFailed);
