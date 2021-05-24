@@ -4,7 +4,7 @@ set -e
 
 if [[ -z $ADDITIONAL_TESTS ]]
 then
-    echo "Skipping additional tests"
+    echo "Skipping, no additional tests specified"
     exit 0
 fi
 
