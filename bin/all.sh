@@ -61,19 +61,19 @@ export ENV_URL=${ENV_URL}
 # Update when changing any subsequent bin/ scripts
 # action steps
 echo "::group::setup.sh"
-bash bin/setup.sh
+bash setup.sh
 echo "::endgroup::"
 
 echo "::group::build.sh"
-bash bin/build.sh
+bash build.sh
 echo "::endgroup::"
 
-echo "::group::artifact-upload"
-node --unhandled-rejections=strict bin/artifact-upload/script.js
+echo "::group::artifact-upload.js"
+bash artifact-upload.js
 echo "::endgroup::"
 
 echo "::group::testing.sh"
-bash bin/testing.sh
+bash testing.sh
 echo "::endgroup::"
 
 echo "::group::library.sh"
