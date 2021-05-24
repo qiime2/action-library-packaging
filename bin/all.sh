@@ -68,6 +68,7 @@ echo "::group::build.sh"
 bash build.sh
 echo "::endgroup::"
 
+which artifact-upload.js
 echo "::group::artifact-upload.js"
 artifact-upload.js
 echo "::endgroup::"
