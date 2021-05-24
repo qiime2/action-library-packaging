@@ -23,4 +23,3 @@ jobs:
         package-name: q2-nothing-to-see-here
         additional-tests: pytest --pyargs q2_nothing_to_see_here
         build-target: tested
-        library-token: ${{ secrets.LIBRARY_TOKEN }}
