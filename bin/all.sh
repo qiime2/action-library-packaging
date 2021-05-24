@@ -61,14 +61,13 @@ export ENV_URL=${ENV_URL}
 # Update when changing any subsequent bin/ scripts
 # action steps
 echo "::group::setup.sh"
-# bash setup.sh
+bash setup.sh
 echo "::endgroup::"
 
 echo "::group::build.sh"
-# bash build.sh
+bash build.sh
 echo "::endgroup::"
 
-which artifact-upload.js
 echo "::group::artifact-upload.js"
 artifact-upload.js
 echo "::endgroup::"

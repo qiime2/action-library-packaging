@@ -1,4 +1,4 @@
-#!/usr/bin/env node --unhandled-rejections=strict
+#!/usr/bin/env node
 
 const artifact = require('@actions/artifact');
 const glob = require('@actions/glob');
