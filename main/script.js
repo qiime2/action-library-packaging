@@ -4,12 +4,11 @@ const path = require('path');
 
 async function main() {
     try {
-        await exec.exec('bash all.sh');
+        await exec.exec('bash alp-7a862f3805c8-all.sh');
     } catch (error) {
         core.setFailed(error.message);
     }
 }
 
 core.addPath(`${path.resolve(__dirname, '..')}/bin`);
-core.addPath(`${path.resolve(__dirname, '..')}/bin/artifact-upload`);
 main().catch(core.setFailed);
