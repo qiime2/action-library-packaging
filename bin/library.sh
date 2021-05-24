@@ -2,11 +2,9 @@
 
 set -e
 
-echo "::group::library.sh"
-
 if [[ -z $LIBRARY_TOKEN || $GITHUB_EVENT_NAME -eq "pull_request" ]]
 then
-    # TODO: log msg
+    echo "Skipping library upload"
     exit 0
 fi
 
@@ -27,8 +25,7 @@ resp=$(curl \
 code=$(echo $resp | grep HTTP | awk '{print $2}' )
 if [[ $code -ne 200 ]]
 then
+    echo "ERROR: Something went wrong. Unable to upload to library."
     echo $resp
     exit 1
 fi
-
-echo "::endgroup::"

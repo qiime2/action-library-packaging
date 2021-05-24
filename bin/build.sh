@@ -2,8 +2,6 @@
 
 set -e
 
-echo "::group::build.sh"
-
 sudo conda build \
     -c $Q2_CHANNEL \
     -c conda-forge \
@@ -13,5 +11,3 @@ sudo conda build \
     --output-folder $BUILD_DIR \
     --no-anaconda-upload \
     $RECIPE_PATH
-
-echo "::endgroup::"

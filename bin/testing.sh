@@ -2,11 +2,9 @@
 
 set -e
 
-echo "::group::testing.sh"
-
 if [[ -z $ADDITIONAL_TESTS ]]
 then
-    # TODO: log msg
+    echo "Skipping additional tests"
     exit 0
 fi
 
@@ -53,8 +51,7 @@ sudo conda update \
     --force-reinstall \
     $PACKAGE_NAME
 else
-    # TODO: log error msg
-    # echo "::error ::Something went wrong"
+    echo "ERROR: Something went wrong. Testing unsuccessful."
     exit 1
 fi
 
@@ -71,5 +68,3 @@ sudo conda install \
 source "$CONDA/etc/profile.d/conda.sh"
 conda activate ./testing
 $ADDITIONAL_TESTS
-
-echo "::endgroup::"

@@ -2,9 +2,6 @@
 
 set -e
 
-env | sort
-less $GITHUB_ENV
-
 # update the following at release time
 DEV_CYCLE=2021.8
 REL_CYCLE=2021.4
@@ -32,7 +29,7 @@ case "$RUNNER_OS" in
         ;;
 
     *)
-        # TODO: log error msg
+        echo "ERROR: Compatible operating system not found"
         exit 1
         ;;
 esac
@@ -63,8 +60,20 @@ export ENV_URL=${ENV_URL}
 
 # Update when changing any subsequent bin/ scripts
 # action steps
+echo "::group::setup.sh"
 bash bin/setup.sh
+echo "::endgroup::"
+
+echo "::group::build.sh"
 bash bin/build.sh
+echo "::endgroup::"
+
 node --unhandled-rejections=strict bin/artifact-upload/script.js
+
+echo "::group::testing.sh"
 bash bin/testing.sh
+echo "::endgroup::"
+
+echo "::group::library.sh"
 bash bin/library.sh
+echo "::endgroup::"
