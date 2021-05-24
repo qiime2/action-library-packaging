@@ -68,7 +68,9 @@ echo "::group::build.sh"
 bash bin/build.sh
 echo "::endgroup::"
 
+echo "::group::script.js"
 node --unhandled-rejections=strict bin/artifact-upload/script.js
+echo "::endgroup::"
 
 echo "::group::testing.sh"
 bash bin/testing.sh
