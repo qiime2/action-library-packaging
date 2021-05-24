@@ -69,7 +69,7 @@ bash build.sh
 echo "::endgroup::"
 
 echo "::group::artifact-upload.js"
-bash artifact-upload.js
+artifact-upload.js
 echo "::endgroup::"
 
 echo "::group::testing.sh"
