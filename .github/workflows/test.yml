@@ -17,11 +17,9 @@ jobs:
     steps:
     # Need to check the action out locally and build it prior to testing
     - uses: actions/checkout@v2
-    - run: |
-        npm install
-        npm run all
     - uses: ./
       with:
         recipe-path: ./example
         package-name: q2-nothing-to-see-here
         additional-tests: pytest --pyargs q2_nothing_to_see_here
+        build-target: tested
