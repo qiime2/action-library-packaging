@@ -2,9 +2,16 @@
 
 set -e
 
+# debugging
+echo "github event type: $GITHUB_EVENT_NAME"
+if [[ -n $LIBRARY_TOKEN ]]
+then
+  echo "library token is present"
+fi
+
 if [[ -z $LIBRARY_TOKEN || $GITHUB_EVENT_NAME -eq "pull_request" ]]
 then
-    echo "Skipping library upload"
+    echo "Skipping library upload due to missing library token or incorrect github event type"
     exit 0
 fi
 
