@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const artifact = require('@actions/artifact');
 const glob = require('@actions/glob');
 const core = require('@actions/core');
