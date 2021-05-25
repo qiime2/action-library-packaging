@@ -60,22 +60,22 @@ export ENV_URL=${ENV_URL}
 
 # Update when changing any subsequent bin/ scripts
 # action steps
-echo "::group::setup.sh"
-bash ./bin/setup.sh
+echo "::group::setup"
+alp-1c8c84a3-setup.sh
 echo "::endgroup::"
 
-echo "::group::build.sh"
-bash ./bin/build.sh
+echo "::group::build"
+alp-1c8c84a3-build.sh
 echo "::endgroup::"
 
 echo "::group::artifact-upload"
-node --unhandled-rejections=strict ./bin/artifact-upload/script.js
+alp-1c8c84a3-artifact-upload.js
 echo "::endgroup::"
 
-echo "::group::testing.sh"
-bash ./bin/testing.sh
+echo "::group::testing"
+alp-1c8c84a3-testing.sh
 echo "::endgroup::"
 
-echo "::group::library.sh"
-bash ./bin/library.sh
+echo "::group::library"
+alp-1c8c84a3-library.sh
 echo "::endgroup::"
