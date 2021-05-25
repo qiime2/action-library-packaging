@@ -21,5 +21,5 @@ jobs:
       with:
         recipe-path: ./example
         package-name: q2-nothing-to-see-here
-        additional-tests: pytest --pyargs q2_nothing_to_see_here
+        additional-tests: FOO= pytest --pyargs q2_nothing_to_see_here
         build-target: tested
