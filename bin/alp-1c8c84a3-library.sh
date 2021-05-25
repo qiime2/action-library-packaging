@@ -5,7 +5,7 @@ set -e
 echo $LIBRARY_TOKEN
 echo $GITHUB_EVENT_NAME
 
-if [[ -z $LIBRARY_TOKEN ]]
+if [[ -n $LIBRARY_TOKEN ]]
 then
   echo "we have a t rex"
   exit 0
