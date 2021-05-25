@@ -8,6 +8,10 @@ if [[ -n $LIBRARY_TOKEN ]]
 then
   echo "library token is present"
 fi
+if [[ -z $LIBRARY_TOKEN ]]
+then
+  echo "library token is not present"
+fi
 
 if [[ -z $LIBRARY_TOKEN || $GITHUB_EVENT_NAME -eq "pull_request" ]]
 then
