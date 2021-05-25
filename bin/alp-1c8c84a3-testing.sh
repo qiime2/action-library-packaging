@@ -67,4 +67,4 @@ sudo conda install \
 
 source "$CONDA/etc/profile.d/conda.sh"
 conda activate ./testing
-$ADDITIONAL_TESTS
+eval $ADDITIONAL_TESTS
