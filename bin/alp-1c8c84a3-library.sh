@@ -2,28 +2,9 @@
 
 set -e
 
-# debugging
-echo "github event type: $GITHUB_EVENT_NAME"
-if [[ -n $LIBRARY_TOKEN ]]
-then
-  echo "library token is present"
-fi
-if [[ -z $LIBRARY_TOKEN ]]
-then
-  echo "library token is not present"
-fi
-if [[ $GITHUB_EVENT_NAME -eq "pull_request" ]]
-then
-  echo "int comparision: this is the incorrect event type for this script"
-fi
-if [[ $GITHUB_EVENT_NAME == "pull_request" ]]
-then
-  echo "string comparision: this is the incorrect event type for this script"
-fi
-
 if [[ -z $LIBRARY_TOKEN ]] || [[ $GITHUB_EVENT_NAME == "pull_request" ]]
 then
-    echo "Skipping library upload due to missing library token or incorrect github event type"
+    echo "Skipping library upload due to missing Library token or incorrect github event type."
     exit 0
 fi
 
@@ -44,7 +25,9 @@ resp=$(curl \
 code=$(echo $resp | grep HTTP | awk '{print $2}' )
 if [[ $code -ne 200 ]]
 then
-    echo "ERROR: Something went wrong. Unable to upload to library."
+    echo "ERROR: Something went wrong. Unable to upload to Library."
     echo $resp
     exit 1
 fi
+
+echo "Successfully notified Library of this build. q2-congratulations!"
