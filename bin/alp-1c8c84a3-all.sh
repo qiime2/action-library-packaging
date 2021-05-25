@@ -61,19 +61,19 @@ export ENV_URL=${ENV_URL}
 # Update when changing any subsequent bin/ scripts
 # action steps
 echo "::group::setup"
-alp-1c8c84a3-setup.sh
+# alp-1c8c84a3-setup.sh
 echo "::endgroup::"
 
 echo "::group::build"
-alp-1c8c84a3-build.sh
+# alp-1c8c84a3-build.sh
 echo "::endgroup::"
 
 echo "::group::artifact-upload"
-alp-1c8c84a3-artifact-upload.js
+# alp-1c8c84a3-artifact-upload.js
 echo "::endgroup::"
 
 echo "::group::testing"
-alp-1c8c84a3-testing.sh
+# alp-1c8c84a3-testing.sh
 echo "::endgroup::"
 
 echo "::group::library"

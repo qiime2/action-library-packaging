@@ -5,6 +5,12 @@ set -e
 echo $LIBRARY_TOKEN
 echo $GITHUB_EVENT_NAME
 
+if [[ -z $LIBRARY_TOKEN ]]
+then
+  echo "we have a t rex"
+  exit 0
+fi
+
 if [[ -z $LIBRARY_TOKEN || $GITHUB_EVENT_NAME -eq "pull_request" ]]
 then
     echo "Skipping library upload"
