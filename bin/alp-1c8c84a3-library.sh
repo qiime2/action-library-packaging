@@ -13,7 +13,7 @@ then
   echo "library token is not present"
 fi
 
-if [[ -z $LIBRARY_TOKEN || $GITHUB_EVENT_NAME -eq "pull_request" ]]
+if [[ -z $LIBRARY_TOKEN ]] || [[ $GITHUB_EVENT_NAME -eq "pull_request" ]]
 then
     echo "Skipping library upload due to missing library token or incorrect github event type"
     exit 0
