@@ -1,0 +1,20 @@
+version: 1
+name: q2-cutadapt
+type: plugin
+build:
+  command: make install
+requirements:
+  qiime2:
+    - qiime2
+    - q2-types
+  anaconda:
+    - cutadapt >=3
+    - pandas {{ pandas }}
+    - numpy {{ numpy }}
+    - pigz
+test:
+  imports:
+    - q2_cutadapt
+    - from qiime2.plugins import cutadapt
+  commands:
+    - pytest -k q2_cutadapt
