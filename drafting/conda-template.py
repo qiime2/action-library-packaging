@@ -8,6 +8,7 @@
 import yaml
 import os
 import sys
+from jinja2 import Template
 
 if __name__ == '__main__':
     # Reading the qiime2 recipe file
@@ -27,66 +28,78 @@ if __name__ == '__main__':
     if os.path.exists(filepath):
         raise FileExistsError('Invalid filename. Recipe file already exists.')
 
-    # Extracting the necessary key pairs from the qiime2 recipe
-    name = parsed_recipe['name']
-    version = parsed_recipe['version']
-    build_command = parsed_recipe['build']
-    script = build_command.get('command')
-    run_reqs = parsed_recipe['requirements']
-    qiime_run_reqs = run_reqs.get('qiime2')
-    anaconda_run_reqs = run_reqs.get('anaconda')
-    qiime2_test = parsed_recipe['test']
-    imports = qiime2_test.get('imports')
-    commands = qiime2_test.get('commands')
+    # Accessing jinja template with recipe key pairs
+    with open('jinja-template.j2') as file:
+        template = Template(file.read())
 
-    # PACKAGE
-    package = {
-        'package': {
-            'name': name,
-            'version': version
-        }
-    }
-    # SOURCE
-    source = {
-        'source': {
-            'path': '.'
-        }
-    }
-    # BUILD
-    build = {
-        'build': {
-            'script': script
-        }
-    }
-    # REQUIREMENTS
-    host = [
-        'python {{ python }}',
-        'setuptools {{ setuptools }}'
-    ]
-    run = [
-        'python {{ python }}',
-        qiime_run_reqs,
-        anaconda_run_reqs
-    ]
-    reqs = {
-        'requirements': {
-            'host': host,
-            'run': run
-        }
-    }
-    # TEST
-    test = {
-        'test': {
-            'imports': imports,
-            'commands': commands
-        }
-    }
+    for recipe in parsed_recipe['parsed_recipe']:
+        recipe_reqs = template.render(package=parsed_recipe['package'],build=parsed_recipe['build'],
+        requirements=parsed_recipe['requirements'],test=parsed_recipe['test'])
 
-    # Opening and writing to new conda recipe file
-    recipe_reqs = [package, source, build, reqs, test]
     conda_recipe = open(filepath, 'w')
     yaml.dump(recipe_reqs, conda_recipe)
     conda_recipe.close
+
+    # # Extracting the necessary key pairs from the qiime2 recipe
+    # name = parsed_recipe['name']
+    # version = parsed_recipe['version']
+    # build_command = parsed_recipe['build']
+    # script = build_command.get('command')
+    # run_reqs = parsed_recipe['requirements']
+    # qiime_run_reqs = run_reqs.get('qiime2')
+    # anaconda_run_reqs = run_reqs.get('anaconda')
+    # qiime2_test = parsed_recipe['test']
+    # imports = qiime2_test.get('imports')
+    # commands = qiime2_test.get('commands')
+
+    # # PACKAGE
+    # package = {
+    #     'package': {
+    #         'name': name,
+    #         'version': version
+    #     }
+    # }
+    # # SOURCE
+    # source = {
+    #     'source': {
+    #         'path': '.'
+    #     }
+    # }
+    # # BUILD
+    # build = {
+    #     'build': {
+    #         'script': script
+    #     }
+    # }
+    # # REQUIREMENTS
+    # host = [
+    #     'python {{ python }}',
+    #     'setuptools {{ setuptools }}'
+    # ]
+    # run = [
+    #     'python {{ python }}',
+    #     qiime_run_reqs,
+    #     anaconda_run_reqs
+    # ]
+    # reqs = {
+    #     'requirements': {
+    #         'host': host,
+    #         'run': run
+    #     }
+    # }
+    # # TEST
+    # test = {
+    #     'test': {
+    #         'imports': imports,
+    #         'commands': commands
+    #     }
+    # }
+
+    # # Opening and writing to new conda recipe file
+    # recipe_reqs = [package, source, build, reqs, test]
+    # conda_recipe = open(filepath, 'w')
+    # yaml.dump(recipe_reqs, conda_recipe)
+    # conda_recipe.close
 
     # ABOUT
         # TODO: figure out how to pull this from the actual plugin
