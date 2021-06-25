@@ -9,15 +9,15 @@ source:
 build:
     script: {{ bld.command }}
 {% endfor -%}
-{% for rq in requirements -%}
+{% for req in requirements -%}
 requirements:
     host:
         - python {{ python }}
         - setuptools {{ setuptools }}
     run:
         - python {{ python }}
-        #TODO: q2 run reqs
-        #TODO: anaconda run reqs
+        {{ req.qiime2 }}
+        {{ req.anaconda }}
 {% endfor -%}
 {% for tst in test -%}
 test:
