@@ -11,18 +11,21 @@ import sys
 
 if __name__ == '__main__':
     # Reading the qiime2 recipe file
-    qiime2_recipe = sys.argv[1]
-    if sys.argv[1] == None:
-        raise ValueError('Missing required parameter. QIIME 2 recipe filepath must be provided.')
-
+    try:
+        qiime2_recipe = sys.argv[1]
+    except:
+        print('ArgumentError: Missing required parameter. QIIME 2 recipe filepath must be provided.')
+        sys.exit(1)
+    
     with open(qiime2_recipe) as qiime2_recipe:
         parsed_recipe = yaml.load(qiime2_recipe, Loader=yaml.FullLoader)
 
-    filepath = sys.argv[2]
-    if sys.argv[2] == None:
-        raise ValueError('Missing required parameter. conda recipe filename must be provided.')
-
-
+    try:
+        filepath = sys.argv[2]
+    except:
+        print('ArgumentError: Missing required parameter. conda recipe filename must be provided.')
+        sys.exit(1)
+    
     if os.path.exists(filepath):
         raise FileExistsError('Invalid filename. Recipe file already exists.')
 
