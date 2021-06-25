@@ -1,0 +1,27 @@
+{% for pkg in package -%}
+package:
+    name: {{ pkg.name }}
+    version: {{ pkg.version }}
+{% endfor -%}
+source:
+    path: .
+{% for bld in build -%}
+build:
+    script: {{ bld.command }}
+{% endfor -%}
+{% for rq in requirements -%}
+requirements:
+    host:
+        - python {{ python }}
+        - setuptools {{ setuptools }}
+    run:
+        - python {{ python }}
+        #TODO: q2 run reqs
+        #TODO: anaconda run reqs
+{% endfor -%}
+{% for tst in test -%}
+test:
+    imports: {{ tst.imports }}
+    commands: {{ tst.commands }}
+{% endfor -%}
+#TODO: about segment from plugin
