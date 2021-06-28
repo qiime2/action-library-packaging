@@ -32,13 +32,18 @@ if __name__ == '__main__':
     with open('jinja-template.j2') as file:
         template = Template(file.read())
 
-    for recipe in parsed_recipe['parsed_recipe']:
-        recipe_reqs = template.render(package=parsed_recipe['package'],build=parsed_recipe['build'],
-        requirements=parsed_recipe['requirements'],test=parsed_recipe['test'])
-
+    recipe_reqs = template.render(parsed_recipe)
     conda_recipe = open(filepath, 'w')
     yaml.dump(recipe_reqs, conda_recipe)
     conda_recipe.close
+
+    # for recipe in parsed_recipe['parsed_recipe']:
+    #     recipe_reqs = template.render(package=parsed_recipe['package'],build=parsed_recipe['build'],
+    #     requirements=parsed_recipe['requirements'],test=parsed_recipe['test'])
+
+    # conda_recipe = open(filepath, 'w')
+    # yaml.dump(recipe_reqs, conda_recipe)
+    # conda_recipe.close
 
     # # Extracting the necessary key pairs from the qiime2 recipe
     # name = parsed_recipe['name']
