@@ -33,78 +33,9 @@ if __name__ == '__main__':
         template = Template(file.read())
 
     recipe_reqs = template.render(parsed_recipe)
+    # print(recipe_reqs)
     conda_recipe = open(filepath, 'w')
     yaml.dump(recipe_reqs, conda_recipe)
     conda_recipe.close
 
-    # for recipe in parsed_recipe['parsed_recipe']:
-    #     recipe_reqs = template.render(package=parsed_recipe['package'],build=parsed_recipe['build'],
-    #     requirements=parsed_recipe['requirements'],test=parsed_recipe['test'])
-
-    # conda_recipe = open(filepath, 'w')
-    # yaml.dump(recipe_reqs, conda_recipe)
-    # conda_recipe.close
-
-    # # Extracting the necessary key pairs from the qiime2 recipe
-    # name = parsed_recipe['name']
-    # version = parsed_recipe['version']
-    # build_command = parsed_recipe['build']
-    # script = build_command.get('command')
-    # run_reqs = parsed_recipe['requirements']
-    # qiime_run_reqs = run_reqs.get('qiime2')
-    # anaconda_run_reqs = run_reqs.get('anaconda')
-    # qiime2_test = parsed_recipe['test']
-    # imports = qiime2_test.get('imports')
-    # commands = qiime2_test.get('commands')
-
-    # # PACKAGE
-    # package = {
-    #     'package': {
-    #         'name': name,
-    #         'version': version
-    #     }
-    # }
-    # # SOURCE
-    # source = {
-    #     'source': {
-    #         'path': '.'
-    #     }
-    # }
-    # # BUILD
-    # build = {
-    #     'build': {
-    #         'script': script
-    #     }
-    # }
-    # # REQUIREMENTS
-    # host = [
-    #     'python {{ python }}',
-    #     'setuptools {{ setuptools }}'
-    # ]
-    # run = [
-    #     'python {{ python }}',
-    #     qiime_run_reqs,
-    #     anaconda_run_reqs
-    # ]
-    # reqs = {
-    #     'requirements': {
-    #         'host': host,
-    #         'run': run
-    #     }
-    # }
-    # # TEST
-    # test = {
-    #     'test': {
-    #         'imports': imports,
-    #         'commands': commands
-    #     }
-    # }
-
-    # # Opening and writing to new conda recipe file
-    # recipe_reqs = [package, source, build, reqs, test]
-    # conda_recipe = open(filepath, 'w')
-    # yaml.dump(recipe_reqs, conda_recipe)
-    # conda_recipe.close
-
-    # ABOUT
-        # TODO: figure out how to pull this from the actual plugin
+    #TODO: add ABOUT segment from plugin into jinja template
