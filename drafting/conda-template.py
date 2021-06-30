@@ -33,9 +33,8 @@ if __name__ == '__main__':
         template = Template(fh.read())
 
     recipe_reqs = template.render(parsed_recipe)
-    
+
     with open(filepath, 'w') as fh:
         fh.write(recipe_reqs)
-        fh.close
 
 #TODO: add ABOUT segment from plugin into jinja template
