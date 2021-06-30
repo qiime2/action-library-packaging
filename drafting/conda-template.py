@@ -17,8 +17,8 @@ if __name__ == '__main__':
     except:
         raise ValueError('Missing required parameter. QIIME 2 recipe filepath must be provided.')
     
-    with open(qiime2_recipe) as qiime2_recipe:
-        parsed_recipe = yaml.load(qiime2_recipe, Loader=yaml.FullLoader)
+    with open(qiime2_recipe) as fh:
+        parsed_recipe = yaml.load(fh, Loader=yaml.FullLoader)
 
     try:
         filepath = sys.argv[2]
@@ -29,13 +29,13 @@ if __name__ == '__main__':
         raise FileExistsError('Invalid filename. Recipe file already exists.')
 
     # Accessing jinja template with recipe key pairs
-    with open('jinja-template.j2') as file:
-        template = Template(file.read())
+    with open('jinja-template.j2') as fh:
+        template = Template(fh.read())
 
     recipe_reqs = template.render(parsed_recipe)
-    # print(recipe_reqs)
-    conda_recipe = open(filepath, 'w')
-    yaml.dump(recipe_reqs, conda_recipe)
-    conda_recipe.close
+    
+    with open(filepath, 'w') as fh:
+        fh.write(recipe_reqs)
+        fh.close
 
-    #TODO: add ABOUT segment from plugin into jinja template
+#TODO: add ABOUT segment from plugin into jinja template
