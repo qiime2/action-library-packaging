@@ -7,7 +7,7 @@ PACKAGE_VERSION=$(sudo conda search \
     -c $BUILD_DIR \
     $PACKAGE_NAME \
     --json | \
-    jq '.\"[${PACKAGE_NAME}]\"[0].version')
+    jq --arg PKG=$PACKAGE_NAME '.\"$PKG\"[0].version')
 
 # TODO: remove these debugging statements
 echo $PACKAGE_VERSION
