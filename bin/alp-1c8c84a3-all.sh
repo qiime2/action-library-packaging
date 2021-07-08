@@ -68,6 +68,11 @@ echo "::group::build"
 alp-1c8c84a3-build.sh
 echo "::endgroup::"
 
+# TODO: remove when done debugging
+echo "::group::debug-env"
+env
+echo "::endgroup::"
+
 echo "::group::artifact-upload"
 alp-1c8c84a3-artifact-upload.js
 echo "::endgroup::"

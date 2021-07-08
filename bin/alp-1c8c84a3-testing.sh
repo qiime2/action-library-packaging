@@ -12,7 +12,7 @@ wget -O env.yml $ENV_URL
 
 sudo conda env create -q -p ./testing --file env.yml
 
-PACKAGE_LENGTH=`sudo conda list -p ./testing "^${PACKAGE_NAME}$" --json | jq length`
+PACKAGE_LENGTH=$(sudo conda list -p ./testing "^${PACKAGE_NAME}$" --json | jq length)
 
 if [[ $PACKAGE_LENGTH -eq 0 ]]
 then

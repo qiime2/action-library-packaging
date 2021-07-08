@@ -13,7 +13,7 @@ resp=$(curl \
   --silent \
   --include \
   --data "token=$LIBRARY_TOKEN" \
-  --data "version=unknown" \
+  --data "version=$PACKAGE_VERSION" \
   --data "package_name=$PACKAGE_NAME" \
   --data "repository=$GITHUB_REPOSITORY" \
   --data "run_id=$GITHUB_RUN_ID" \

@@ -11,3 +11,9 @@ sudo conda build \
     --output-folder $BUILD_DIR \
     --no-anaconda-upload \
     $RECIPE_PATH
+
+export PACKAGE_VERSION=$(conda search \
+    -c $BUILD_DIR \
+    $PACKAGE_NAME \
+    --json | \
+    jq '."$PACKAGE_NAME"[0].version')
