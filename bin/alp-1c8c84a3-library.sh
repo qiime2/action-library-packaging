@@ -7,7 +7,7 @@ PACKAGE_VERSION=$(conda search \
     -c $BUILD_DIR \
     $PACKAGE_NAME \
     --json | \
-    jq '."$PACKAGE_NAME"[0].version')
+    jq '."${PACKAGE_NAME}"[0].version')
 
 # TODO: remove this debugging statement
 echo $PACKAGE_VERSION
