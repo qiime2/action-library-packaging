@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -ex
 
 # TODO: move this below the guard when done testing
 PACKAGE_VERSION=$(conda search \
@@ -9,8 +9,19 @@ PACKAGE_VERSION=$(conda search \
     --json | \
     jq '."${PACKAGE_NAME}"[0].version')
 
-# TODO: remove this debugging statement
+# TODO: remove these debugging statements
 echo $PACKAGE_VERSION
+conda search \
+    -c $BUILD_DIR \
+    $PACKAGE_NAME \
+    --json
+conda search \
+    -c $BUILD_DIR \
+    $PACKAGE_NAME \
+    --json | \
+    jq '."${PACKAGE_NAME}"[0].version'
+echo '."${PACKAGE_NAME}"[0].version'
+echo '."$PACKAGE_NAME"[0].version'
 
 if [[ -z $LIBRARY_TOKEN ]] || [[ $GITHUB_EVENT_NAME == "pull_request" ]]
 then
