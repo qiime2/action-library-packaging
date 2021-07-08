@@ -2,21 +2,17 @@
 
 set -ex
 
-# TODO: move this below the guard when done testing
-PACKAGE_VERSION=$(sudo conda search \
-    -c $BUILD_DIR \
-    $PACKAGE_NAME \
-    --json | \
-    jq --arg PKG "$PACKAGE_NAME" '.[$PKG][0].version')
-
-# TODO: remove these debugging statements
-echo $PACKAGE_VERSION
-
 if [[ -z $LIBRARY_TOKEN ]] || [[ $GITHUB_EVENT_NAME == "pull_request" ]]
 then
     echo "Skipping library upload due to missing Library token or incorrect github event type."
     exit 0
 fi
+
+PACKAGE_VERSION=$(sudo conda search \
+    -c $BUILD_DIR \
+    $PACKAGE_NAME \
+    --json | \
+    jq --arg PKG "$PACKAGE_NAME" '.[$PKG][0].version')
 
 # --fail-with-body is what we need, but that version of curl isn't on GH runners, yet
 resp=$(curl \
