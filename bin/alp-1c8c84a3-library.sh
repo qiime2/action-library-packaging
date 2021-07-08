@@ -2,6 +2,16 @@
 
 set -e
 
+# TODO: move this below the guard when done testing
+PACKAGE_VERSION=$(conda search \
+    -c $BUILD_DIR \
+    $PACKAGE_NAME \
+    --json | \
+    jq '."$PACKAGE_NAME"[0].version')
+
+# TODO: remove this debugging statement
+env | sort
+
 if [[ -z $LIBRARY_TOKEN ]] || [[ $GITHUB_EVENT_NAME == "pull_request" ]]
 then
     echo "Skipping library upload due to missing Library token or incorrect github event type."
