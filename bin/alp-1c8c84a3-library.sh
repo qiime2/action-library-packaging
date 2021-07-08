@@ -7,7 +7,7 @@ PACKAGE_VERSION=$(conda search \
     -c $BUILD_DIR \
     $PACKAGE_NAME \
     --json | \
-    jq '."${PACKAGE_NAME}"[0].version')
+    jq '.\"${PACKAGE_NAME}\"[0].version')
 
 # TODO: remove these debugging statements
 echo $PACKAGE_VERSION
@@ -19,9 +19,9 @@ conda search \
     -c $BUILD_DIR \
     $PACKAGE_NAME \
     --json | \
-    jq '."${PACKAGE_NAME}"[0].version'
-echo '."${PACKAGE_NAME}"[0].version'
-echo '."$PACKAGE_NAME"[0].version'
+    jq '."\${PACKAGE_NAME}\"[0].version'
+echo '.\"${PACKAGE_NAME}\"[0].version'
+echo '.\"$PACKAGE_NAME\"[0].version'
 
 if [[ -z $LIBRARY_TOKEN ]] || [[ $GITHUB_EVENT_NAME == "pull_request" ]]
 then
