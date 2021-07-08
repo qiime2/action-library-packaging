@@ -10,7 +10,7 @@ PACKAGE_VERSION=$(conda search \
     jq '."$PACKAGE_NAME"[0].version')
 
 # TODO: remove this debugging statement
-env | sort
+echo $PACKAGE_VERSION
 
 if [[ -z $LIBRARY_TOKEN ]] || [[ $GITHUB_EVENT_NAME == "pull_request" ]]
 then
