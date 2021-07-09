@@ -3,12 +3,12 @@
 set -ex
 
 cbc_fp="${RECIPE_PATH}/conda_build_config.yaml"
-if [ -e "${cbc_file}" ]
+if [ -e "${cbc_fp}" ]
 then
-    echo "WARNING: overwriting existing ${cbc_file}"
+    echo "WARNING: overwriting existing ${cbc_fp}"
 fi
 
-wget -O "${cbc_file}" "${CBC_URL}"
+wget -O "${cbc_fp}" "${CBC_URL}"
 
 additional_tests_fp="${GITHUB_WORKSPACE}/additional_tests.yaml"
 touch $additional_tests_fp
