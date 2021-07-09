@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 
-set -e
+set -ex
 
 cbc_fp="${RECIPE_PATH}/conda_build_config.yaml"
 if [ -e $cbc_file ]
 then
     echo "WARNING: overwriting existing ${cbc_file}"
 fi
+
+echo $CBC_URL
+echo $cbc_fp
 wget -O $cbc_file $CBC_URL
 
 additional_tests_fp="${GITHUB_WORKSPACE}/additional_tests.yaml"
