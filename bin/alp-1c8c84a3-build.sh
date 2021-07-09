@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# TODO: drop x flag
 set -ex
 
 cbc_fp="${RECIPE_PATH}/conda_build_config.yaml"
@@ -19,6 +20,8 @@ else
     echo "test:\n  commands:\n    - ${ADDITIONAL_TESTS}\n" >> $additional_tests_fp
 fi
 
+cat $additional_tests_fp
+
 sudo conda build \
     -c $Q2_CHANNEL \
     -c conda-forge \
@@ -27,6 +30,5 @@ sudo conda build \
     --override-channels \
     --output-folder $BUILD_DIR \
     --no-anaconda-upload \
+    --append-file $additional_tests_fp \
     $RECIPE_PATH
-
-# --append-file $additional_tests_fp \
