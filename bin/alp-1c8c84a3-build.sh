@@ -27,5 +27,6 @@ sudo conda build \
     --override-channels \
     --output-folder $BUILD_DIR \
     --no-anaconda-upload \
-    --append-file $additional_tests_fp \
     $RECIPE_PATH
+
+# --append-file $additional_tests_fp \
