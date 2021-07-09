@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -ex
+set -e
 
 if [[ -z $LIBRARY_TOKEN ]] || [[ $GITHUB_EVENT_NAME == "pull_request" ]]
 then
@@ -8,7 +8,7 @@ then
     exit 0
 fi
 
-PACKAGE_VERSION=$(sudo conda search \
+package_version=$(sudo conda search \
     -c $BUILD_DIR \
     $PACKAGE_NAME \
     --json | \
@@ -19,11 +19,12 @@ resp=$(curl \
   --silent \
   --include \
   --data "token=$LIBRARY_TOKEN" \
-  --data "version=$PACKAGE_VERSION" \
+  --data "version=$package_version" \
   --data "package_name=$PACKAGE_NAME" \
   --data "repository=$GITHUB_REPOSITORY" \
   --data "run_id=$GITHUB_RUN_ID" \
   --data "artifact_name=$ARTIFACT_NAME" \
+  --data "dev_mode=True" \
   --header "Content-Type: application/x-www-form-urlencoded" \
   --request POST https://library.qiime2.org/api/v1/packages/integrate/
 )
