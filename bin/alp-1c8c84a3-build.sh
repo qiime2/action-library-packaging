@@ -17,7 +17,7 @@ if [[ -z $ADDITIONAL_TESTS ]]
 then
     echo "No additional tests specified"
 else
-    echo "test:\n  commands:\n    - ${ADDITIONAL_TESTS}\n" >> $additional_tests_fp
+    printf "test:\n  commands:\n    - ${ADDITIONAL_TESTS}\n" >> $additional_tests_fp
 fi
 
 cat $additional_tests_fp
