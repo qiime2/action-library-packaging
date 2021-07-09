@@ -3,7 +3,7 @@
 set -ex
 
 cbc_fp="${RECIPE_PATH}/conda_build_config.yaml"
-if [ -e $cbc_file ]
+if [ -e "${cbc_file}" ]
 then
     echo "WARNING: overwriting existing ${cbc_file}"
 fi
