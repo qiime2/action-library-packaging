@@ -10,14 +10,14 @@ import os
 import sys
 from jinja2 import Template
 
-def validate_params(qiime2_recipe, filepath):
+def validate_params(cli_args):
     try:
-        qiime2_recipe
+        qiime2_recipe = cli_args[1]
     except:
         raise ValueError('Missing required parameter. QIIME 2 recipe filepath must be provided.')
 
     try:
-        filepath
+        filepath = cli_args[2]
     except:
         raise ValueError('Missing required parameter. conda recipe filename must be provided.')
     
@@ -32,21 +32,20 @@ def _yaml_parsing(qiime2_recipe):
 
     return parsed_recipe
 
-def write_recipe(j2, filepath):
+def write_recipe(j2, filepath, parsed_recipe):
     with open(j2) as fh:
         template = Template(fh.read())
 
-    recipe_reqs = template.render(_yaml_parsing(qiime2_recipe))
+    recipe_reqs = template.render(parsed_recipe)
 
     with open(filepath, 'w') as fh:
         fh.write(recipe_reqs)
 
-if __name__ == '__main__':   
-    qiime2_recipe = sys.argv[1]
-    filepath = sys.argv[2]
-    j2 = 'jinja-template.j2'
+if __name__ == '__main__':
 
-    validate_params(qiime2_recipe, filepath)
-    write_recipe(j2, filepath)
+    j2 = 'jinja-template.j2'
+    input_fp, output_fp = validate_params(sys.argv)
+    parsed_recipe = _yaml_parsing(input_fp)
+    write_recipe(j2, output_fp, parsed_recipe)
 
 #TODO: add ABOUT segment from plugin into jinja template
