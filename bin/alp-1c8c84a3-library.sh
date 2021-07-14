@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -ex
+set -e
 
 if [[ -z $LIBRARY_TOKEN ]] || [[ $GITHUB_EVENT_NAME == "pull_request" ]]
 then
@@ -12,7 +12,7 @@ package_version=$(sudo conda search \
     -c $BUILD_DIR \
     $PACKAGE_NAME \
     --json | \
-    jq --arg PKG "$PACKAGE_NAME" '.[$PKG][0].version')
+    jq --arg PKG "$PACKAGE_NAME" -r '.[$PKG][0].version')
 
 # --fail-with-body is what we need, but that version of curl isn't on GH runners, yet
 resp=$(curl \
