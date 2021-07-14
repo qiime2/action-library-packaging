@@ -13,7 +13,7 @@ inputs:
     required: true
     default: 'release'
   additional-tests:
-    description: 'Additional tests to run post-build'
+    description: 'Additional tests to run during package building'
     required: false
   library-token:
     description: 'A package token from library.qiime2.org. Required to upload built packages.'
