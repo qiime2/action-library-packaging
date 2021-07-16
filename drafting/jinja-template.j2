@@ -13,6 +13,12 @@ requirements:
         - python {{ python }}
         {{ requirements.qiime2 }}
         {{ requirements.anaconda }}
+{% if test.imports or test.commands -%}
 test:
+    {%- if test.imports -%}
     imports: {{ test.imports }}
+    {%- endif %}
+    {% if test.commands -%}
     commands: {{ test.commands }}
+    {%- endif %}
+{%- endif %}
