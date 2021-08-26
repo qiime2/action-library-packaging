@@ -22,5 +22,7 @@ requirements:
     - qiime2
 
 test:
+  requires:
+    - pytest
   imports:
     - qiime2.plugins.nothing_to_see_here

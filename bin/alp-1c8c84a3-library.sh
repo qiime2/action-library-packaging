@@ -8,16 +8,22 @@ then
     exit 0
 fi
 
+package_version=$(sudo conda search \
+    -c $BUILD_DIR \
+    $PACKAGE_NAME \
+    --json | \
+    jq --arg PKG "$PACKAGE_NAME" -r '.[$PKG][0].version')
+
 # --fail-with-body is what we need, but that version of curl isn't on GH runners, yet
 resp=$(curl \
   --silent \
   --include \
-  --data "token=$LIBRARY_TOKEN" \
-  --data "version=unknown" \
-  --data "package_name=$PACKAGE_NAME" \
-  --data "repository=$GITHUB_REPOSITORY" \
-  --data "run_id=$GITHUB_RUN_ID" \
-  --data "artifact_name=$ARTIFACT_NAME" \
+  --data token=$LIBRARY_TOKEN \
+  --data version=$package_version \
+  --data package_name=$PACKAGE_NAME \
+  --data repository=$GITHUB_REPOSITORY \
+  --data run_id=$GITHUB_RUN_ID \
+  --data artifact_name=$ARTIFACT_NAME \
   --header "Content-Type: application/x-www-form-urlencoded" \
   --request POST https://library.qiime2.org/api/v1/packages/integrate/
 )
