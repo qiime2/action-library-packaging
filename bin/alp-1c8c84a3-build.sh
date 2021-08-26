@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-# TODO: drop x flag
-set -ex
+set -e
 
 cbc_fp="${RECIPE_PATH}/conda_build_config.yaml"
 if [ -e "${cbc_fp}" ]
@@ -19,8 +18,6 @@ then
 else
     printf "test:\n  commands:\n    - ${ADDITIONAL_TESTS}\n" >> $additional_tests_fp
 fi
-
-cat $additional_tests_fp
 
 sudo conda build \
     -c $Q2_CHANNEL \
