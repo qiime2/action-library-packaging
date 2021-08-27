@@ -20,7 +20,7 @@ resp=$(curl \
   --silent \
   --include \
   --data "token=$LIBRARY_TOKEN" \
-  --data "version=$package_version" \
+  --data-urlencode "version=$package_version" \
   --data "package_name=$PACKAGE_NAME" \
   --data "repository=$GITHUB_REPOSITORY" \
   --data "run_id=$GITHUB_RUN_ID" \
