@@ -5,8 +5,8 @@ set -e
 # lowercase variables are local to the script, uppercase variables are global
 
 # update the following at release time
-dev_cycle=2021.8
-rel_cycle=2021.4
+dev_cycle=2021.10
+rel_cycle=2021.8
 
 export BUILD_DIR="${GITHUB_WORKSPACE}/built-package"
 # TODO: When composite actions are supported, replace vars below with
