@@ -28,4 +28,5 @@ sudo conda build \
     --output-folder $BUILD_DIR \
     --no-anaconda-upload \
     --append-file $additional_tests_fp \
+    --old-build-string \
     $RECIPE_PATH
