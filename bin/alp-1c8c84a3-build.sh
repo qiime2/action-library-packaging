@@ -19,7 +19,7 @@ else
     printf "test:\n  commands:\n    - ${ADDITIONAL_TESTS}\n" >> $additional_tests_fp
 fi
 
-sudo conda build \
+sudo conda mambabuild \
     -c $Q2_CHANNEL \
     -c conda-forge \
     -c bioconda \
