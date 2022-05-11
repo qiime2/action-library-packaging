@@ -25,6 +25,7 @@ resp=$(curl \
   --data "repository=$GITHUB_REPOSITORY" \
   --data "run_id=$GITHUB_RUN_ID" \
   --data "artifact_name=$ARTIFACT_NAME" \
+  --data "build_target=$BUILD_TARGET" \
   --header "Content-Type: application/x-www-form-urlencoded" \
   --request POST https://library.qiime2.org/api/v1/packages/integrate/
 )
