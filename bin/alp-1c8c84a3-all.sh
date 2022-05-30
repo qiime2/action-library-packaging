@@ -7,6 +7,7 @@ set -e
 # update the following at release time
 dev_cycle=2022.4
 rel_cycle=2022.2
+distro=core
 
 export BUILD_DIR="${GITHUB_WORKSPACE}/built-package"
 # TODO: When composite actions are supported, replace vars below with
@@ -41,7 +42,7 @@ case "$BUILD_TARGET" in
         ;;
 
     release)
-        export Q2_CHANNEL="qiime2/label/r${rel_cycle}"
+        export Q2_CHANNEL="https://packages.qiime2.org/qiime2/${rel_cycle}/passed/${distro}"
         export CBC_URL="https://raw.githubusercontent.com/qiime2/package-integration/main/${rel_cycle}/tested/conda_build_config.yaml"
         ;;
 
