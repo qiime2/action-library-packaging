@@ -2,14 +2,6 @@
 
 set -e
 
-sudo conda upgrade \
-  -n base \
-  -q \
-  -y \
-  -c defaults \
-  --override-channels \
-  conda
-
 sudo conda install \
   -n base \
   -q \
@@ -20,3 +12,11 @@ sudo conda install \
   boa \
   conda-build \
   conda-verify
+
+sudo conda upgrade \
+  -n base \
+  -q \
+  -y \
+  -c defaults \
+  --override-channels \
+  conda
