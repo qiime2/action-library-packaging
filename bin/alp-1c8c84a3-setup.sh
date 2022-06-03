@@ -9,7 +9,7 @@ sudo conda install \
   -c conda-forge \
   -c defaults \
   --override-channels \
-  conda
+  conda \
   boa \
   conda-build \
   conda-verify
