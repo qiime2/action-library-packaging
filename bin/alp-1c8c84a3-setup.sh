@@ -9,6 +9,7 @@ sudo conda install \
   -c conda-forge \
   -c defaults \
   --override-channels \
+  --update-all \
   conda \
   boa \
   conda-build \
