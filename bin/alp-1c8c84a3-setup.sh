@@ -9,14 +9,8 @@ sudo conda install \
   -c conda-forge \
   -c defaults \
   --override-channels \
+  --update-all \
+  conda \
   boa \
   conda-build \
   conda-verify
-
-sudo conda upgrade \
-  -n base \
-  -q \
-  -y \
-  -c defaults \
-  --override-channels \
-  conda
