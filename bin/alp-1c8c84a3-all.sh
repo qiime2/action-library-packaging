@@ -5,7 +5,7 @@ set -e
 # lowercase variables are local to the script, uppercase variables are global
 
 # update the following at release time
-dev_cycle=2022.4
+dev_cycle=2022.8
 rel_cycle=2022.2
 distro=core
 
