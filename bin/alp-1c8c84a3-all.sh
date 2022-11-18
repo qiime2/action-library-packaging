@@ -37,7 +37,7 @@ esac
 
 case "$BUILD_TARGET" in
     dev)
-        export Q2_CHANNEL="https://packages.qiime2.org/qiime2/${dev_cycle}/tested"
+        export Q2_CHANNEL="https://packages.qiime2.org/qiime2/${dev_cycle}/staged/${distro}"
         export CBC_URL="https://raw.githubusercontent.com/qiime2/package-integration/main/${dev_cycle}/tested/conda_build_config.yaml"
         ;;
 
