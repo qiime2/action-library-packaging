@@ -5,8 +5,8 @@ set -e
 # lowercase variables are local to the script, uppercase variables are global
 
 # update the following at release time
-dev_cycle=2023.2
-rel_cycle=2022.11
+dev_cycle=2023.5
+rel_cycle=2023.2
 distro=core
 
 export BUILD_DIR="${GITHUB_WORKSPACE}/built-package"
