@@ -1,0 +1,29 @@
+name: 'QIIME 2 Library Packaging - Build'
+description: 'Build a conda package'
+inputs:
+  recipe-path:
+    description: 'Path to package recipe'
+    required: true
+  conda-build-config:
+    description: 'conda_build_config.yml to use while building'
+    required: true
+  channels:
+    description: 'A list of channels needed to build the package'
+    required: true
+  output-channel:
+    description: 'Local (file-system) channel to place the built package'
+    required: true
+outputs:
+  package-name:
+    description: 'Name of built package'
+    value: ${{ steps.build-package.outputs.name }}
+  package-version:
+    description: 'Version of built package'
+    value: ${{ steps.build-package.outputs.version }}
+runs:
+  using: composite
+  steps:
+    - id: 'setup-path'
+      run: echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
+    - id: 'build-package'
+      run: echo ${{ toJSON(inputs) }} | action.py

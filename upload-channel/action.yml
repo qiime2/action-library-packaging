@@ -1,0 +1,12 @@
+name: 'QIIME 2 Library Packaging - Upload Channel'
+description: 'FOR INTERNAL USE ONLY - SEE UPLOAD-PACKAGE INSTEAD'
+inputs:
+  channel:
+    description: 'Local (file-system) channel that will be uploaded'
+    required: true
+  library-token:
+    description: 'Not generally available'
+    required: true
+  distro-target:
+    description: 'QIIME 2 distribution to upload channel contents to'
+    required: true

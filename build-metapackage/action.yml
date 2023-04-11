@@ -1,0 +1,15 @@
+name: 'QIIME 2 Library Packaging - Build Distro Metapackage'
+description: 'Build a QIIME 2 metapackage'
+inputs:
+  channels:
+    description: 'A list of channels needed to build the package'
+    required: true
+  output-channel:
+    description: 'Local (file-system) channel to place the built package'
+    required: true
+  conda-build-config:
+    description: 'conda_build_config.yml to use while building'
+    required: true
+  metapackage-name:
+    description: 'Name for the built distribution (e.g. qiime2-core)'
+    required: true

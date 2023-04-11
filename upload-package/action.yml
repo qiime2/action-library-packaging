@@ -1,0 +1,18 @@
+name: 'QIIME 2 Library Packaging - Upload Package'
+description: 'Upload a conda package'
+inputs:
+  channel:
+    description: 'Local (file-system) channel that contains the package to upload'
+    required: true
+  package-name:
+    description: 'Name of conda package to upload'
+    required: true
+  package-version:
+    description: 'Version of conda package to upload'
+    required: true
+  library-token:
+    description: 'ASK ON THE QIIME 2 FORUM ABOUT AQUIRING THIS'
+    required: true
+  distro-target:
+    description: 'QIIME 2 distribution to uplaod the package to'
+    required: true

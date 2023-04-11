@@ -1,0 +1,10 @@
+name: 'QIIME 2 Library Packaging - Configure Distro Matrix'
+description: ''
+inputs:
+  package-name:
+    description: 'Name of QIIME 2 package'
+    required: true
+  release-target:
+    description: 'Target QIIME 2 release cycle: "dev" or "release"'
+    required: true
+    default: 'release'

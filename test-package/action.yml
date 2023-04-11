@@ -1,0 +1,16 @@
+name: 'QIIME 2 Library Packaging - Test'
+description: 'Test a conda package'
+inputs:
+  channels:
+    description: 'A list of channels to use to install the package for testing'
+    required: true
+  package-name:
+    description: 'The conda package's name to test'
+    required: true
+  package-version:
+    description: 'The conda package's version'
+    required: true
+  additional-tests:
+    description: 'A list of additional test commands to run'
+    required: false
+    default: []

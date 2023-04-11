@@ -1,0 +1,24 @@
+name: 'QIIME 2 Library Packaging'
+description: 'Build, test, and distribute a QIIME 2 conda package'
+inputs:
+  recipe-path:
+    description: 'Path to recipe'
+    required: false
+    default: 'ci/recipe'
+  package-name:
+    description: 'Name of QIIME 2 package'
+    required: true
+  release-target:
+    description: 'Target QIIME 2 release cycle: "dev" or "release"'
+    required: true
+    default: 'release'
+  distro-target:
+    description: 'Target QIIME 2 distribution'
+    required: true
+  additional-tests:
+    description: 'Additional tests to run during package building'
+    required: false
+  library-token:
+    description: 'A package token from library.qiime2.org. Required to upload built packages.'
+    required: true
+    default: ''
