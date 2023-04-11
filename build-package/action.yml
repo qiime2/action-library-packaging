@@ -20,6 +20,15 @@ outputs:
   package-version:
     description: 'Version of built package'
     value: ${{ steps.build-package.outputs.version }}
+  package-filename:
+    description: 'Filename of built package'
+    value: ${{ steps.build-package.outputs.filename }}
+  package-build:
+    description: 'Build ID of built package'
+    value: ${{ steps.build-package.outputs.build }}
+  conda-subdir:
+    description: 'Conda channel subdirectory'
+    value: ${{ steps.build-package.outputs.subdir }}
 runs:
   using: composite
   steps:

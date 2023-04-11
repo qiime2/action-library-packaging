@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import itertools
-import json
+import os
 import subprocess
 
 from ...src.common import ActionAdapter
@@ -19,23 +19,21 @@ def main(recipe_path, conda_build_config, channels, output_channel):
         '--no-test',
         '--old-build-string',
         '-m', conda_build_config,
-        '--stats-file', '__buildstats.json',
         '--output-folder', output_channel,
         recipe_path]
 
     subprocess.run(cmd, check=True)
 
-    with open('__buildstats.json', 'r') as fh:
-        stats = json.load(fh)
+    output = subprocess.run([*cmd[:-1], '--output', cmd[-1]], check=True,
+                            capture_output=True)
 
-    for k in stats:
-        if k.startswith('build'):
-            name, version = k.rsplit('-', 1)
-            name = name[len('build'):]
+    output_info = os.path.relpath(output.stdout, output_channel)
+    subdir, filename = os.path.split(output_info)
 
-            return dict(name=name, version=version)
+    name, version, build = filename.rsplit('-', 3)
 
-    raise Exception('Could not identify package name')
+    return dict(name=name, version=version, filename=filename,
+                build=build, subdir=subdir)
 
 
 if __name__ == '__main__':
