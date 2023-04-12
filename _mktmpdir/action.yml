@@ -1,0 +1,16 @@
+name: 'Private utility - make a temporary directory with some prefix'
+description: 'Makes a temporary directory with a given name as a prefix'
+inputs:
+  prefix:
+    description: 'Prefix to use in the random name'
+    required: false
+    default: 'tmp'
+outputs:
+  path:
+    description: 'A randomly generated directory'
+    value: ${{ steps.mktemp.outputs.path }}
+runs:
+  using: composite
+  steps:
+    - id: 'mktemp'
+      run: echo path=$(mktemp -p ${{ runner.temp }} -d ${{ inputs.prefix }}-XXXXXXX) >> $GITHUB_OUTPUT

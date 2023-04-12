@@ -1,0 +1,21 @@
+package:
+  name: {{ name }}
+  version: {{ version }}
+
+requirements:
+  build:
+{%- for pkg, ver in packages | items %}
+    - {{ pkg }} {{ '{{' }} {{ ver }} {{ '}}' }}
+{%- endfor %}
+
+  run:
+{%- raw %}
+  {%- for package in resolved_packages('build') %}
+    - {{ package.split(' ')[:2] | join(' ') }}.*
+  {% endfor %}
+{%- endraw %}
+
+extra:
+  qiime2:
+    integration_git_head_ref: {{ env.GITHUB_HEAD_REF or 'placehold' }}
+

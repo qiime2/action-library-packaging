@@ -1,15 +1,49 @@
 name: 'QIIME 2 Library Packaging - Build Distro Metapackage'
 description: 'Build a QIIME 2 metapackage'
 inputs:
-  channels:
-    description: 'A list of channels needed to build the package'
+  metapackage-name:
+    description: 'Name for the built distribution (e.g. qiime2-core)'
+    required: true
+  metapackage-version:
+    description: 'Version for the built distribution'
+    required: true
+  seed-environment:
+    description: 'An environment file produced by `conda env export`'
     required: true
   output-channel:
     description: 'Local (file-system) channel to place the built package'
     required: true
-  conda-build-config:
-    description: 'conda_build_config.yml to use while building'
-    required: true
-  metapackage-name:
-    description: 'Name for the built distribution (e.g. qiime2-core)'
-    required: true
+outputs:
+  package-name:
+    description: 'Name of built package'
+    value: ${{ steps.build-metapackage.outputs.package-name }}
+  package-version:
+    description: 'Version of built package'
+    value: ${{ steps.build-metapackage.outputs.package-version }}
+  package-filename:
+    description: 'Filename of built package'
+    value: ${{ steps.build-metapackage.outputs.package-filename }}
+  conda-subdir:
+    description: 'Conda channel subdir'
+    value: ${{ steps.build-metapackage.outputs.conda-subdir }}
+runs:
+  using: composite
+  steps:
+    - id: 'setup-path'
+      run: echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
+    - id: 'make-recipe-dir'
+      uses: 'qiime2/action-library-packaging/_mktmpdir@beta'
+    - id: 'make-cbc'
+      uses: 'qiime2/actions-library-packaging/make-conda-config@beta'
+      with:
+        seed-envrionment: ${{ inputs.seed-environment }}
+        conda-build-config: '${{ steps.make-recipe-dir.outputs.path }}/conda_build_config.yml'
+    - id: 'template-metapackage'
+      run: echo ${{ toJSON(inputs) }} | template-metapackage.py ${{ steps.make-recipe-dir.outputs.path }}
+    - id: 'build-metapackage'
+      uses: 'qiime2/action-library-packaging/build-package@beta'
+      with:
+        recipe-path: ${{ steps.template-metapackage.outputs.recipe-path }}
+        conda-build-config: ${{ steps.make-cbc.outputs.conda-build-config }}
+        channels: ${{ steps.make-cbc.outputs.channels }}
+        output-channel: ${{ inputs.output-channel }}

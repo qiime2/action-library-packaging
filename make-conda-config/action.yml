@@ -1,0 +1,26 @@
+name: 'QIIME 2 Library Packaging - Make conda_build_config.yml (build variants)'
+description: 'Create a conda_build_config.yml file for use with conda build.'
+inputs:
+  seed-environment:
+    description: 'An environment file produced by `conda env export`'
+    required: true
+  conda-build-config:
+    description: 'The path to place the produced conda_build_config.yml'
+    required: true
+outputs:
+  conda-build-config:
+    description: 'The path provided in inputs'
+    value: ${{ inputs.conda-build-config }}
+  channels:
+    description: 'The list of channels defined in the seed-environment'
+    value: ${{ steps.make-cbc.outputs.channels }}
+  extras:
+    description: 'Any information in the "extras" block of the seed-environment'
+    value: ${{ steps.make-cbc.outputs.extras }}
+runs:
+  using: composite
+  steps:
+    - id: 'setup-path'
+      run: echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
+    - id: 'make-cbc'
+      run: echo ${{ toJSON(inputs) }} | make-cbc.py

@@ -3,7 +3,7 @@ import sys
 import json
 
 
-def ActionAdapter(function):
+def ActionAdapter(function, **extras):
     """Evaluate a main function in a github action
 
     * Assumes that sys.stdin contains JSON arguments for `function` (main).
@@ -23,9 +23,11 @@ def ActionAdapter(function):
     kwargs = {k.replace('-', '_'): v for k, v in arguments.items()}
     print(' == Using arguments == ')
     print(json.dumps(arguments, indent=2), flush=True)
+    if extras:
+        print(json.dumps(extras, indent=2), flush=True)
 
     print(' == Executing == ', flush=True)
-    results = function(**kwargs)
+    results = function(**kwargs, **extras)
 
     if results:
         print(' == Outputs == ')
