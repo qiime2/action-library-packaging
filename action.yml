@@ -22,3 +22,28 @@ inputs:
     description: 'A package token from library.qiime2.org. Required to upload built packages.'
     required: true
     default: ''
+runs:
+  using: composite
+  steps:
+    - id: 'build-package'
+      uses: 'qiime2/action-library-packaging/build-package@beta'
+      with:
+        recipe-path: ${{ inputs.recipe-path }}
+        conda-build-config: ${{ steps.config.outputs.conda-build-config }}
+        channels: ${{ steps.config.outputs.channels }}
+        output-channel: ${{ steps.config.outputs.output-channel }}
+    - id: 'make-prefix'
+      run: 'mkdir ./test_env'
+    - id: 'install-package'
+      uses: 'qiime2/action-library-packaging/install-package@beta'
+      with:
+        channels: ${{ steps.config.outputs.channels }}
+        package-name: ${{ steps.build.outputs.package-name }}
+        package-version: ${{ steps.build.outputs.package-version }}
+        conda-prefix: './test_env'
+    - id: 'test-package'
+      uses: 'qiime2/action-library-packaging/test-package@beta'
+      with:
+        conda-prefix: './test_env'
+        package-filepath: './test_env/${{ steps.build-package.outputs.conda-subdir }}/${{ steps.build-package.outputs.package-filename }}'
+        additional-tests: ${{ inputs.additional-tests }}

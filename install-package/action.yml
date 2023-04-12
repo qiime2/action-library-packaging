@@ -1,0 +1,19 @@
+name: 'QIIME 2 Library Packaging - Install'
+description: 'Install a conda package'
+inputs:
+  channels:
+    description: 'A list of channels needed to build the package'
+    required: true
+  package-name:
+    description: 'The name of a conda package to install'
+    required: true
+  package-version:
+    description: 'The version of a conda package to install'
+    required: true
+  conda-prefix:
+    description: 'Path to the prefix to be populated with a conda environment'
+    required: true
+runs:
+  using: composite
+  steps:
+    - id: 'install-package'

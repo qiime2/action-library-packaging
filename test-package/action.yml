@@ -1,16 +1,21 @@
 name: 'QIIME 2 Library Packaging - Test'
 description: 'Test a conda package'
 inputs:
-  channels:
-    description: 'A list of channels to use to install the package for testing'
+  conda-prefix:
+    description: 'The path to a conda environment'
     required: true
-  package-name:
-    description: 'The conda package's name to test'
-    required: true
-  package-version:
-    description: 'The conda package's version'
+  package-filepath:
+    description: 'The path to the .tar.bz2 to test'
     required: true
   additional-tests:
     description: 'A list of additional test commands to run'
     required: false
     default: []
+outputs: []
+runs:
+  using: composite
+  steps:
+    - id: 'setup-path'
+      run: echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
+    - id: 'test-package'
+      run: echo ${{ toJSON(inputs) }} | action.py
