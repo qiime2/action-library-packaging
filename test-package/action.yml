@@ -11,7 +11,6 @@ inputs:
     description: 'A list of additional test commands to run'
     required: false
     default: []
-outputs: []
 runs:
   using: composite
   steps:
