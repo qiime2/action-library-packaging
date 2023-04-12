@@ -13,6 +13,10 @@ inputs:
   conda-prefix:
     description: 'Path to the prefix to be populated with a conda environment'
     required: true
+outputs:
+  conda-prefix:
+    description: 'Same path provided to input'
+    value: ${{ inputs.conda-prefix }}
 runs:
   using: composite
   steps:

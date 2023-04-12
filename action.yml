@@ -44,6 +44,6 @@ runs:
     - id: 'test-package'
       uses: 'qiime2/action-library-packaging/test-package@beta'
       with:
-        conda-prefix: './test_env'
-        package-filepath: './test_env/${{ steps.build-package.outputs.conda-subdir }}/${{ steps.build-package.outputs.package-filename }}'
+        conda-prefix: ${{ steps.install-package.outputs.conda-prefix }}
+        package-filepath: ${{ steps.install-package.outputs.conda-prefix }}/${{ steps.build-package.outputs.conda-subdir }}/${{ steps.build-package.outputs.package-filename }}
         additional-tests: ${{ inputs.additional-tests }}
