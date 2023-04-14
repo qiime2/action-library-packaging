@@ -10,7 +10,7 @@ inputs:
   channels:
     description: 'Extra channels to add to the output, useful for adding local channels in addition to what is described by the seed-environment.'
     required: false
-    default: []
+    default: '[]'
 outputs:
   conda-build-config:
     description: 'The path provided in inputs'
@@ -25,6 +25,8 @@ runs:
   using: composite
   steps:
     - id: 'setup-path'
+      shell: bash
       run: echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
     - id: 'make-cbc'
+      shell: bash
       run: echo ${{ toJSON(inputs) }} | make-cbc.py
