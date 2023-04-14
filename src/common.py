@@ -40,7 +40,7 @@ def ActionAdapter(function, **extras):
     if results:
         print(' == Outputs == ')
         results = {k.replace('_', '-'): v for k, v in results.items()}
-        print(json.dumps(results, indent=2, flush=True))
+        print(json.dumps(results, indent=2), flush=True)
 
         lines = []
         for param, arg in results.items():

@@ -26,6 +26,7 @@ def ActionAdapter(function, **extras):
     arguments = json.load(sys.stdin)
     kwargs = {k.replace('-', '_'): v for k, v in arguments.items()}
     for key, val in kwargs.items():
+        print(key, val, type(val))
         if type(val) is str and (val.startswith('[') or val.startswith('{')):
             try:
                 kwargs[key] = json.loads(val)
@@ -44,7 +45,7 @@ def ActionAdapter(function, **extras):
     if results:
         print(' == Outputs == ')
         results = {k.replace('_', '-'): v for k, v in results.items()}
-        print(json.dumps(results, indent=2, flush=True))
+        print(json.dumps(results, indent=2), flush=True)
 
         lines = []
         for param, arg in results.items():
