@@ -7,6 +7,10 @@ inputs:
   conda-build-config:
     description: 'The path to place the produced conda_build_config.yml'
     required: true
+  channels:
+    description: 'Extra channels to add to the output, useful for adding local channels in addition to what is described by the seed-environment.'
+    required: false
+    default: []
 outputs:
   conda-build-config:
     description: 'The path provided in inputs'

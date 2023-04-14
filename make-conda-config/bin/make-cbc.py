@@ -11,7 +11,7 @@ def split_spec(install_spec):
     return install_spec.split('=')
 
 
-def main(seed_environment, conda_build_config):
+def main(seed_environment, conda_build_config, channels):
     with open(seed_environment) as fh:
         env = yaml.safe_load(fh)
 
@@ -22,6 +22,11 @@ def main(seed_environment, conda_build_config):
 
     if 'extras' not in env:
         env['extras'] = {}
+
+    if 'channels' not in env:
+        env['channels'] = channels
+    else:
+        env['channels'] += channels
 
     return env
 
