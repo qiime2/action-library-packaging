@@ -2,6 +2,8 @@
 
 import yaml
 
+print(__file__)
+
 from ...src.common import ActionAdapter
 from ...src.cbc import process_seed_env_deps
 
