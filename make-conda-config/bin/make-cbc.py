@@ -29,8 +29,10 @@ def ActionAdapter(function, **extras):
         print(key, val, type(val))
         if type(val) is str and (val.startswith('[') or val.startswith('{')):
             try:
+                print(json.loads(val))
                 kwargs[key] = json.loads(val)
             except Exception:
+                print('ummm')
                 pass
 
 
