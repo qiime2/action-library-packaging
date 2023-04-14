@@ -29,4 +29,7 @@ runs:
       run: echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
     - id: 'make-cbc'
       shell: bash
-      run: echo ${{ toJSON(inputs) }} | make-cbc.py
+      run: |
+        cat <<EOF | make-cbc.py
+        ${{ toJSON(inputs) }}
+        EOF
