@@ -34,7 +34,7 @@ def ActionAdapter(function, **extras):
     if extras:
         print(json.dumps(extras, indent=2), flush=True)
     print(' == Evaluated keyword arguments == ')
-    print(json.dumps(kwargs), flush=True)
+    print(json.dumps(kwargs, index=2), flush=True)
 
     print(' == Executing == ', flush=True)
     results = function(**kwargs, **extras)
