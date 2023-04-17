@@ -46,6 +46,8 @@ def ActionAdapter(function, **extras):
 
         lines = []
         for param, arg in results.items():
+            if type(arg) is dict or type(arg) is list:
+                arg = json.dumps(arg)
             lines.append(f'{param}={arg}\n')
 
         output_path = os.environ.get('GITHUB_OUTPUT')
