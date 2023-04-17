@@ -28,9 +28,10 @@ runs:
       shell: bash
       run: |
         echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
-        pwd
     - id: 'make-cbc'
       shell: bash
+      env:
+        PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
         cat <<EOF | make-cbc.py
         ${{ toJSON(inputs) }}
