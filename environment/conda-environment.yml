@@ -1,0 +1,9 @@
+channels:
+  - conda-forge
+dependencies:
+  - conda=23.3
+  - conda-libmamba-solver=23.3
+  - conda-pack=0.7.0
+  - boa=0.14.0
+extras:
+  break-in-case-of-cache: 0

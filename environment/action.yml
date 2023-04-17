@@ -1,0 +1,53 @@
+name: 'QIIME 2 Library Packaging - Setup Environment'
+description: 'Install and configure conda-build and libmamba'
+inputs:
+  conda-prefix:
+    description: 'The conda prefix environment to set up'
+    required: false
+    default: ${{ github.workspace }}/alp-base-env/
+  conda-pack:
+    description: 'The name of tar.xz file of the conda environment to cache'
+    required: false
+    default: 'alp-base-env.tar.xz'
+outputs:
+  conda-prefix:
+    description: 'The conda prefix environment which has been set up'
+    value: ${{ inputs.conda-prefix }}
+
+runs:
+  using: composite
+  steps:
+    - id: 'check-cache'
+      uses: actions/cache/restore@v3
+      with:
+        path: ${{ inputs.conda-pack }}
+        key: ${{ inputs.conda-pack }} (${{ runner.os }}, ${{ hashFile(format('{0}/conda-environment.yml', github.action_path)) }})
+
+    - id: 'unpack-cache'
+      if: ${{ steps.check-cache.outputs.cache-hit }}
+      shell: bash
+      run: |
+        mkidr -p ${{ inputs.conda-prefix }}
+        tar -xJf ${{ inputs.conda-pack }} -C ${{ inputs.conda-prefix }}
+        ${{ inputs.conda-prefix }}/bin/conda-unpack
+
+    - id: 'install-conda'
+      if: ${{ !steps.check-cache.outputs.cache-hit }}
+      shell: bash
+      run: conda env create -q -p ${{ inputs.conda-prefix }} --file ${{ github.action_path }}/conda-environment.yml
+
+    - id: 'activate-conda'
+      shell: bash
+      run: echo "conda activate '${{ inputs.conda-prefix }}'" >> ~/.bash_profile
+
+    - id: 'pack-conda'
+      if: ${{ !steps.check-cache.outputs.cache-hit }}
+      shell: bash
+      run: conda pack --format tar.xz -p ${{ inputs.conda-prefix }} -o ${{ inputs.conda-pack }}
+
+    - id: 'store-cache'
+      if: ${{ !steps.check-cache.outputs.cache-hit }}
+      uses: actions/cache/save@v3
+      with:
+        path: ${{ inputs.conda-pack }}
+        key: ${{ steps.check-cache.outputs.cache-primary-key }}
