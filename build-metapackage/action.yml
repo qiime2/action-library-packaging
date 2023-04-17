@@ -30,6 +30,7 @@ runs:
   using: composite
   steps:
     - id: 'setup-path'
+      shell: bash
       run: echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
     - id: 'make-recipe-dir'
       uses: 'qiime2/action-library-packaging/_mktmpdir@beta'

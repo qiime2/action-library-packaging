@@ -33,6 +33,7 @@ runs:
   using: composite
   steps:
     - id: 'setup-path'
+      shell: bash
       run: echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
     - id: 'build-package'
       shell: bash
