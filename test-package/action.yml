@@ -17,4 +17,9 @@ runs:
     - id: 'setup-path'
       run: echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
     - id: 'test-package'
-      run: echo ${{ toJSON(inputs) }} | action.py
+      env:
+        PYTHONPATH: "${{ github.action_path }}/../src/"
+      run: |
+        cat <<EOF | test-package.py
+        ${{ toJSON(inputs) }}
+        EOF

@@ -5,8 +5,8 @@ import sys
 import os
 import jinja2
 
-from ...src.common import ActionAdapter
-from ...src.cbc import process_seed_env_deps
+from alp.common import ActionAdapter
+from alp.cbc import process_seed_env_deps
 
 
 def main(metapackage_name, metapackage_version, seed_environment, recipe_path,

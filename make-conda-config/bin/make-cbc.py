@@ -3,8 +3,8 @@
 import yaml
 
 
-from cbc import process_seed_env_deps
-from common import ActionAdapter
+from alp.cbc import process_seed_env_deps
+from alp.common import ActionAdapter
 
 
 def main(seed_environment, conda_build_config, channels):

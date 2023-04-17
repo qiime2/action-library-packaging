@@ -4,7 +4,7 @@ import itertools
 import os
 import subprocess
 
-from ...src.common import ActionAdapter
+from alp.common import ActionAdapter
 
 
 def main(recipe_path, conda_build_config, channels, output_channel):

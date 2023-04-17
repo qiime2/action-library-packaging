@@ -39,7 +39,12 @@ runs:
         seed-envrionment: ${{ inputs.seed-environment }}
         conda-build-config: '${{ steps.make-recipe-dir.outputs.path }}/conda_build_config.yml'
     - id: 'template-metapackage'
-      run: echo ${{ toJSON(inputs) }} | template-metapackage.py ${{ steps.make-recipe-dir.outputs.path }}
+      env:
+        PYTHONPATH: "${{ github.action_path }}/../src/"
+      run: |
+        cat <<EOF | template-metapackage.py ${{ steps.make-recipe-dir.outputs.path }}
+        ${{ toJSON(inputs) }}
+        EOF
     - id: 'build-metapackage'
       uses: 'qiime2/action-library-packaging/build-package@beta'
       with:

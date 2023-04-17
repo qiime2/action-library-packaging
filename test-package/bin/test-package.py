@@ -6,7 +6,7 @@ import subprocess
 import tarfile
 import yaml
 
-from ...src.common import ActionAdapter
+from alp.common import ActionAdapter
 
 
 def find_tests(package_filepath):
