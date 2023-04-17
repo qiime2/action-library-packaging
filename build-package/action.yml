@@ -35,6 +35,7 @@ runs:
     - id: 'setup-path'
       run: echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
     - id: 'build-package'
+      shell: bash
       env:
         PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |

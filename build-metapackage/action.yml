@@ -39,6 +39,7 @@ runs:
         seed-envrionment: ${{ inputs.seed-environment }}
         conda-build-config: '${{ steps.make-recipe-dir.outputs.path }}/conda_build_config.yml'
     - id: 'template-metapackage'
+      shell: bash
       env:
         PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
