@@ -21,7 +21,7 @@ runs:
       uses: actions/cache/restore@v3
       with:
         path: ${{ inputs.conda-pack }}
-        key: ${{ inputs.conda-pack }} (${{ runner.os }}, ${{ hashFile(format('{0}/conda-environment.yml', github.action_path)) }})
+        key: ${{ inputs.conda-pack }} (${{ runner.os }}, ${{ hashFiles(format('{0}/conda-environment.yml', github.action_path)) }})
 
     - id: 'unpack-cache'
       if: ${{ steps.check-cache.outputs.cache-hit }}
