@@ -29,10 +29,12 @@ def ActionAdapter(function, **extras):
                 pass
 
 
-    print(' == Using arguments == ')
+    print(' == Using inputs == ')
     print(json.dumps(arguments, indent=2), flush=True)
     if extras:
         print(json.dumps(extras, indent=2), flush=True)
+    print(' == Evaluated keyword arguments == ')
+    print(json.dumps(kwargs), flush=True)
 
     print(' == Executing == ', flush=True)
     results = function(**kwargs, **extras)
