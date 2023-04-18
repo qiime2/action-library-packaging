@@ -30,13 +30,12 @@ runs:
         path: ${{ inputs.conda-pack }}
         key: "${{ inputs.conda-pack }} (${{ runner.os }} ${{ steps.get-hash.outputs.hash }})"
 
-    - id: 'unpack-cache'
+    - id: 'extract-cached-env'
       if: ${{ steps.check-cache.outputs.cache-hit }}
       shell: bash
       run: |
         mkdir -p ${{ inputs.conda-prefix }}
         tar -xJf ${{ inputs.conda-pack }} -C ${{ inputs.conda-prefix }}
-        ${{ inputs.conda-prefix }}/bin/conda-unpack
 
     - id: 'install-conda'
       if: ${{ !steps.check-cache.outputs.cache-hit }}
@@ -45,9 +44,11 @@ runs:
 
     - id: 'activate-conda'
       shell: bash
-      run: echo "conda activate '${{ inputs.conda-prefix }}'" >> ~/.bash_profile
+      run: |
+        conda init bash
+        echo "conda activate '${{ inputs.conda-prefix }}'" >> ~/.bash_profile
 
-    - id: 'test-unpack-cache'
+    - id: 'upack-env'
       if: ${{ steps.check-cache.outputs.cache-hit }}
       shell: bash -l {0}
       run: conda-unpack
