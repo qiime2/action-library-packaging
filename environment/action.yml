@@ -17,48 +17,48 @@ outputs:
 runs:
   using: composite
   steps:
-    - id: get-hash
-      shell: bash
-     # HACK: github.action_path doesn't exist during expression evaluation for REASONS(tm)
-     # so that means that hashFiles(...) comes up with a blank string.
-      run:
-        echo hash=$(shasum -a 256 -U ${{ github.action_path }}/conda-environment.yml | cut -f1 -d ' ') >> $GITHUB_OUTPUT
+#   - id: get-hash
+#     shell: bash
+#    # HACK: github.action_path doesn't exist during expression evaluation for REASONS(tm)
+#    # so that means that hashFiles(...) comes up with a blank string.
+#     run:
+#       echo hash=$(shasum -a 256 -U ${{ github.action_path }}/conda-environment.yml | cut -f1 -d ' ') >> $GITHUB_OUTPUT
 
-    - id: 'check-cache'
-      uses: actions/cache/restore@v3
-      with:
-        path: ${{ inputs.conda-pack }}
-        key: "${{ inputs.conda-pack }} (${{ runner.os }} ${{ steps.get-hash.outputs.hash }})"
+#   - id: 'check-cache'
+#     uses: actions/cache/restore@v3
+#     with:
+#       path: ${{ inputs.conda-pack }}
+#       key: "${{ inputs.conda-pack }} (${{ runner.os }} ${{ steps.get-hash.outputs.hash }})"
 
     - id: 'install-conda'
       if: ${{ !steps.check-cache.outputs.cache-hit }}
       shell: bash
       run: conda env create -q -p ${{ inputs.conda-prefix }} --file ${{ github.action_path }}/conda-environment.yml
 
-    - id: 'pack-conda'
-      if: ${{ !steps.check-cache.outputs.cache-hit }}
-      shell: bash
-      run: conda run -p ${{ inputs.conda-prefix }} conda pack --format tar.xz -p ${{ inputs.conda-prefix }} -o ${{ inputs.conda-pack }}
+#   - id: 'pack-conda'
+#     if: ${{ !steps.check-cache.outputs.cache-hit }}
+#     shell: bash
+#     run: conda run -p ${{ inputs.conda-prefix }} conda pack --format tar.xz -p ${{ inputs.conda-prefix }} -o ${{ inputs.conda-pack }}
 
-    - id: 'store-cache'
-      if: ${{ !steps.check-cache.outputs.cache-hit }}
-      uses: actions/cache/save@v3
-      with:
-        path: ${{ inputs.conda-pack }}
-        key: ${{ steps.check-cache.outputs.cache-primary-key }}
+#   - id: 'store-cache'
+#     if: ${{ !steps.check-cache.outputs.cache-hit }}
+#     uses: actions/cache/save@v3
+#     with:
+#       path: ${{ inputs.conda-pack }}
+#       key: ${{ steps.check-cache.outputs.cache-primary-key }}
 
-    - id: 'extract-cached-env'
-      if: ${{ steps.check-cache.outputs.cache-hit }}
-      shell: bash
-      run: |
-        mkdir -p ${{ inputs.conda-prefix }}
-        tar -xJf ${{ inputs.conda-pack }} -C ${{ inputs.conda-prefix }}
+#   - id: 'extract-cached-env'
+#     if: ${{ steps.check-cache.outputs.cache-hit }}
+#     shell: bash
+#     run: |
+#       mkdir -p ${{ inputs.conda-prefix }}
+#       tar -xJf ${{ inputs.conda-pack }} -C ${{ inputs.conda-prefix }}
 
     - id: 'add-env-to-path'
       shell: bash
       run: echo "$(readlink -f ${{ inputs.conda-prefix }})/bin" >> $GITHUB_PATH
 
-    - id: 'upack-env'
-      if: ${{ steps.check-cache.outputs.cache-hit }}
-      shell: bash
-      run: conda-unpack
+#   - id: 'upack-env'
+#     if: ${{ steps.check-cache.outputs.cache-hit }}
+#     shell: bash
+#     run: conda-unpack
