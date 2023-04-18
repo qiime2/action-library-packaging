@@ -36,7 +36,7 @@ def main(recipe_path, conda_build_config, channels,
     output = subprocess.run([*cmd[:-1], '--output', cmd[-1]], check=True,
                             capture_output=True)
 
-    output_info = os.path.relpath(output.stdout, output_channel)
+    output_info = os.path.relpath(output.stdout.decode('utf8'), output_channel)
     subdir, filename = os.path.split(output_info)
 
     name, version, build = filename.rsplit('-', 3)
