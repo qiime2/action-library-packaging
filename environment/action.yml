@@ -34,7 +34,7 @@ runs:
       if: ${{ steps.check-cache.outputs.cache-hit }}
       shell: bash
       run: |
-        mkidr -p ${{ inputs.conda-prefix }}
+        mkdir -p ${{ inputs.conda-prefix }}
         tar -xJf ${{ inputs.conda-pack }} -C ${{ inputs.conda-prefix }}
         ${{ inputs.conda-prefix }}/bin/conda-unpack
 
