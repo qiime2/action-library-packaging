@@ -47,6 +47,11 @@ runs:
       shell: bash
       run: echo "conda activate '${{ inputs.conda-prefix }}'" >> ~/.bash_profile
 
+    - id: 'test-unpack-cache'
+      if: ${{ steps.check-cache.outputs.cache-hit }}
+      shell: bash -l {0}
+      run: conda-unpack
+
     - id: 'pack-conda'
       if: ${{ !steps.check-cache.outputs.cache-hit }}
       shell: bash
