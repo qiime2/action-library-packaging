@@ -17,6 +17,11 @@ outputs:
 runs:
   using: composite
   steps:
+    - run: |
+        echo ${{ format('{0}/conda-environment.yml', github.action_path) }}
+        ls ${{ github.action_path }}
+
+      shell: bash
     - id: 'check-cache'
       uses: actions/cache/restore@v3
       with:
