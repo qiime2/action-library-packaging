@@ -43,7 +43,7 @@ runs:
       run: conda env create -q -p ${{ inputs.conda-prefix }} --file ${{ github.action_path }}/conda-environment.yml
 
     - id: 'activate-conda'
-      shell: bash
+      shell: bash -l {0}
       run: |
         conda init bash
         echo "conda activate '${{ inputs.conda-prefix }}'" >> ~/.bash_profile
