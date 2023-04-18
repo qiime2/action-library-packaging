@@ -17,35 +17,42 @@ outputs:
 runs:
   using: composite
   steps:
-#    - id: get-hash
-#      shell: bash
-      # HACK: github.action_path doesn't exist during expression evaluation for REASONS(tm)
-      # so that means that hashFiles(...) comes up with a blank string.
-#      run:
-#        echo hash=$(shasum -a 256 -U ${{ github.action_path }}/conda-environment.yml | cut -f1 -d ' ') >> $GITHUB_OUTPUT
+    - id: get-hash
+      shell: bash
+     # HACK: github.action_path doesn't exist during expression evaluation for REASONS(tm)
+     # so that means that hashFiles(...) comes up with a blank string.
+      run:
+        echo hash=$(shasum -a 256 -U ${{ github.action_path }}/conda-environment.yml | cut -f1 -d ' ') >> $GITHUB_OUTPUT
 
-#    - id: 'check-cache'
-#      uses: actions/cache/restore@v3
-#      with:
-#        path: ${{ inputs.conda-pack }}
-#        key: "${{ inputs.conda-pack }} (${{ runner.os }} ${{ steps.get-hash.outputs.hash }})"
+    - id: 'check-cache'
+      uses: actions/cache/restore@v3
+      with:
+        path: ${{ inputs.conda-pack }}
+        key: "${{ inputs.conda-pack }} (${{ runner.os }} ${{ steps.get-hash.outputs.hash }})"
 
-#    - id: 'extract-cached-env'
-#      if: ${{ steps.check-cache.outputs.cache-hit }}
-#      shell: bash
-#      run: |
-#        mkdir -p ${{ inputs.conda-prefix }}
-#        tar -xJf ${{ inputs.conda-pack }} -C ${{ inputs.conda-prefix }}
+    - id: 'extract-cached-env'
+      if: ${{ steps.check-cache.outputs.cache-hit }}
+      shell: bash
+      run: |
+        mkdir -p ${{ inputs.conda-prefix }}
+        tar -xJf ${{ inputs.conda-pack }} -C ${{ inputs.conda-prefix }}
 
+    - id: 'add-env-to-path'
+      shell: bash
+      run: echo "$(readlink -f ${{ inputs.conda_prefix }})/bin" >> $GITHUB_PATH
+
+    - id: 'check-path'
+      shell: bash
+      run: echo $PATH
 #    - id: 'upack-env'
 #      if: ${{ steps.check-cache.outputs.cache-hit }}
 #      shell: bash
 #      run: conda run -p ${{ inputs.conda-prefix }} conda-unpack
 
-    - id: 'install-conda'
+#    - id: 'install-conda'
 #      if: ${{ !steps.check-cache.outputs.cache-hit }}
-      shell: bash
-      run: conda env create -q -p ${{ inputs.conda-prefix }} --file ${{ github.action_path }}/conda-environment.yml
+#      shell: bash
+#      run: conda env create -q -p ${{ inputs.conda-prefix }} --file ${{ github.action_path }}/conda-environment.yml
 
 #    - id: 'activate-conda'
 #      shell: bash -l {0}
