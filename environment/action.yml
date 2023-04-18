@@ -17,16 +17,18 @@ outputs:
 runs:
   using: composite
   steps:
-    - run: |
-        echo ${{ hashFiles(format('{0}/conda-environment.yml', github.action_path)) }}
-        ls ${{ github.action_path }}
-
+    - id: get-hash
       shell: bash
+      # HACK: github.action_path doesn't exist during expression evaluation for REASONS(tm)
+      # so that means that hashFiles(...) comes up with a blank string.
+      run:
+        echo hash=$(shasum -a 256 -U ${{ github.action_path }}/conda-environment.yml | cut -f1 -d ' ') >> $GITHUB_OUTPUT
+
     - id: 'check-cache'
       uses: actions/cache/restore@v3
       with:
         path: ${{ inputs.conda-pack }}
-        key: "${{ inputs.conda-pack }} (${{ runner.os }}-${{ hashFiles( format('{0}/conda-environment.yml', github.action_path) ) }})"
+        key: "${{ inputs.conda-pack }} (${{ runner.os }} ${{ steps.get-hash.outputs.hash }})"
 
     - id: 'unpack-cache'
       if: ${{ steps.check-cache.outputs.cache-hit }}
