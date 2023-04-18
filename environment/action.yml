@@ -39,7 +39,7 @@ runs:
 
     - id: 'add-env-to-path'
       shell: bash
-      run: echo "$(readlink -f ${{ inputs.conda_prefix }})/bin" >> $GITHUB_PATH
+      run: echo "$(readlink -f ${{ inputs.conda-prefix }})/bin" >> $GITHUB_PATH
 
     - id: 'check-path'
       shell: bash
