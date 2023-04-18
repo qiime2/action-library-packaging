@@ -45,7 +45,7 @@ runs:
     - id: 'activate-conda'
       shell: bash -l {0}
       run: |
-        conda init bash
+        conda init --all
         echo "conda activate '${{ inputs.conda-prefix }}'" >> ~/.bash_profile
 
     - id: 'upack-env'
