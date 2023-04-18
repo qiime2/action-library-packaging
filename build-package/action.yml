@@ -1,6 +1,9 @@
 name: 'QIIME 2 Library Packaging - Build'
 description: 'Build a conda package'
 inputs:
+  conda-prefix:
+    description: 'Conda prefix which contains build tools'
+    required: false
   recipe-path:
     description: 'Path to package recipe'
     required: true

@@ -7,16 +7,12 @@ import subprocess
 from alp.common import ActionAdapter
 
 
-def main(conda_prefix, recipe_path, conda_build_config, channels,
-         output_channel):
+def main(recipe_path, conda_build_config, channels,
+         output_channel, conda_prefix=None):
     channels = itertools.chain.from_iterable(
         [('-c', channel) for channel in channels])
 
     cmd = [
-        # "activate environment"
-        'conda', 'run',
-        '-p', conda_prefix,
-        # actual command
         'conda', 'mambabuild',
         *channels,
         '--override-channels',
@@ -26,6 +22,14 @@ def main(conda_prefix, recipe_path, conda_build_config, channels,
         '-m', conda_build_config,
         '--output-folder', output_channel,
         recipe_path]
+
+    if conda_prefix is not None:
+        prefix_cmd = [
+            # "activate environment"
+            'conda', 'run',
+            '-p', conda_prefix
+        ]
+        cmd = prefix_cmd + cmd
 
     subprocess.run(cmd, check=True)
 
