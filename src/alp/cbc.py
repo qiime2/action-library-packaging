@@ -15,4 +15,7 @@ def process_seed_env_deps(env):
         mapping[package] = cbc_package
         cbc[cbc_package] = cbc_version
 
+    if 'extras' in env and 'variant_override' in env['extras']:
+        cbc.update(env['extras']['variant_override'])
+
     return mapping, cbc
