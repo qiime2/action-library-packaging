@@ -18,7 +18,7 @@ runs:
   using: composite
   steps:
     - run: |
-        echo ${{ format('{0}/conda-environment.yml', github.action_path) }}
+        echo ${{ hashFiles(format('{0}/conda-environment.yml', github.action_path)) }}
         ls ${{ github.action_path }}
 
       shell: bash
