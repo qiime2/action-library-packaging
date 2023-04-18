@@ -23,13 +23,13 @@ def main(recipe_path, conda_build_config, channels,
         '--output-folder', output_channel,
         recipe_path]
 
-    if conda_prefix is not None:
-        prefix_cmd = [
-            # "activate environment"
-            'conda', 'run',
-            '-p', conda_prefix
-        ]
-        cmd = prefix_cmd + cmd
+#    if conda_prefix is not None:
+#        prefix_cmd = [
+#            # "activate environment"
+#            'conda', 'run',
+#            '-p', conda_prefix
+#        ]
+#        cmd = prefix_cmd + cmd
 
     subprocess.run(cmd, check=True)
 

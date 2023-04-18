@@ -30,6 +30,23 @@ runs:
         path: ${{ inputs.conda-pack }}
         key: "${{ inputs.conda-pack }} (${{ runner.os }} ${{ steps.get-hash.outputs.hash }})"
 
+    - id: 'install-conda'
+      if: ${{ !steps.check-cache.outputs.cache-hit }}
+      shell: bash
+      run: conda env create -q -p ${{ inputs.conda-prefix }} --file ${{ github.action_path }}/conda-environment.yml
+
+    - id: 'pack-conda'
+      if: ${{ !steps.check-cache.outputs.cache-hit }}
+      shell: bash
+      run: conda run -p ${{ inputs.conda-prefix }} conda pack --format tar.xz -p ${{ inputs.conda-prefix }} -o ${{ inputs.conda-pack }}
+
+    - id: 'store-cache'
+      if: ${{ !steps.check-cache.outputs.cache-hit }}
+      uses: actions/cache/save@v3
+      with:
+        path: ${{ inputs.conda-pack }}
+        key: ${{ steps.check-cache.outputs.cache-primary-key }}
+
     - id: 'extract-cached-env'
       if: ${{ steps.check-cache.outputs.cache-hit }}
       shell: bash
@@ -41,33 +58,7 @@ runs:
       shell: bash
       run: echo "$(readlink -f ${{ inputs.conda-prefix }})/bin" >> $GITHUB_PATH
 
-    - id: 'check-path'
+    - id: 'upack-env'
+      if: ${{ steps.check-cache.outputs.cache-hit }}
       shell: bash
-      run: echo $PATH
-#    - id: 'upack-env'
-#      if: ${{ steps.check-cache.outputs.cache-hit }}
-#      shell: bash
-#      run: conda run -p ${{ inputs.conda-prefix }} conda-unpack
-
-#    - id: 'install-conda'
-#      if: ${{ !steps.check-cache.outputs.cache-hit }}
-#      shell: bash
-#      run: conda env create -q -p ${{ inputs.conda-prefix }} --file ${{ github.action_path }}/conda-environment.yml
-
-#    - id: 'activate-conda'
-#      shell: bash -l {0}
-#      run: |
-#        conda init --all
-#        echo "conda activate '${{ inputs.conda-prefix }}'" >> ~/.bash_profile
-
-#    - id: 'pack-conda'
-#      if: ${{ !steps.check-cache.outputs.cache-hit }}
-#      shell: bash
-#      run: conda run -p ${{ inputs.conda-prefix }} conda pack --format tar.xz -p ${{ inputs.conda-prefix }} -o ${{ inputs.conda-pack }}
-
-#    - id: 'store-cache'
-#      if: ${{ !steps.check-cache.outputs.cache-hit }}
-#      uses: actions/cache/save@v3
-#      with:
-#        path: ${{ inputs.conda-pack }}
-#        key: ${{ steps.check-cache.outputs.cache-primary-key }}
+      run: conda-unpack
