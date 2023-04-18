@@ -37,21 +37,21 @@ runs:
         mkdir -p ${{ inputs.conda-prefix }}
         tar -xJf ${{ inputs.conda-pack }} -C ${{ inputs.conda-prefix }}
 
+    - id: 'upack-env'
+      if: ${{ steps.check-cache.outputs.cache-hit }}
+      shell: bash
+      run: conda run -p ${{ inputs.conda-prefix }} conda-unpack
+
     - id: 'install-conda'
       if: ${{ !steps.check-cache.outputs.cache-hit }}
       shell: bash
       run: conda env create -q -p ${{ inputs.conda-prefix }} --file ${{ github.action_path }}/conda-environment.yml
 
-    - id: 'activate-conda'
-      shell: bash -l {0}
-      run: |
-        conda init --all
-        echo "conda activate '${{ inputs.conda-prefix }}'" >> ~/.bash_profile
-
-    - id: 'upack-env'
-      if: ${{ steps.check-cache.outputs.cache-hit }}
-      shell: bash -l {0}
-      run: conda-unpack
+#    - id: 'activate-conda'
+#      shell: bash -l {0}
+#      run: |
+#        conda init --all
+#        echo "conda activate '${{ inputs.conda-prefix }}'" >> ~/.bash_profile
 
     - id: 'pack-conda'
       if: ${{ !steps.check-cache.outputs.cache-hit }}
