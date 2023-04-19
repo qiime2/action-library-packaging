@@ -1,5 +1,6 @@
 name: 'QIIME 2 Library Packaging - Setup Environment'
 description: 'Install and configure conda-build and libmamba'
+
 inputs:
   conda-prefix:
     description: 'The conda prefix environment to set up'
@@ -9,6 +10,11 @@ inputs:
     description: 'The name of the cache to store the environment in'
     required: false
     default: 'alp-base-env'
+  skip-cache:
+    description: 'Do not use a cache'
+    required: false
+    default: false
+
 outputs:
   conda-prefix:
     description: 'The conda prefix environment which has been set up'
@@ -20,6 +26,7 @@ outputs:
 runs:
   using: composite
   steps:
+
     - id: 'create-env'
       name: 'Create base environment for ALP'
       uses: qiime2/action-library-packaging/create-env@beta
@@ -27,3 +34,4 @@ runs:
         conda-prefix: ${{ inputs.conda-prefix }}
         environment-file: ${{ github.action_path }}/conda-environment.yml
         cache-name: ${{ inputs.cache-name }}
+        skip-cache: ${{ inputs.skip-cache }}

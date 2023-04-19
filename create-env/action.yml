@@ -1,5 +1,6 @@
 name: 'QIIME 2 Library Packaging - Create Environment'
 description: 'Install and configure a conda environment'
+
 inputs:
   conda-prefix:
     description: 'The conda prefix to set up'
@@ -15,6 +16,7 @@ inputs:
     description: 'Do not use a cache'
     required: false
     default: false
+
 outputs:
   conda-activate:
     description: 'Activates this environment via sourcing (e.g. `. foo`)'
