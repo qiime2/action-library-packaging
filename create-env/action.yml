@@ -40,19 +40,13 @@ runs:
       name: 'Determine full path to prefix'
       shell: bash
       run: |
-        echo path=$( \
-          readlink -f '${{ inputs.conda-prefix }}' \
-        ) >> $GITHUB_OUTPUT
+        echo "path=$(readlink -f '${{ inputs.conda-prefix }}')" >> $GITHUB_OUTPUT
 
     - id: 'cache-key'
       if: ${{ inputs.skip-cache == 'false' }}
       name: 'Determine cache key basename'
       shell: bash
-      run: |
-        [ -n '${{ inputs.cache-name }}' ] \
-          && echo "key=${{inputs.cache-name }}" \
-          || echo "key=$(basename ${{ inputs.conda-prefix }})" \
-        >> $GITHUB_OUTPUT
+      run: echo "path=$([ -n '${{ inputs.cache-name }}' ] && echo '${{inputs.cache-name }}' || basename '${{ inputs.conda-prefix }}')" >> $GITHUB_OUTPUT
 
     - id: 'check-cache'
       if: ${{ inputs.skip-cache == 'false' }}
