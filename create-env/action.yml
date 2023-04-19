@@ -18,7 +18,7 @@ inputs:
 outputs:
   conda-activate:
     description: 'Activates this environment via sourcing (e.g. `. foo`)'
-    value: ". '${{ steps.prefix.outputs.path}}/etc/activate.sh'"
+    value: "source '${{ steps.prefix.outputs.path}}/etc/activate.sh'"
   conda-prefix:
     description: 'A full path to the conda prefix that was installed'
     value: "${{ steps.prefix.outputs.path }}"
