@@ -56,6 +56,16 @@ runs:
             || basename '${{ inputs.conda-prefix }}' \
         )" >> $GITHUB_OUTPUT
 
+    - id: 'get-env-hash'
+      name: 'Determine environment file hash'
+      shell: bash
+      # HACK: github.action_path doesn't exist during expression evaluation for
+      # REASONS(tm) so that means that hashFiles() comes up with a blank string
+      run: |
+        echo hash=$( \
+          shasum -a 256 -U ${{ inputs.environment-file }} | cut -f1 -d ' ' \
+        ) >> $GITHUB_OUTPUT
+
     - id: 'check-cache'
       if: ${{ inputs.skip-cache == 'false' }}
       name: 'Try loading environment ${{ inputs.conda-prefix }} from cache'
@@ -65,7 +75,7 @@ runs:
         key: >-
           ${{ steps.cache-key.outputs.key }}
           (alp$create-env ${{ runner.os }}
-           ${{ hashFiles(inputs.environment-file) }})
+          ${{ steps.get-env-hash.outputs.hash }})
 
     - id: 'extract-env'
       if: ${{ steps.check-cache.outputs.cache-hit }}
