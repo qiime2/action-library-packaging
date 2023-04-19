@@ -71,10 +71,10 @@ runs:
       name: 'Try loading environment ${{ inputs.conda-prefix }} from cache'
       uses: actions/cache/restore@v3
       with:
-        path: alp$create-env.${{ inputs.cache-name }}.tar.xz
+        path: alp.create-env.${{ inputs.cache-name }}.tar.xz
         key: >-
           ${{ steps.cache-key.outputs.key }}
-          (alp$create-env ${{ runner.os }}
+          (alp.create-env ${{ runner.os }}
           ${{ steps.get-env-hash.outputs.hash }})
 
     - id: 'extract-env'
@@ -83,7 +83,7 @@ runs:
       shell: bash
       run: |
         mkdir -p '${{ steps.prefix.outputs.path }}'
-        tar -xJf 'alp$create-env.${{ inputs.cache-name }}.tar.xz' \
+        tar -xJf 'alp.create-env.${{ inputs.cache-name }}.tar.xz' \
             -C '${{ steps.prefix.outputs.path }}'
         '${{ steps.prefix.outputs.path}}/bin/conda-unpack'
 
@@ -105,20 +105,21 @@ runs:
       name: 'Pack up conda environment for cache'
       shell: bash
       run: |
+        '${{ steps.prefix.outputs.path }}/etc/activate.sh'
         conda pack --format tar.xz \
           -p '${{ steps.prefix.outputs.path }}' \
-          -o 'alp$create-env.${{ inputs.cache-name }}.tar.xz'
+          -o 'alp.create-env.${{ inputs.cache-name }}.tar.xz'
 
     - id: 'store-cache'
       if: ${{ inputs.skip-cache == 'false' && !steps.check-cache.outputs.cache-hit }}
       name: 'Write packed environment to cache'
       uses: actions/cache/save@v3
       with:
-        path: alp$create-env.${{ inputs.cache-name }}.tar.xz
+        path: alp.create-env.${{ inputs.cache-name }}.tar.xz
         key: ${{ steps.check-cache.outputs.cache-primary-key }}
 
     - id: 'cleanup'
       if: ${{ inputs.skip-cache == 'false' }}
       name: 'Cleanup'
       shell: bash
-      run: rm alp$create-env.${{ inputs.cache-name }}.tar.xz
+      run: rm alp.create-env.${{ inputs.cache-name }}.tar.xz
