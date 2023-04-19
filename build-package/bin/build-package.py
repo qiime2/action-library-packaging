@@ -8,12 +8,12 @@ from alp.common import ActionAdapter
 
 
 def main(recipe_path, conda_build_config, channels,
-         output_channel, conda_prefix=None):
+         output_channel, conda_activate=None):
     channels = itertools.chain.from_iterable(
         [('-c', channel) for channel in channels])
 
     cmd = [
-        'conda', 'mambabuild',
+        'conda', 'build',
         *channels,
         '--override-channels',
         '--quiet',
@@ -22,14 +22,6 @@ def main(recipe_path, conda_build_config, channels,
         '-m', conda_build_config,
         '--output-folder', output_channel,
         recipe_path]
-
-#    if conda_prefix is not None:
-#        prefix_cmd = [
-#            # "activate environment"
-#            'conda', 'run',
-#            '-p', conda_prefix
-#        ]
-#        cmd = prefix_cmd + cmd
 
     subprocess.run(cmd, check=True)
 
@@ -47,3 +39,75 @@ def main(recipe_path, conda_build_config, channels,
 
 if __name__ == '__main__':
     ActionAdapter(main)
+
+
+"""
+A chronicle of my failures over 7ish hours:
+
+So. I tried to get `conda mambabuild` to work, however there is something about
+how it is invoked which just DOES NOT WORK with `conda-pack`.
+
+I tried the following configurations:
+    - conda run -p <PREFIX> <CMD>
+    - <PREFIX>/bin -> $PATH
+    - conda init + conda activate -> .bash_profile (this one failed miserably)
+       * I could not get conda init to work properly in GH actions which caused
+         most everything else to fail.
+       * I did not yet try sourcing the base conda setup which may be necessary
+         source "$CONDA/etc/profile.d/conda.sh"
+       * This doesn't matter because I was able to reproduce this locally and
+         using `conda activate` did not help in a local environment.
+
+`conda-pack` is necessary in github actions as the prefix of the environment is
+not in a reliable location. What conda-pack does rewrite an environment (using
+pkg cache) to create a tar file with all prefixes replaced with their original
+form. This is then undone (just like during installation) using `conda-unpack`
+
+I know that I was able to get conda-unpack to work correctly as if I did not
+use the command, the CA certificates where completely hosed (showing the 
+pre-install prefixes) which broke the build.
+
+I was also able to reproduce the issue with `conda mamababuild` locally.
+In a freshly-unpacked prefix we will inevitably get this error during PS1
+setup for the build environment:
+
+    +++ export PATH
+    +++ '[' -z '' ']'
+    +++ PS1=
+    +++ conda activate base
+    +++ local cmd=activate
+    +++ case "$cmd" in
+    +++ __conda_activate activate base
+    +++ '[' -n '' ']'
+    +++ local ask_conda
+    ++++ PS1=
+    ++++ __conda_exe shell.posix activate base
+    ++++ /home/evan/alp3/bin/conda shell.posix activate base
+    Traceback (most recent call last):
+      File "/home/evan/alp3/bin/conda", line 12, in <module>
+        from conda.cli import main
+    ModuleNotFoundError: No module named 'conda'
+    +++ ask_conda=
+    +++ return
+    
+    subprocess.CalledProcessError: Command '['/bin/bash', '-x', '-o', 
+    'errexit', '/home/evan/alp3/conda-bld/q2-feature-table_1681863197065/work
+    /conda_build.sh']' returned non-zero exit status 1.
+
+This error DOES NOT OCCUR when using a regular prefix environment (that hasn't
+gone through conda-pack). Inspecting differences when using --debug between the
+two modes did not reveal anything as the debug output was essentially the same.
+
+---
+
+Given the above, the plan is to continue to use conda-pack, which works well in
+every other reasonable situation, and instead use `conda build`. It is probably
+inevitable that the newer solvers will make it into conda build as a default at
+some point.
+
+An alternative to that would be to generate a one-stop-shop channel out of the
+conda pkg cache post-installation, and cache that channel in github actions
+instead of a packed environment. This is slightly less convenient but would
+probably work.
+
+"""

@@ -1,8 +1,8 @@
 name: 'QIIME 2 Library Packaging - Build'
 description: 'Build a conda package'
 inputs:
-  conda-prefix:
-    description: 'Conda prefix which contains build tools'
+  conda-activate:
+    description: 'An activation script for the conda env to use'
     required: false
   recipe-path:
     description: 'Path to package recipe'
@@ -43,6 +43,7 @@ runs:
       env:
         PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
+        [ -n '${{ inputs.conda-activate }}' ] '${{ inputs.conda-activate }}'
         cat <<EOF | build-package.py
         ${{ toJSON(inputs) }}
         EOF

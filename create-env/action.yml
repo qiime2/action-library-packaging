@@ -1,0 +1,112 @@
+name: 'QIIME 2 Library Packaging - Create Environment'
+description: 'Install and configure a conda environment'
+inputs:
+  conda-prefix:
+    description: 'The conda prefix to set up'
+    required: true
+  environment-file:
+    description: 'The conda environment.yml to install in the prefix'
+    required: true
+  cache-name:
+    description: 'The name of the cache to store the environment in'
+    required: false
+    default: ''
+  skip-cache:
+    description: 'Do not use a cache'
+    required: false
+    default: false
+outputs:
+  conda-activate:
+    description: 'Activates this environment via sourcing (e.g. `. foo`)'
+    value: ". '${{ steps.prefix.outputs.path}}/etc/activate.sh'"
+  conda-prefix:
+    description: 'A full path to the conda prefix that was installed'
+    value: "${{ steps.prefix.outputs.path }}"
+  cache-name:
+    description: 'The name of the cache that has been used'
+    value: "${{ inputs.cache-name }}"
+  cache-key:
+    description: 'The full key of the cache that has been used'
+    value: "${{ steps.check-cache.outputs.primary-key }}"
+  cache-hit:
+    description: 'Whether a cache hit occured'
+    value: ${{ steps.check-cache.outputs.cache-hit || false }}
+
+runs:
+  using: composite
+  steps:
+
+    - id: 'prefix'
+      name: 'Determine full path to prefix'
+      shell: bash
+      run: |
+        echo path=$( \
+          readlink -f '${{ inputs.conda-prefix }}' \
+        ) >> $GITHUB_OUTPUT
+
+    - id: 'cache-key'
+      if: ${{ !inputs.skip-cache }}
+      name: 'Determine cache key basename'
+      shell: bash
+      run: |
+        [ -n '${{ inputs.cache-name }}' ] \
+          && echo "key=${{inputs.cache-name }}" \
+          || echo "key=$(basename ${{ inputs.conda-prefix }})" \
+        >> $GITHUB_OUTPUT
+
+    - id: 'check-cache'
+      if: ${{ !inputs.skip-cache }}
+      name: 'Try loading environment ${{ inputs.conda-prefix }} from cache'
+      uses: actions/cache/restore@v3
+      with:
+        path: alp$create-env/${{ inputs.cache-name }}.tar.xz
+        key: >-
+          ${{ steps.cache-key.outputs.key }}
+          (alp$create-env ${{ runner.os }}
+           ${{ hashFiles(inputs.environment-file) }})
+
+    - id: 'extract-env'
+      if: ${{ steps.check-cache.outputs.cache-hit }}
+      name: 'Untar and reinstall cached environment'
+      shell: bash
+      run: |
+        mkdir -p '${{ steps.prefix.outputs.path }}'
+        tar -xJf 'alp$create-env/${{ inputs.cache-name }}.tar.xz' \
+            -C '${{ steps.prefix.outputs.path }}'
+        '${{ steps.prefix.outputs.path}}/bin/conda-unpack'
+
+    - id: 'install-conda'
+      if: ${{ !steps.check-cache.outputs.cache-hit }}
+      name: 'Install environment ${{ inputs.conda-prefix }}'
+      shell: bash
+      run: |
+        conda env create -q \
+          -p '${{ steps.prefix.outputs.path }}' \
+          --file '${{ inputs.environment-file }}'
+        cat <<EOF > '${{ steps.prefix.outputs.path }}/etc/activate.sh'
+          . "$CONDA/etc/profile.d/conda.sh"
+          conda activate '${{ steps.prefix.outputs.path }}'
+        EOF
+
+    - id: 'pack-conda'
+      if: ${{ !inputs.skip-cache && !steps.check-cache.outputs.cache-hit }}
+      name: 'Pack up conda environment for cache'
+      shell: bash
+      run: |
+        conda pack --format tar.xz \
+          -p '${{ steps.prefix.outputs.path }}' \
+          -o 'alp$create-env/${{ inputs.cache-name }}.tar.xz'
+
+    - id: 'store-cache'
+      if: ${{ !inputs.skip-cache && !steps.check-cache.outputs.cache-hit }}
+      name: 'Write packed environment to cache'
+      uses: actions/cache/save@v3
+      with:
+        path: alp$create-env/${{ inputs.cache-name }}.tar.xz
+        key: ${{ steps.check-cache.outputs.cache-primary-key }}
+
+    - id: 'cleanup'
+      if: ${{ !inputs.skip-cache }}
+      name: 'Cleanup'
+      shell: bash
+      run: rm alp$create-env/${{ inputs.cache-name }}.tar.xz

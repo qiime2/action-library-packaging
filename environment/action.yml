@@ -5,60 +5,25 @@ inputs:
     description: 'The conda prefix environment to set up'
     required: false
     default: ${{ github.workspace }}/alp-base-env/
-  conda-pack:
-    description: 'The name of tar.xz file of the conda environment to cache'
+  cache-name:
+    description: 'The name of the cache to store the environment in'
     required: false
-    default: 'alp-base-env.tar.xz'
+    default: 'alp-base-env'
 outputs:
   conda-prefix:
     description: 'The conda prefix environment which has been set up'
     value: ${{ inputs.conda-prefix }}
+  conda-activate:
+    description: 'Activates this environment via sourcing (e.g. `. foo`)'
+    value: ${{ steps.create-env.outputs.conda-activate }}
 
 runs:
   using: composite
   steps:
-#   - id: get-hash
-#     shell: bash
-#    # HACK: github.action_path doesn't exist during expression evaluation for REASONS(tm)
-#    # so that means that hashFiles(...) comes up with a blank string.
-#     run:
-#       echo hash=$(shasum -a 256 -U ${{ github.action_path }}/conda-environment.yml | cut -f1 -d ' ') >> $GITHUB_OUTPUT
-
-#   - id: 'check-cache'
-#     uses: actions/cache/restore@v3
-#     with:
-#       path: ${{ inputs.conda-pack }}
-#       key: "${{ inputs.conda-pack }} (${{ runner.os }} ${{ steps.get-hash.outputs.hash }})"
-
-    - id: 'install-conda'
-      if: ${{ !steps.check-cache.outputs.cache-hit }}
-      shell: bash
-      run: conda env create -q -p ${{ inputs.conda-prefix }} --file ${{ github.action_path }}/conda-environment.yml
-
-#   - id: 'pack-conda'
-#     if: ${{ !steps.check-cache.outputs.cache-hit }}
-#     shell: bash
-#     run: conda run -p ${{ inputs.conda-prefix }} conda pack --format tar.xz -p ${{ inputs.conda-prefix }} -o ${{ inputs.conda-pack }}
-
-#   - id: 'store-cache'
-#     if: ${{ !steps.check-cache.outputs.cache-hit }}
-#     uses: actions/cache/save@v3
-#     with:
-#       path: ${{ inputs.conda-pack }}
-#       key: ${{ steps.check-cache.outputs.cache-primary-key }}
-
-#   - id: 'extract-cached-env'
-#     if: ${{ steps.check-cache.outputs.cache-hit }}
-#     shell: bash
-#     run: |
-#       mkdir -p ${{ inputs.conda-prefix }}
-#       tar -xJf ${{ inputs.conda-pack }} -C ${{ inputs.conda-prefix }}
-
-    - id: 'add-env-to-path'
-      shell: bash
-      run: echo "$(readlink -f ${{ inputs.conda-prefix }})/bin" >> $GITHUB_PATH
-
-#   - id: 'upack-env'
-#     if: ${{ steps.check-cache.outputs.cache-hit }}
-#     shell: bash
-#     run: conda-unpack
+    - id: 'create-env'
+      name: 'Create base environment for ALP'
+      uses: qiime2/action-library-packaging/create-env@beta
+      with:
+        conda-prefix: ${{ inputs.conda-prefix }}
+        environment-file: ${{ github.action_path }}/conda-environment.yml
+        cache-name: ${{ inputs.cache-name }}
