@@ -99,6 +99,7 @@ runs:
           . "$CONDA/etc/profile.d/conda.sh"
           conda activate '${{ steps.prefix.outputs.path }}'
         EOF
+        chmod +x '${{ steps.prefix.outputs.path }}/etc/activate.sh'
 
     - id: 'pack-conda'
       if: ${{ inputs.skip-cache == 'false' && !steps.check-cache.outputs.cache-hit }}
