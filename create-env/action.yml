@@ -106,7 +106,7 @@ runs:
       name: 'Pack up conda environment for cache'
       shell: bash
       run: |
-        '${{ steps.prefix.outputs.path }}/etc/activate.sh'
+        source '${{ steps.prefix.outputs.path }}/etc/activate.sh'
         conda pack --format tar.xz \
           -p '${{ steps.prefix.outputs.path }}' \
           -o 'alp.create-env.${{ inputs.cache-name }}.tar.xz'
