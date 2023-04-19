@@ -45,7 +45,7 @@ runs:
         ) >> $GITHUB_OUTPUT
 
     - id: 'cache-key'
-      if: ${{ !inputs.skip-cache }}
+      if: ${{ inputs.skip-cache == 'false' }}
       name: 'Determine cache key basename'
       shell: bash
       run: |
@@ -55,7 +55,7 @@ runs:
         >> $GITHUB_OUTPUT
 
     - id: 'check-cache'
-      if: ${{ !inputs.skip-cache }}
+      if: ${{ inputs.skip-cache == 'false' }}
       name: 'Try loading environment ${{ inputs.conda-prefix }} from cache'
       uses: actions/cache/restore@v3
       with:
@@ -89,7 +89,7 @@ runs:
         EOF
 
     - id: 'pack-conda'
-      if: ${{ !inputs.skip-cache && !steps.check-cache.outputs.cache-hit }}
+      if: ${{ inputs.skip-cache == 'false' && !steps.check-cache.outputs.cache-hit }}
       name: 'Pack up conda environment for cache'
       shell: bash
       run: |
@@ -98,7 +98,7 @@ runs:
           -o 'alp$create-env/${{ inputs.cache-name }}.tar.xz'
 
     - id: 'store-cache'
-      if: ${{ !inputs.skip-cache && !steps.check-cache.outputs.cache-hit }}
+      if: ${{ inputs.skip-cache == 'false' && !steps.check-cache.outputs.cache-hit }}
       name: 'Write packed environment to cache'
       uses: actions/cache/save@v3
       with:
@@ -106,7 +106,7 @@ runs:
         key: ${{ steps.check-cache.outputs.cache-primary-key }}
 
     - id: 'cleanup'
-      if: ${{ !inputs.skip-cache }}
+      if: ${{ inputs.skip-cache == 'false' }}
       name: 'Cleanup'
       shell: bash
       run: rm alp$create-env/${{ inputs.cache-name }}.tar.xz
