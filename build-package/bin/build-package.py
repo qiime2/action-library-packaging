@@ -40,7 +40,7 @@ def main(recipe_path, conda_build_config, channels,
         recipe_path]
 
     name = get_setup_info(recipe_path, 'name')
-    version = get_setup_info(version, 'name')
+    version = get_setup_info(recipe_path, 'version')
     build = ''
     filename = ''
     subdir = ''
