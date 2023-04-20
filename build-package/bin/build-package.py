@@ -46,7 +46,10 @@ def main(recipe_path, conda_build_config, channels,
     subdir = ''
 
     if not dry_run:
+        print(f'Running: {" ".join(cmd)}', flush=True)
         subprocess.run(cmd, check=True)
+        print('done.', flush=True)
+
         path, = glob.glob(os.path.join(output_channel,
                                        '**',
                                        '-'.join([name, version, '*'])))
