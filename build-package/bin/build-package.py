@@ -42,10 +42,10 @@ if __name__ == '__main__':
 
 
 """
-A chronicle of my failures over 7ish hours:
+A chronicle of my failures over 7ish (future me: add 6 more) hours:
 
-So. I tried to get `conda mambabuild` to work, however there is something about
-how it is invoked which just DOES NOT WORK with `conda-pack`.
+So. I tried to get `conda [mamba]build` to work, however there is something
+about how it is invoked which just DOES NOT WORK with `conda-pack`.
 
 I tried the following configurations:
     - conda run -p <PREFIX> <CMD>
@@ -64,10 +64,10 @@ pkg cache) to create a tar file with all prefixes replaced with their original
 form. This is then undone (just like during installation) using `conda-unpack`
 
 I know that I was able to get conda-unpack to work correctly as if I did not
-use the command, the CA certificates where completely hosed (showing the 
+use the command, the CA certificates where completely hosed (showing the
 pre-install prefixes) which broke the build.
 
-I was also able to reproduce the issue with `conda mamababuild` locally.
+I was also able to reproduce the issue with `conda [mamba]build` locally.
 In a freshly-unpacked prefix we will inevitably get this error during PS1
 setup for the build environment:
 
@@ -89,8 +89,8 @@ setup for the build environment:
     ModuleNotFoundError: No module named 'conda'
     +++ ask_conda=
     +++ return
-    
-    subprocess.CalledProcessError: Command '['/bin/bash', '-x', '-o', 
+
+    subprocess.CalledProcessError: Command '['/bin/bash', '-x', '-o',
     'errexit', '/home/evan/alp3/conda-bld/q2-feature-table_1681863197065/work
     /conda_build.sh']' returned non-zero exit status 1.
 
@@ -101,9 +101,7 @@ two modes did not reveal anything as the debug output was essentially the same.
 ---
 
 Given the above, the plan is to continue to use conda-pack, which works well in
-every other reasonable situation, and instead use `conda build`. It is probably
-inevitable that the newer solvers will make it into conda build as a default at
-some point.
+every other reasonable situation.
 
 An alternative to that would be to generate a one-stop-shop channel out of the
 conda pkg cache post-installation, and cache that channel in github actions

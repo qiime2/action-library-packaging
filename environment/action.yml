@@ -6,14 +6,6 @@ inputs:
     description: 'The conda prefix environment to set up'
     required: false
     default: ${{ github.workspace }}/alp-base-env/
-  cache-name:
-    description: 'The name of the cache to store the environment in'
-    required: false
-    default: 'alp-base-env'
-  skip-cache:
-    description: 'Do not use a cache'
-    required: false
-    default: false
 
 outputs:
   conda-prefix:
@@ -33,5 +25,5 @@ runs:
       with:
         conda-prefix: ${{ inputs.conda-prefix }}
         environment-file: ${{ github.action_path }}/conda-environment.yml
-        cache-name: ${{ inputs.cache-name }}
-        skip-cache: ${{ inputs.skip-cache }}
+        # conda-build etc can't be conda-packed (or conda create --cloned)
+        skip-cache: true
