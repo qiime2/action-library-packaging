@@ -13,7 +13,7 @@ def main(recipe_path, conda_build_config, channels,
         [('-c', channel) for channel in channels])
 
     cmd = [
-        'conda', 'build',
+        'conda', 'mambabuild',
         *channels,
         '--override-channels',
         '--quiet',
@@ -30,10 +30,15 @@ def main(recipe_path, conda_build_config, channels,
                             capture_output=True)
 
     output_info = os.path.relpath(output.stdout.decode('utf8'), output_channel)
-    print(output_info)
     subdir, filename = os.path.split(output_info)
 
-    name, version, build = filename.rsplit('-', 3)
+    name, version, build = filename.rsplit('-', 2)
+
+    build, ext = os.path.splitext(build)
+    if ext == '.bz2':
+        # one more time for tar
+        build, ext = os.path.splitext(build)
+        assert ext = '.tar'
 
     return dict(name=name, version=version, filename=filename,
                 build=build, subdir=subdir)
