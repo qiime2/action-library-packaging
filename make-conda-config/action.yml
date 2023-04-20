@@ -36,7 +36,7 @@ runs:
       env:
         PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
-        [ -n "${{ inputs.conda-activate }}" ] && ${{ inputs.conda-activate }}
+        [ -n "${{ inputs.conda-activate }}" ] && "${{ inputs.conda-activate }}" || true
         cat <<EOF | make-cbc.py
         ${{ toJSON(inputs) }}
         EOF

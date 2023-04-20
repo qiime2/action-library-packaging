@@ -47,7 +47,7 @@ runs:
       env:
         PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
-        [ -n "${{ inputs.conda-activate }}" ] && ${{ inputs.conda-activate }}
+        [ -n "${{ inputs.conda-activate }}" ] && "${{ inputs.conda-activate }}" || true
         cat <<EOF | build-package.py
         ${{ toJSON(inputs) }}
         EOF
