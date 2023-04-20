@@ -22,7 +22,7 @@ def main(seed_environment, conda_build_config, channels, conda_activate=None):
     if 'channels' not in env:
         env['channels'] = channels
     else:
-        env['channels'] += channels
+        env['channels'] = channels + env['channels']
 
     return env
 
