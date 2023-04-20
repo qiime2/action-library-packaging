@@ -38,7 +38,7 @@ def main(recipe_path, conda_build_config, channels,
     if ext == '.bz2':
         # one more time for tar
         build, ext = os.path.splitext(build)
-        assert ext = '.tar'
+        assert ext == '.tar'
 
     return dict(name=name, version=version, filename=filename,
                 build=build, subdir=subdir)
