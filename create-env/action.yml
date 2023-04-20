@@ -84,21 +84,10 @@ runs:
       name: 'Untar and reinstall cached environment'
       shell: bash
       run: |
-        mkdir -p '${{ runner.temp }}/alp.create-env.${{ inputs.cache-name }}'
-        tar -xJf 'alp.create-env.${{ inputs.cache-name }}.tar.xz' \
-            -C '${{ runner.temp }}/alp.create-env.${{ inputs.cache-name }}'
-        '${{ runner.temp }}/alp.create-env.${{ inputs.cache-name }}/bin/conda-unpack'
-
-    - id: 'fix-env'
-      if: ${{ steps.check-cache.outputs.cache-hit }}
-      name: 'Run conda clone to repair conda'
-      shell: bash
-      run: |
-        source '${{ runner.temp }}/alp.create-env.${{ inputs.cache-name }}/etc/activate.sh'
         mkdir -p '${{ steps.prefix.outputs.path }}'
-        conda create \
-          --clone '${{ runner.temp }}/alp.create-env.${{ inputs.cache-name }}' \
-          -p '${{ steps.prefix.outputs.path }}'
+        tar -xJf 'alp.create-env.${{ inputs.cache-name }}.tar.xz' \
+            -C '${{ steps.prefix.outputs.path }}'
+        '${{ steps.prefix.outputs.path}}/bin/conda-unpack'
 
     - id: 'install-conda'
       if: ${{ !steps.check-cache.outputs.cache-hit }}
@@ -110,7 +99,7 @@ runs:
           --file '${{ inputs.environment-file }}'
         cat <<EOF > '${{ steps.prefix.outputs.path }}/etc/activate.sh'
           . "$CONDA/etc/profile.d/conda.sh"
-          conda activate '${{ steps.prefix.outputs.path }}'
+          conda activate --stack '${{ steps.prefix.outputs.path }}'
         EOF
         chmod +x '${{ steps.prefix.outputs.path }}/etc/activate.sh'
 
