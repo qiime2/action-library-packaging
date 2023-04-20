@@ -45,6 +45,9 @@ def main(recipe_path, conda_build_config, channels,
     filename = ''
     subdir = ''
 
+    if type(dry_run) is str:
+        dry_run = dry_run == 'true'
+
     if not dry_run:
         print(f'Running: {" ".join(cmd)}', flush=True)
         subprocess.run(cmd, check=True)
