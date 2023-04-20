@@ -14,6 +14,7 @@ outputs:
   conda-activate:
     description: 'Activates this environment via sourcing (e.g. `. foo`)'
     value: ${{ steps.create-env.outputs.conda-activate }}
+  env-hash: ${{ steps.create-env.outputs.env-hash }}
 
 runs:
   using: composite

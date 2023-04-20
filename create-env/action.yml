@@ -33,6 +33,9 @@ outputs:
   cache-hit:
     description: 'Whether a cache hit occured'
     value: ${{ steps.check-cache.outputs.cache-hit || false }}
+  env-hash:
+    description: 'Hash of the environment (useful for build caching)'
+    value: ${{ steps.get-env-hash.outputs.hash }}
 
 runs:
   using: composite

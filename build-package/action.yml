@@ -16,6 +16,10 @@ inputs:
   output-channel:
     description: 'Local (file-system) channel to place the built package'
     required: true
+  dry-run:
+    description: 'Produce action outputs without building'
+    required: false
+    default: false
 outputs:
   package-name:
     description: 'Name of built package'

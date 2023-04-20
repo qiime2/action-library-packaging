@@ -8,7 +8,7 @@ from alp.common import ActionAdapter
 
 
 def main(recipe_path, conda_build_config, channels,
-         output_channel, conda_activate=None):
+         output_channel, conda_activate=None, dry_run=False):
     channels = itertools.chain.from_iterable(
         [('-c', channel) for channel in channels])
 
@@ -23,12 +23,14 @@ def main(recipe_path, conda_build_config, channels,
         '--output-folder', output_channel,
         recipe_path]
 
-    subprocess.run(cmd, check=True)
+    if not dry_run:
+        subprocess.run(cmd, check=True)
 
     output = subprocess.run([*cmd[:-1], '--output', cmd[-1]], check=True,
                             capture_output=True)
 
     output_info = os.path.relpath(output.stdout.decode('utf8'), output_channel)
+    print(output_info)
     subdir, filename = os.path.split(output_info)
 
     name, version, build = filename.rsplit('-', 3)
