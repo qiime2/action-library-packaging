@@ -3,15 +3,31 @@
 import itertools
 import os
 import subprocess
+import glob
 
 from alp.common import ActionAdapter
 
 
+def get_setup_info(recipe_path, key):
+    if not os.path.isdir(recipe_path):
+        raise Exception(f'{recipe_path} is not a directory')
+
+    setup_path = os.path.join(recipe_path, '..', '..', 'setup.py')
+    cmd = [
+        'python',
+        setup_path,
+        f'--{key}'
+    ]
+
+    result = subprocess.run(cmd, check=True, capture_output=True)
+    return result.stdout.decode().strip()
+
+
 def main(recipe_path, conda_build_config, channels,
          output_channel, conda_activate=None, dry_run=False):
+
     channels = itertools.chain.from_iterable(
         [('-c', channel) for channel in channels])
-
     cmd = [
         'conda', 'mambabuild',
         *channels,
@@ -23,22 +39,31 @@ def main(recipe_path, conda_build_config, channels,
         '--output-folder', output_channel,
         recipe_path]
 
+    name = get_setup_info(recipe_path, 'name')
+    version = get_setup_info(version, 'name')
+    build = ''
+    filename = ''
+    subdir = ''
+
     if not dry_run:
         subprocess.run(cmd, check=True)
+        path, = glob.glob(os.path.join(output_channel,
+                                       '**',
+                                       '-'.join([name, version, '*'])))
 
-    output = subprocess.run([*cmd[:-1], '--output', cmd[-1]], check=True,
-                            capture_output=True)
+        output_info = os.path.relpath(path, output_channel)
+        subdir, filename = os.path.split(output_info)
 
-    output_info = os.path.relpath(output.stdout.decode('utf8'), output_channel)
-    subdir, filename = os.path.split(output_info)
+        name_from_file, version_from_file, build = filename.rsplit('-', 2)
+        assert name == name_from_file
+        assert version == version_from_file
 
-    name, version, build = filename.rsplit('-', 2)
-
-    build, ext = os.path.splitext(build)
-    if ext == '.bz2':
-        # one more time for tar
         build, ext = os.path.splitext(build)
-        assert ext == '.tar'
+        if ext == '.bz2':
+            # one more time for tar
+            build, ext = os.path.splitext(build)
+            assert ext == '.tar'
+            subdir = ''
 
     return dict(name=name, version=version, filename=filename,
                 build=build, subdir=subdir)
