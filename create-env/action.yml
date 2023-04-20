@@ -94,6 +94,7 @@ runs:
       name: 'Run conda clone to repair conda'
       shell: bash
       run: |
+        mkdir -p '${{ steps.prefix.outputs.path }}'
         conda create \
           --clone '${{ runner.temp }}/alp.create-env.${{ inputs.cache-name }}' \
           -p '${{ steps.prefix.outputs.path }}'
