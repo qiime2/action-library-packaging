@@ -10,6 +10,7 @@ inputs:
   conda-activate:
     description: 'An activation script for the conda env to use'
     required: false
+    default: ''
   channels:
     description: 'Extra channels to add to the output, useful for adding local channels in addition to what is described by the seed-environment.'
     required: false
@@ -36,7 +37,7 @@ runs:
       env:
         PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
-        [ -n "${{ inputs.conda-activate }}" ] && "${{ inputs.conda-activate }}" || true
+        ${{ inputs.conda-activate }}
         cat <<EOF | make-cbc.py
         ${{ toJSON(inputs) }}
         EOF

@@ -4,6 +4,7 @@ inputs:
   conda-activate:
     description: 'An activation script for the conda env to use'
     required: false
+    default: ''
   recipe-path:
     description: 'Path to package recipe'
     required: true
@@ -47,7 +48,7 @@ runs:
       env:
         PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
-        [ -n "${{ inputs.conda-activate }}" ] && "${{ inputs.conda-activate }}" || true
+        ${{ inputs.conda-activate }}
         cat <<EOF | build-package.py
         ${{ toJSON(inputs) }}
         EOF
