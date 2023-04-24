@@ -1,0 +1,28 @@
+name: 'QIIME 2 Library Packaging - Patch Environment File'
+description: 'Patch an environment file with different versions'
+inputs:
+  conda-activate:
+    description: 'An activation script for the conda env to use'
+    required: false
+    default: ''
+  environment-file:
+    description: 'The conda environment.yml to patch'
+    required: true
+  versions-file:
+    description: 'Newline seperated list of conda package specifications'
+    required: true
+runs:
+  using: composite
+  steps:
+    - id: 'setup-path'
+      shell: bash
+      run: echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
+    - id: 'patch-environment'
+      shell: bash
+      env:
+        PYTHONPATH: "${{ github.action_path }}/../src/"
+      run: |
+        ${{ inputs.conda-activate }}
+        cat <<EOF | patch-env.py
+        ${{ toJSON(inputs) }}
+        EOF
