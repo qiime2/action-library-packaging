@@ -1,6 +1,10 @@
 name: 'QIIME 2 Library Packaging - Build Distro Metapackage'
 description: 'Build a QIIME 2 metapackage'
 inputs:
+  conda-activate:
+    description: 'An activation script for the conda env to use'
+    required: false
+    default: ''
   metapackage-name:
     description: 'Name for the built distribution (e.g. qiime2-core)'
     required: true
@@ -50,6 +54,7 @@ runs:
     - id: 'build-metapackage'
       uses: 'qiime2/action-library-packaging/build-package@beta'
       with:
+        conda-activate: ${{ inputs.conda-activate }}
         recipe-path: ${{ steps.template-metapackage.outputs.recipe-path }}
         conda-build-config: ${{ steps.make-cbc.outputs.conda-build-config }}
         channels: ${{ steps.make-cbc.outputs.channels }}
