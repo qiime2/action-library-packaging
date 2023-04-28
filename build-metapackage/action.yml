@@ -53,6 +53,7 @@ runs:
       env:
         PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
+        ${{ inputs.conda-activate }}
         cat <<EOF | template-metapackage.py ${{ steps.make-recipe-dir.outputs.path }}
         ${{ toJSON(inputs) }}
         EOF
