@@ -13,4 +13,5 @@ runs:
   using: composite
   steps:
     - id: 'mktemp'
+      shell: bash
       run: echo path=$(mktemp -p ${{ runner.temp }} -d ${{ inputs.prefix }}-XXXXXXX) >> $GITHUB_OUTPUT
