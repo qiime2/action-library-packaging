@@ -28,7 +28,8 @@ def main(metapackage_name, metapackage_version, seed_environment, recipe_path,
         fh.write(template.render(
             name=metapackage_name,
             version=metapackage_version,
-            packages=mapping
+            packages=mapping,
+            env=os.environ
         ))
 
 
