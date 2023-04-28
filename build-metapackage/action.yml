@@ -61,7 +61,7 @@ runs:
       uses: 'qiime2/action-library-packaging/build-package@beta'
       with:
         conda-activate: ${{ inputs.conda-activate }}
-        recipe-path: ${{ steps.template-metapackage.outputs.recipe-path }}
+        recipe-path: ${{ steps.make-recipe-dir.outputs.path }}
         conda-build-config: ${{ steps.make-cbc.outputs.conda-build-config }}
         channels: ${{ steps.make-cbc.outputs.channels }}
         output-channel: ${{ inputs.output-channel }}
