@@ -3,6 +3,7 @@
 import subprocess
 import sys
 import os
+import yaml
 import jinja2
 
 from alp.common import ActionAdapter
