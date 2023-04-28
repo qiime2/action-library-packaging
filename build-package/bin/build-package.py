@@ -24,7 +24,14 @@ def get_setup_info(recipe_path, key):
 
 
 def main(recipe_path, conda_build_config, channels,
-         output_channel, conda_activate=None, dry_run=False):
+         output_channel, conda_activate=None, dry_run=False,
+         metapackage=False):
+
+    if type(dry_run) is str:
+        dry_run = dry_run == 'true'
+
+    if type(metapackage) is str:
+        metapackage = metapackage == 'true'
 
     channels = itertools.chain.from_iterable(
         [('-c', channel) for channel in channels])
@@ -39,14 +46,15 @@ def main(recipe_path, conda_build_config, channels,
         '--output-folder', output_channel,
         recipe_path]
 
-    name = get_setup_info(recipe_path, 'name')
-    version = get_setup_info(recipe_path, 'version')
+    name = ''
+    version = ''
     build = ''
     filename = ''
     subdir = ''
 
-    if type(dry_run) is str:
-        dry_run = dry_run == 'true'
+    if not metapackage:
+        name = get_setup_info(recipe_path, 'name')
+        version = get_setup_info(recipe_path, 'version')
 
     if not dry_run:
         print(f'Running: {" ".join(cmd)}', flush=True)
@@ -61,8 +69,10 @@ def main(recipe_path, conda_build_config, channels,
         subdir, filename = os.path.split(output_info)
 
         name_from_file, version_from_file, build = filename.rsplit('-', 2)
-        assert name == name_from_file
-        assert version == version_from_file
+
+        if not metapackage:
+            assert name == name_from_file
+            assert version == version_from_file
 
         build, ext = os.path.splitext(build)
         if ext == '.bz2':

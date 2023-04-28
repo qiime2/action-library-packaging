@@ -21,6 +21,10 @@ inputs:
     description: 'Produce action outputs without building'
     required: false
     default: false
+  metapackage:
+    description: 'Is this a python package or a metapackage'
+    default: false
+    required: false
 outputs:
   package-name:
     description: 'Name of built package'
