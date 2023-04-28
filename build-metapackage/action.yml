@@ -43,7 +43,7 @@ runs:
     - id: 'make-recipe-dir'
       uses: 'qiime2/action-library-packaging/_mktmpdir@beta'
     - id: 'make-cbc'
-      uses: 'qiime2/actions-library-packaging/make-conda-config@beta'
+      uses: 'qiime2/action-library-packaging/make-conda-config@beta'
       with:
         seed-envrionment: ${{ inputs.seed-environment }}
         channels: ${{ inputs.channels }}
