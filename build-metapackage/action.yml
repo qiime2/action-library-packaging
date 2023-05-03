@@ -45,6 +45,7 @@ runs:
     - id: 'make-cbc'
       uses: 'qiime2/action-library-packaging/make-conda-config@beta'
       with:
+        conda-activate: ${{ inputs.conda-activate }}
         seed-environment: ${{ inputs.seed-environment }}
         channels: ${{ inputs.channels }}
         conda-build-config: '${{ steps.make-recipe-dir.outputs.path }}/conda_build_config.yml'
