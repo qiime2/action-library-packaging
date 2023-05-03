@@ -11,9 +11,9 @@ outputs:
     value: ${{ steps.mktemp.outputs.path }}
 runs:
   using: composite
-  env:
-    TMPDIR: ${{ runner.temp }}
   steps:
     - id: 'mktemp'
       shell: bash
+      env:
+        TMPDIR: ${{ runner.temp }}
       run: echo path=$(mktemp -d ${{ inputs.prefix }}-XXXXXXX) >> $GITHUB_OUTPUT
