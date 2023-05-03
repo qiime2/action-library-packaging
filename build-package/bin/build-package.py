@@ -2,12 +2,20 @@
 
 import itertools
 import os
+import io
 import subprocess
 import glob
 
 import yaml
 
 from alp.common import ActionAdapter
+
+
+def head(fh, n):
+    lines = []
+    for _, line in zip(range(n), fh):
+        lines.append(line)
+    return io.StringIO(''.join(lines))
 
 
 def get_setup_info(recipe_path, key):
@@ -56,9 +64,9 @@ def main(recipe_path, conda_build_config, channels,
 
     if metapackage:
         with open(os.path.join(recipe_path, 'meta.yaml')) as fh:
-            recipe = yaml.safe_load(fh)
-        name = recipe['name']
-        version = recipe['version']
+            recipe = yaml.safe_load(head(fh, 4))
+        name = recipe['package']['name']
+        version = recipe['package']['version']
     else:
         name = get_setup_info(recipe_path, 'name')
         version = get_setup_info(recipe_path, 'version')
