@@ -52,7 +52,12 @@ def main(recipe_path, conda_build_config, channels,
     filename = ''
     subdir = ''
 
-    if not metapackage:
+    if metapackage:
+        with open(os.path.join(recipe_path, 'meta.yaml')) as fh:
+            recipe = yaml.safe_load(fh)
+        name = recipe['name']
+        version = recipe['version']
+    else:
         name = get_setup_info(recipe_path, 'name')
         version = get_setup_info(recipe_path, 'version')
 
@@ -70,9 +75,8 @@ def main(recipe_path, conda_build_config, channels,
 
         name_from_file, version_from_file, build = filename.rsplit('-', 2)
 
-        if not metapackage:
-            assert name == name_from_file
-            assert version == version_from_file
+        assert name == name_from_file
+        assert version == version_from_file
 
         build, ext = os.path.splitext(build)
         if ext == '.bz2':
