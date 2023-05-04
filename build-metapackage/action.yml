@@ -34,6 +34,9 @@ outputs:
   conda-subdir:
     description: 'Conda channel subdir'
     value: ${{ steps.build-metapackage.outputs.conda-subdir }}
+  channels:
+    description: 'Channels used'
+    value: ${{ steps.make-cbc.outputs.channels }}
 runs:
   using: composite
   steps:
