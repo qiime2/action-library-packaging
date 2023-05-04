@@ -7,6 +7,7 @@ import subprocess
 import glob
 
 import yaml
+import json
 
 from alp.common import ActionAdapter
 
@@ -36,6 +37,10 @@ def get_setup_info(recipe_path, key):
 def main(recipe_path, conda_build_config, channels,
          output_channel, conda_activate=None, dry_run=False,
          metapackage=False):
+
+    conda_info = subprocess.run(['conda', 'info', '--json'], check=True,
+                                capture_output=True).stdout.decode('utf-8')
+    platform = json.loads(conda_info)['platform']
 
     if type(dry_run) is str:
         dry_run = dry_run == 'true'
@@ -76,10 +81,8 @@ def main(recipe_path, conda_build_config, channels,
         subprocess.run(cmd, check=True)
         print('done.', flush=True)
 
-        found = glob.glob(os.path.join(output_channel,
-                                       '**',
+        found = glob.glob(os.path.join(output_channel, platform,
                                        '-'.join([name, version, '*'])))
-        print(found)
         path, = found
 
 
