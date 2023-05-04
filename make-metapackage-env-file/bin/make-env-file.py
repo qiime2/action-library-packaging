@@ -35,6 +35,8 @@ def main(conda_activate, conda_prefix, package_name, package_version,
         if not spec.startswith(package_name)
     ]
 
+    env['dependencies'].append('conda-pack=0.7.0')
+
     del env['name']
     del env['prefix']
 
