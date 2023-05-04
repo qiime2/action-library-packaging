@@ -76,9 +76,12 @@ def main(recipe_path, conda_build_config, channels,
         subprocess.run(cmd, check=True)
         print('done.', flush=True)
 
-        path, = glob.glob(os.path.join(output_channel,
+        found = glob.glob(os.path.join(output_channel,
                                        '**',
                                        '-'.join([name, version, '*'])))
+        print(found)
+        path, = found
+
 
         output_info = os.path.relpath(path, output_channel)
         subdir, filename = os.path.split(output_info)
