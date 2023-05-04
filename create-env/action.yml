@@ -112,7 +112,7 @@ runs:
       shell: bash
       run: |
         source '${{ steps.prefix.outputs.path }}/etc/activate.sh'
-        conda pack --format tar.xz \
+        conda pack --format tar.xz --quiet \
           -p '${{ steps.prefix.outputs.path }}' \
           -o 'alp.create-env.${{ inputs.cache-name }}.tar.xz'
 
