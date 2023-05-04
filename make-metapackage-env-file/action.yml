@@ -1,0 +1,41 @@
+name: 'QIIME 2 Library Packaging - Create Environment File'
+description: 'Create environment file from a metapackage'
+
+inputs:
+  conda-activate:
+    description: 'An activation script for the conda env to use'
+    required: false
+    default: ''
+  conda-prefix:
+    description: 'The conda prefix to set up'
+    required: true
+  package-name:
+    description: 'The conda package to install'
+    required: true
+  package-version:
+    description: 'The version to install'
+    required: true
+  channels:
+    description: 'A list of channels needed to install the package'
+    required: true
+  environment-file:
+    description: 'The conda environment.yml to create'
+    required: true
+
+outputs:
+  environment-file:
+    description: 'The conda environment.yml which was created'
+    value: ${{ inputs.environment-file }}
+
+runs:
+  using: composite
+  steps:
+    - id: 'make-env-file'
+      shell: bash
+      env:
+        PYTHONPATH: "${{ github.action_path }}/../src/"
+      run: |
+        ${{ inputs.conda-activate }}
+        cat <<EOF | make-env-file.py
+        ${{ toJSON(inputs) }}
+        EOF
