@@ -48,6 +48,9 @@ def main(recipe_path, conda_build_config, channels,
     if type(metapackage) is str:
         metapackage = metapackage == 'true'
 
+    print('OR IS PRINTING A DEBUGGING STRATEGY????????????')
+    print(channels)
+
     channels = itertools.chain.from_iterable(
         [('-c', channel) for channel in channels])
     cmd = [
@@ -60,9 +63,6 @@ def main(recipe_path, conda_build_config, channels,
         '-m', conda_build_config,
         '--output-folder', output_channel,
         recipe_path]
-
-    print('OR IS PRINTING A DEBUGGING STRATEGY????????????')
-    print(channels)
 
     name = ''
     version = ''
