@@ -61,6 +61,9 @@ def main(recipe_path, conda_build_config, channels,
         '--output-folder', output_channel,
         recipe_path]
 
+    print('OR IS PRINTING A DEBUGGING STRATEGY????????????')
+    print(channels)
+
     name = ''
     version = ''
     build = ''
@@ -84,7 +87,6 @@ def main(recipe_path, conda_build_config, channels,
         found = glob.glob(os.path.join(output_channel, platform,
                                        '-'.join([name, version, '*'])))
         path, = found
-
 
         output_info = os.path.relpath(path, output_channel)
         subdir, filename = os.path.split(output_info)
