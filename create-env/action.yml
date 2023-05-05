@@ -77,7 +77,7 @@ runs:
       name: 'Check if environment file exists'
       shell: bash
       run: |
-        echo "exists=$([ -f '${{ inputs.environment-file }} ] && echo 'true' \
+        echo "exists=$([ -f '${{ inputs.environment-file }}' ] && echo 'true' \
           )" >> $GITHUB_OUTPUT
 
     - id: 'cache-key'
