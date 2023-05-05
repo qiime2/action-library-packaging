@@ -11,18 +11,7 @@ import yaml
 from alp.common import ActionAdapter
 
 
-def main(conda_activate, conda_prefix, package_name, package_version,
-         channels, environment_file):
-    channels = list(itertools.chain.from_iterable(
-        [('-c', c) for c in channels]))
-
-    cmd = [
-        'conda', 'create', '-p', conda_prefix, '-y', '-q', *channels,
-        f'{package_name}={package_version}'
-    ]
-
-    subprocess.run(cmd, check=True)
-
+def main(conda_prefix, environment_file, package_name, **unused):
     cmd = [
         'conda', 'env', 'export', '--no-builds', '-p', conda_prefix
     ]
@@ -34,8 +23,6 @@ def main(conda_activate, conda_prefix, package_name, package_version,
         spec for spec in env['dependencies']
         if not spec.startswith(package_name)
     ]
-
-    env['dependencies'].append('conda-pack=0.7.0')
 
     del env['name']
     del env['prefix']

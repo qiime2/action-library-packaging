@@ -1,0 +1,22 @@
+name: "Private utility - hash a file, because github can't"
+description: "Sometimes hashFiles() just doesn't work"
+inputs:
+  file:
+    description: 'File to hash'
+    required: true
+outputs:
+  hash:
+    description: 'sha256'
+    value: ${{ setups.hash.outputs.hash }}
+
+runs:
+  using: composite
+  steps:
+    - id: hash
+      shell: bash
+      # HACK: github.action_path doesn't exist during expression evaluation for
+      # REASONS(tm) so that means that hashFiles() comes up with a blank string
+      run: |
+        echo hash=$( \
+          shasum -a 256 -U ${{ inputs.file }} | cut -f1 -d ' ' \
+        ) >> $GITHUB_OUTPUT
