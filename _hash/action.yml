@@ -7,7 +7,7 @@ inputs:
 outputs:
   hash:
     description: 'sha256'
-    value: ${{ setups.hash.outputs.hash }}
+    value: ${{ steps.hash.outputs.hash }}
 
 runs:
   using: composite
