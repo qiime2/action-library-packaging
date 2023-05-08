@@ -20,8 +20,8 @@ def main(conda_activate, channel, rev_deps, versions_file):
         updates = [line.strip() for line in fh]
         new_versions = dict([split_spec(u) for u in updates])
 
-    patch_channels(channel_dir=channel, source_revdeps=rev_deps,
-                   pkgs_in_distro=new_versions)
+    patch_channels(channel_dir=channel, rev_deps=rev_deps,
+                   new_versions=new_versions)
 
 
 def _patch_repodata(repodata, changes):
@@ -51,11 +51,11 @@ def _patch_repodata(repodata, changes):
     return instructions
 
 
-def patch_channels(channel_dir, source_revdeps, pkgs_in_distro):
+def patch_channels(channel_dir, rev_deps, new_versions):
     patch_instructions = {}
 
-    versioned_revdeps = {(pkg, pkgs_in_distro[pkg]): revs
-                         for pkg, revs in source_revdeps.items()}
+    versioned_revdeps = {(pkg, version): rev_deps[pkg]
+                         for pkg, version in new_versions.items()}
 
     for subdir in SUBDIRS:
         with open(os.path.join(channel_dir,
