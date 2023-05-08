@@ -1,0 +1,35 @@
+name: 'QIIME 2 Library Packaging - Patch Conda Channel'
+description: ''
+inputs:
+  conda-activate:
+    description: 'An activation script for the conda env to use'
+    required: false
+    default: ''
+  channel:
+    description: 'The conda channel to patch'
+    required: true
+  rev-deps:
+    description: 'Reverse dependencies of packages to rebuild'
+    required: true
+  versions-file:
+    description: 'Newline seperated list of conda package specifications'
+    required: true
+outputs:
+  channel:
+    description: 'The patched conda channel'
+    value: ${{ inputs.channel }}
+runs:
+  using: composite
+  steps:
+    - id: 'setup-path'
+      shell: bash
+      run: echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
+    - id: 'patch-channel'
+      shell: bash
+      env:
+        PYTHONPATH: "${{ github.action_path }}/../src/"
+      run: |
+        ${{ inputs.conda-activate }}
+        cat <<EOF | patch-channel.py
+        ${{ toJSON(inputs) }}
+        EOF

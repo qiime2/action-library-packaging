@@ -11,7 +11,7 @@ def main(conda_activate, environment_file, versions_file):
         env = yaml.safe_load(fh)
 
     with open(versions_file) as fh:
-        updates = [l.strip() for l in fh]
+        updates = [line.strip() for line in fh]
         split_updates = [split_spec(u)[0] for u in updates]
 
     deps = env['dependencies']
