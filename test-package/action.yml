@@ -1,8 +1,8 @@
 name: 'QIIME 2 Library Packaging - Test'
 description: 'Test a conda package'
 inputs:
-  conda-prefix:
-    description: 'The path to a conda environment'
+  conda-activate:
+    description: 'An activation script for the conda env to use'
     required: true
   package-filepath:
     description: 'The path to the .tar.bz2 to test'
@@ -22,6 +22,7 @@ runs:
       env:
         PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
+        ${{ inputs.conda-activate }}
         cat <<EOF | test-package.py
         ${{ toJSON(inputs) }}
         EOF
