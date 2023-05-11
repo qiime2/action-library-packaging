@@ -2,9 +2,9 @@ name: 'Mirror channel'
 inputs:
   packages:
     required: true
-  remote_channel:
+  remote-channel:
     required: true
-  local_channel:
+  local-channel:
     required: true
 
 runs:
