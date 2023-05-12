@@ -16,7 +16,8 @@ def find_tests(package_path):
     return tests
 
 
-def install_requires(reqs, channels):
+def install_requires(reqs):
+    channels = ['conda-forge', 'bioconda']
     print(f'Installing: {" ".join(reqs)}', flush=True)
     channels = itertools.chain.from_iterable(
         [('-c', channel) for channel in channels])
