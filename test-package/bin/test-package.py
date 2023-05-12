@@ -9,8 +9,8 @@ import yaml
 from alp.common import ActionAdapter
 
 
-def find_tests(package_filepath):
-    with tarfile.open(package_filepath, mode='r:bz2') as fh:
+def find_tests(package_path):
+    with tarfile.open(package_path, mode='r:bz2') as fh:
         recipe_fh = fh.extractfile('info/recipe/meta.yaml')
         tests = yaml.safe_load(recipe_fh).get('test')
     return tests
@@ -39,8 +39,8 @@ def run_commands(commands):
         subprocess.run(cmd, shell=True, check=True)
 
 
-def main(package_filepath, conda_activate):
-    tests = find_tests(package_filepath)
+def main(package_path, conda_activate):
+    tests = find_tests(package_path)
     if 'requires' in tests:
         install_requires(tests['requires'])
     if 'imports' in tests:

@@ -4,7 +4,7 @@ inputs:
   conda-activate:
     description: 'An activation script for the conda env to use'
     required: true
-  package-filepath:
+  package-path:
     description: 'The path to the .tar.bz2 to test'
     required: true
 runs:
