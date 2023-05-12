@@ -1,11 +1,7 @@
 #!/usr/bin/env python
 import yaml
-import json
 import os
-import sys
 import subprocess
-import copy
-from collections import defaultdict
 
 from alp.common import ActionAdapter
 

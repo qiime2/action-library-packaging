@@ -1,0 +1,31 @@
+name: 'QIIME 2 Library Packaging - Collect Package Path'
+description: 'Collect package path'
+inputs:
+  package:
+    description: 'The name of the package to locate'
+    required: true
+  channels:
+    description: 'A list of channels which may contain the package'
+    required: true
+  runner:
+    description: 'The operating system runner'
+    required: true
+outputs:
+  path:
+    description: 'package path'
+    value: ${{ steps.collect-package.outputs.path }}
+runs:
+  using: composite
+  steps:
+  - id: 'setup-path'
+    shell: bash
+    run: |
+      echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
+  - id: 'collect-package'
+    shell: bash
+    env:
+      PYTHONPATH: "${{ github.action_path }}/../src/"
+    run: |
+      cat <<EOF | collect_package.py
+      ${{ toJSON(inputs) }}
+      EOF
