@@ -22,7 +22,7 @@ def install_requires(reqs):
     channels = itertools.chain.from_iterable(
         [('-c', channel) for channel in channels])
     subprocess.run(['conda', 'install',
-                    channels,
+                    *channels,
                     '-y', '-q',
                     *reqs],
                    check=True)
