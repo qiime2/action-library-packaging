@@ -14,13 +14,13 @@ def _os_detector(runner):
     return subdir
 
 
-def main(pkg, channel, runner):
+def main(package, channel, runner):
     subdir = _os_detector(runner)
     path = os.path.dirname(os.path.join(channel, subdir))
     for root, _, files in os.walk(path):
         for name in files:
-            if name.startswith(pkg):
-                return {'path': (os.path.join(root, pkg))}
+            if name.startswith(package):
+                return {'path': (os.path.join(root, name))}
 
 
 if __name__ == '__main__':
