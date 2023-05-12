@@ -39,7 +39,7 @@ def run_commands(commands):
         subprocess.run(cmd, shell=True, check=True)
 
 
-def main(package_filepath):
+def main(package_filepath, conda_activate):
     tests = find_tests(package_filepath)
     if 'requires' in tests:
         install_requires(tests['requires'])

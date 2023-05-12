@@ -7,22 +7,18 @@ inputs:
   package-filepath:
     description: 'The path to the .tar.bz2 to test'
     required: true
-  additional-tests:
-    description: 'A list of additional test commands to run'
-    required: false
-    default: []
 runs:
   using: composite
   steps:
-    - id: 'setup-path'
-      shell: bash
-      run: echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
-    - id: 'test-package'
-      shell: bash
-      env:
-        PYTHONPATH: "${{ github.action_path }}/../src/"
-      run: |
-        ${{ inputs.conda-activate }}
-        cat <<EOF | test-package.py
-        ${{ toJSON(inputs) }}
-        EOF
+  - id: 'setup-path'
+    shell: bash
+    run: echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
+  - id: 'test-package'
+    shell: bash
+    env:
+      PYTHONPATH: "${{ github.action_path }}/../src/"
+    run: |
+      ${{ inputs.conda-activate }}
+      cat <<EOF | test-package.py
+      ${{ toJSON(inputs) }}
+      EOF
