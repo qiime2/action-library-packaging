@@ -42,6 +42,7 @@ def run_commands(commands):
 
 def main(package_path, conda_activate):
     tests = find_tests(package_path)
+    print(tests, flush=True)
     if 'requires' in tests:
         install_requires(tests['requires'])
     if 'imports' in tests:
