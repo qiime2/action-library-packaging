@@ -33,6 +33,7 @@ runs:
         channels: ${{ steps.config.outputs.channels }}
         output-channel: ${{ steps.config.outputs.output-channel }}
     - id: 'make-prefix'
+      shell: bash
       run: 'mkdir ./test_env'
     - id: 'install-package'
       uses: 'qiime2/action-library-packaging/install-package@beta'

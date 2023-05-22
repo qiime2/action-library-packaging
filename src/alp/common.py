@@ -28,7 +28,6 @@ def ActionAdapter(function, **extras):
             except Exception:
                 pass
 
-
     print(' == Using inputs == ')
     print(json.dumps(arguments, indent=2), flush=True)
     if extras:
