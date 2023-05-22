@@ -20,4 +20,15 @@ outputs:
 runs:
   using: composite
   steps:
-    - id: 'install-package'
+  - id: 'setup-path'
+    shell: bash
+    run: |
+      echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
+  - id: 'install-package'
+    shell: bash
+    env:
+      PYTHONPATH: "${{ github.action_path }}/../src/"
+    run: |
+      cat <<EOF | install_package.py
+      ${{ toJSON(inputs) }}
+      EOF
