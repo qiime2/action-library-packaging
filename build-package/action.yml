@@ -52,7 +52,18 @@ runs:
       env:
         PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
-        source "$CONDA/etc/profile.d/conda.sh"
+        sudo conda install \
+          -n base \
+          -q \
+          -y \
+          -c conda-forge \
+          -c defaults \
+          --override-channels \
+          --update-all \
+          conda \
+          boa \
+          conda-build \
+          conda-verify
         ${{ inputs.conda-activate }}
         cat <<EOF | build-package.py
         ${{ toJSON(inputs) }}
