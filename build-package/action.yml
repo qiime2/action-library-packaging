@@ -44,9 +44,6 @@ outputs:
 runs:
   using: composite
   steps:
-    - id: 'install mambabuild'
-      shell: bash
-      run: conda install mambabuild
     - id: 'setup-path'
       shell: bash
       run: echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
