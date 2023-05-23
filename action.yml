@@ -25,6 +25,21 @@ inputs:
 runs:
   using: composite
   steps:
+    - id: 'setup-conda'
+    - shell: bash
+    - run: |
+        sudo conda install \
+        -n base \
+        -q \
+        -y \
+        -c conda-forge \
+        -c defaults \
+        --override-channels \
+        --update-all \
+        conda \
+        boa \
+        conda-build \
+        conda-verify
     - id: 'build-package'
       uses: 'qiime2/action-library-packaging/build-package@beta'
       with:
