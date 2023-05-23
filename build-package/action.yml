@@ -52,6 +52,7 @@ runs:
       env:
         PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
+        source "$CONDA/etc/profile.d/conda.sh"
         ${{ inputs.conda-activate }}
         cat <<EOF | build-package.py
         ${{ toJSON(inputs) }}
