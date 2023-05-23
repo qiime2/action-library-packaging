@@ -26,8 +26,8 @@ runs:
   using: composite
   steps:
     - id: 'setup-conda'
-    - shell: bash
-    - run: |
+      shell: bash
+      run: |
         sudo conda install \
         -n base \
         -q \
