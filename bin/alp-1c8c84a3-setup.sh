@@ -10,7 +10,7 @@ sudo conda install \
   -c defaults \
   --override-channels \
   --update-all \
-  conda \
+  conda=23.3.1 \
   boa \
   conda-build \
   conda-verify
