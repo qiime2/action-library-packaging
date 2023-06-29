@@ -1,0 +1,34 @@
+name: 'Notify Library of New Package Build'
+description: ''
+
+inputs:
+  package-name:
+    description: ''
+    required: true
+  package-version:
+    description: ''
+    required: true
+  build-target:
+    description: ''
+    required: true
+  distro:
+    description: ''
+    required: true
+  artifact:
+    description: ''
+    required: true
+runs:
+  using: composite
+  steps:
+    - id: 'setup-path'
+      shell: bash
+      run: echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
+    - id: 'notify-library'
+      shell: bash
+      env:
+        PYTHONPATH: "${{ github.action_path }}/../src/"
+      run: |
+        ${{ inputs.conda-activate }}
+        cat <<EOF | notify-library.py
+        ${{ toJSON(inputs) }}
+        EOF

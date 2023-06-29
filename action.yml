@@ -63,3 +63,11 @@ runs:
         conda-prefix: ${{ steps.install-package.outputs.conda-prefix }}
         package-filepath: ${{ steps.install-package.outputs.conda-prefix }}/${{ steps.build-package.outputs.conda-subdir }}/${{ steps.build-package.outputs.package-filename }}
         additional-tests: ${{ inputs.additional-tests }}
+    - id: 'notify-library'
+      uses: 'qiime2/action-library-packaging/notify-library'
+      with:
+        package-name: ${{ steps.build.outputs.package-name }}
+        package-version: ${{ steps.build.outputs.package-version }}
+        build-target: 'dev'
+        distro: ${{ inputs.distro-target }}
+        artifact: '[Conda Channel] ${{ inputs.distro-target }}'
