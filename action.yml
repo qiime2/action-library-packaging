@@ -54,8 +54,8 @@ runs:
       uses: 'qiime2/action-library-packaging/install-package@beta'
       with:
         channels: ${{ steps.config.outputs.channels }}
-        package-name: ${{ steps.build.outputs.package-name }}
-        package-version: ${{ steps.build.outputs.package-version }}
+        package-name: ${{ steps.build-package.outputs.package-name }}
+        package-version: ${{ steps.build-package.outputs.package-version }}
         conda-prefix: './test_env'
     - id: 'test-package'
       uses: 'qiime2/action-library-packaging/test-package@beta'
