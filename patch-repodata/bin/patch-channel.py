@@ -58,6 +58,9 @@ def patch_channels(channel_dir, rev_deps, new_versions):
                          for pkg, version in new_versions.items()}
 
     for subdir in SUBDIRS:
+        if not os.path.exists(os.path.join(channel_dir, subdir)):
+            continue
+
         with open(os.path.join(channel_dir,
                                subdir, 'repodata.json'), 'r') as fh:
             repodata = json.load(fh)
