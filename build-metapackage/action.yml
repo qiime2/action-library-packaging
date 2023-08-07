@@ -52,6 +52,7 @@ runs:
         seed-environment: ${{ inputs.seed-environment }}
         channels: ${{ inputs.channels }}
         conda-build-config: '${{ steps.make-recipe-dir.outputs.path }}/conda_build_config.yml'
+        skip-first-channel: true
     - id: 'template-metapackage'
       shell: bash
       env:

@@ -15,6 +15,10 @@ inputs:
     description: 'Extra channels to add to the output, useful for adding local channels in addition to what is described by the seed-environment.'
     required: false
     default: '[]'
+  skip-first-channel:
+    description: 'Drop the first channel in the seed-environment (this is usually a release channel)'
+    required: false
+    default: false
 outputs:
   conda-build-config:
     description: 'The path provided in inputs'

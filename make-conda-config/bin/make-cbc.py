@@ -7,7 +7,7 @@ from alp.cbc import process_seed_env_deps
 from alp.common import ActionAdapter
 
 
-def main(seed_environment, conda_build_config, channels, conda_activate=None):
+def main(seed_environment, conda_build_config, channels, skip_first_channel, conda_activate=None):
     with open(seed_environment) as fh:
         env = yaml.safe_load(fh)
 
@@ -22,7 +22,10 @@ def main(seed_environment, conda_build_config, channels, conda_activate=None):
     if 'channels' not in env:
         env['channels'] = channels
     else:
-        env['channels'] = channels + env['channels']
+        env_channels = env['channels']
+        if skip_first_channel == 'true' or skip_first_channel is True:
+            env_channels = env_channels[1:]
+        env['channels'] = channels + env_channels
 
     return env
 
