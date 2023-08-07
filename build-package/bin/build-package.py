@@ -51,7 +51,7 @@ def main(recipe_path, conda_build_config, channels,
     channels = itertools.chain.from_iterable(
         [('-c', channel) for channel in channels])
     cmd = [
-        'conda', 'build',
+        'conda', 'mambabuild',
         *channels,
         '--override-channels',
         '--quiet',
