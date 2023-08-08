@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import re
 
 from alp.common import ActionAdapter
 
@@ -20,7 +21,7 @@ def main(package, channels, runner):
         path = os.path.dirname(os.path.join(channel, subdir))
         for root, _, files in os.walk(path):
             for name in files:
-                if name.startswith(package):
+                if re.match(re.escape(package) + r'\-\d+', name):
                     return {'path': (os.path.join(root, name))}
 
 
