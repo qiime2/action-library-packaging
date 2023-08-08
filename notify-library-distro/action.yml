@@ -1,0 +1,35 @@
+
+name: 'Notify Library of New Distro Build'
+description: ''
+
+inputs:
+  distro:
+    description: ''
+    required: true
+  distro-version:
+    description: ''
+    required: true
+  is-release:
+    description: ''
+    required: true
+  patch-instructions-artifact-key:
+    description: ''
+    required: true
+  rebuilt-channel-artifact-key:
+    description: ''
+    required: true
+runs:
+  using: composite
+  steps:
+    - id: 'setup-path'
+      shell: bash
+      run: echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
+    - id: 'notify-library'
+      shell: bash
+      env:
+        PYTHONPATH: "${{ github.action_path }}/../src/"
+      run: |
+        ${{ inputs.conda-activate }}
+        cat <<EOF | notify-library-distro.py
+        ${{ toJSON(inputs) }}
+        EOF
