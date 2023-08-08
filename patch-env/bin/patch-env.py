@@ -14,7 +14,7 @@ def load_env(environment_file):
     return env
 
 
-def versions_to_env(versions_file)
+def versions_to_env(versions_file):
     new_env = {}
     with open(versions_file) as fh:
         updates = [line.strip() for line in fh]
