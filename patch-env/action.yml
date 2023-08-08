@@ -10,7 +10,12 @@ inputs:
     required: true
   versions-file:
     description: 'Newline seperated list of conda package specifications'
-    required: true
+    required: false
+    default: ''
+  mask-environment-file:
+    description: 'An environment file to use to update versions'
+    required: false
+    default: ''
 runs:
   using: composite
   steps:

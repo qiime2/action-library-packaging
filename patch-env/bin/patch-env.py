@@ -1,27 +1,52 @@
 #!/usr/bin/env python
 
 import yaml
+from packaging.version import parse
 
 from alp.common import ActionAdapter
 from alp.cbc import split_spec
 
 
-def main(conda_activate, environment_file, versions_file):
+def load_env(environment_file):
     with open(environment_file) as fh:
         env = yaml.safe_load(fh)
 
+    return env
+
+
+def versions_to_env(versions_file)
+    new_env = {}
     with open(versions_file) as fh:
         updates = [line.strip() for line in fh]
-        split_updates = [split_spec(u)[0] for u in updates]
 
+    new_env['dependencies'] = updates
+
+    return new_env
+
+
+def main(conda_activate, environment_file, versions_file,
+         mask_environment_file):
+    env = load_env(environment_file)
     deps = env['dependencies']
-    split_deps = [split_spec(d)[0] for d in deps]
+    package_versions = {split_spec(d) for d in deps}
+    package_order = {split_spec(d)[0]: idx for idx, d in enumerate(deps)}
 
-    for name, spec in zip(split_updates, updates):
-        try:
-            idx = split_deps.index(name)
-            deps[idx] = spec
-        except ValueError:
+    if versions_file != '':
+        mask = versions_to_env(versions_file)
+    elif mask_environment_file != '':
+        mask = load_env(mask_environment_file)
+    else:
+        raise Exception('neither versions_file or mask_environment_file'
+                        ' were provided')
+
+    mask_deps = mask['dependencies']
+    for (pkg, new_version), spec in zip(map(split_spec, mask_deps), mask_deps):
+        if pkg in package_order:
+            idx = package_order[pkg]
+            version = package_versions[pkg]
+            if parse(new_version) > parse(version):
+                deps[idx] = spec
+        else:
             deps.append(spec)
 
     with open(environment_file, 'w') as fh:
