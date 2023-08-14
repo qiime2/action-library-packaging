@@ -28,7 +28,7 @@ def main(conda_activate, environment_file, versions_file,
          mask_environment_file):
     env = load_env(environment_file)
     deps = env['dependencies']
-    package_versions = {split_spec(d) for d in deps}
+    package_versions = dict(split_spec(d) for d in deps)
     package_order = {split_spec(d)[0]: idx for idx, d in enumerate(deps)}
 
     if versions_file != '':
