@@ -24,14 +24,8 @@ def main(conda_activate, channel, rev_deps, versions_file):
                    new_versions=new_versions)
 
 
-def _patch_repodata(repodata, changes):
+def _patch_repodata(repodata, instructions, changes):
     packages = repodata['packages']
-    instructions = {
-        'patch_instructions_version': 1,
-        'packages': defaultdict(dict),
-        'revoke': [],
-        'remove': [],
-    }
 
     for updated, downstream in changes.items():
         updated_pkg, new_version = updated
@@ -64,11 +58,22 @@ def patch_channels(channel_dir, rev_deps, new_versions):
         with open(os.path.join(channel_dir,
                                subdir, 'repodata.json'), 'r') as fh:
             repodata = json.load(fh)
-        patch_instructions = _patch_repodata(repodata,
-                                             versioned_revdeps)
+        patch_path = os.path.join(
+            channel_dir, subdir, 'patch_instructions.json')
+        if os.path.exists(patch_path):
+            with open(patch_path) as fh:
+                instructions = json.load(fh)
+        else:
+            instructions = {
+                'patch_instructions_version': 1,
+                'packages': {},
+                'revoke': [],
+                'remove': [],
+            }
 
-        with open(os.path.join(channel_dir,
-                               subdir, 'patch_instructions.json'), 'w') as fh:
+        patch_instructions = _patch_repodata(repodata, instructions,
+                                             versioned_revdeps)
+        with open(patch_path, 'w') as fh:
             json.dump(patch_instructions, fh, indent=2,
                       sort_keys=True, separators=(",", ": "))
 
