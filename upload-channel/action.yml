@@ -1,12 +1,113 @@
-name: 'QIIME 2 Library Packaging - Upload Channel'
-description: 'FOR INTERNAL USE ONLY - SEE UPLOAD-PACKAGE INSTEAD'
+name: 'QIIME 2 Library Packaging - Upload channel'
+description: ''
+
 inputs:
-  channel:
-    description: 'Local (file-system) channel that will be uploaded'
+  distro:
     required: true
-  library-token:
-    description: 'Not generally available'
+  epoch:
     required: true
-  distro-target:
-    description: 'QIIME 2 distribution to upload channel contents to'
+  rebuilt-channel-key:
     required: true
+  repodata-patches-key:
+    required: false
+    default: ''
+  passed-gate:
+    required: true
+  released-gate:
+    required: true:
+  remote-base:
+    required: true
+  ssh-user:
+    required: true
+  ssh-key:
+    required: true
+  ssh-host:
+    required: true
+
+env:
+  rebuilt_channel_path: './rebuilt-channel'
+  repodata_patches_path: './repodata-patches'
+
+runs:
+  using: composite
+  steps:
+    - name: Configure SSH
+      shell: bash
+      run: |
+        mkdir -p ~/.ssh/
+        echo "$SSH_KEY" > ~/.ssh/staging.key
+        chmod 600 ~/.ssh/staging.key
+        cat >>~/.ssh/config <<END
+        Host staging
+          HostName $SSH_HOST
+          User $SSH_USER
+          IdentityFile ~/.ssh/staging.key
+          StrictHostKeyChecking no
+        END
+      env:
+        SSH_USER: ${{ inputs.ssh-user }}
+        SSH_KEY: ${{ inputs.ssh-key }}
+        SSH_HOST: ${{ inputs.ssh-host }}
+
+    - name: 'Fetch rebuilt channel'
+      uses: actions/download-artifact@v3
+      with:
+        name: ${{ inputs.rebuilt-channel-key }}
+        path: ${{ env.rebuilt_channel_path }}
+
+    - name: 'prepare target directories'
+      shell: bash
+      run: |
+        ssh staging 'mkdir -p ${{ inputs.remote-base }}/${{ inputs.epoch }}/${{ inputs.distro }}/staged'
+        ssh staging 'mkdir -p ${{ inputs.remote-base }}/${{ inputs.epoch }}/${{ inputs.distro }}/passed'
+        ssh staging 'mkdir -p ${{ inputs.remote-base }}/${{ inputs.epoch }}/${{ inputs.distro }}/released'
+
+    - name: 'rsync new packages (staged)'
+      shell: bash
+      run: |
+        rsync -hvrt --ignore-existing \
+          ${{ env.rebuilt_channel_path }}/ \
+          staging:${{ inputs.remote-base }}/${{ inputs.epoch }}/${{ inputs.distro }}/staged/
+
+    - name: 'link new packages (passed)'
+      if: ${{ inputs.passed-gate == 'true' }}
+      shell: bash
+      run: |
+        rsync -hvrt --ignore-existing \
+          --link-dest=../staged/ \
+          ${{ env.rebuilt_channel_path }}/ \
+          staging:${{ inputs.remote-base }}/${{ inputs.epoch }}/${{ inputs.distro }}/passed/
+
+    - name: 'link new packages (released)'
+      if: ${{ inputs.released-gate == 'true' }}
+      shell: bash
+      run: |
+        rsync -hvrt --ignore-existing \
+          --link-dest=../staged/ \
+          ${{ env.rebuilt_channel_path }}/ \
+          staging:${{ inputs.remote-base }}/${{ inputs.epoch }}/${{ inputs.distro }}/released/
+
+    # - name: 'Fetch patch instructions'
+    #   if: ${{ inputs.repodata-patches-key != '' }}
+    #   uses: actions/download-artifact@v3
+    #   with:
+    #     name: ${{ inputs.repodata-patches-key }}
+    #     path: ${{ env.repodata_patches_path }}
+
+    # - name: 'merge patch instructions (passed)'
+    #   if: ${{ inputs.repodata-patches-key != '' && inputs.passed-gate == 'true' }}
+
+    # - name: 'rsync merged patch instructions (passed)'
+    #   if: ${{ inputs.repodata-patches-key != '' && inputs.passed-gate == 'true' }}
+    #   shell: bash
+    #   run: |
+    #     rsync -hvrt \
+    #       ${{ env.repodata_patches_path }}/ \
+    #       staging:${{ inputs.remote-base }}/${{ inputs.epoch }}/${{ inputs.distro }}/passed/
+
+    - name: 'run conda index'
+      shell: bash
+      run: |
+        ssh staging '/opt/miniconda3/bin/conda index ${{ inputs.remote-base }}/${{ inputs.epoch }}/${{ inputs.distro }}/staged'
+        ssh staging '/opt/miniconda3/bin/conda index ${{ inputs.remote-base }}/${{ inputs.epoch }}/${{ inputs.distro }}/passed'
+        ssh staging '/opt/miniconda3/bin/conda index ${{ inputs.remote-base }}/${{ inputs.epoch }}/${{ inputs.distro }}/released'
