@@ -56,7 +56,6 @@ def main(recipe_path, conda_build_config, channels,
         '--override-channels',
         '--quiet',
         '--no-test',
-        '--old-build-string',
         '-m', conda_build_config,
         '--output-folder', output_channel,
         recipe_path]
