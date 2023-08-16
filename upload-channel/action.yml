@@ -14,7 +14,7 @@ inputs:
   passed-gate:
     required: true
   released-gate:
-    required: true:
+    required: true
   remote-base:
     required: true
   ssh-user:
