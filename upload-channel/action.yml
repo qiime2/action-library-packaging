@@ -24,10 +24,6 @@ inputs:
   ssh-host:
     required: true
 
-env:
-  rebuilt_channel_path: './rebuilt-channel'
-  repodata_patches_path: './repodata-patches'
-
 runs:
   using: composite
   steps:
@@ -53,7 +49,7 @@ runs:
       uses: actions/download-artifact@v3
       with:
         name: ${{ inputs.rebuilt-channel-key }}
-        path: ${{ env.rebuilt_channel_path }}
+        path: ./rebuilt-channel
 
     - name: 'prepare target directories'
       shell: bash
@@ -66,7 +62,7 @@ runs:
       shell: bash
       run: |
         rsync -hvrt --ignore-existing \
-          ${{ env.rebuilt_channel_path }}/ \
+          ./rebuilt-channel/ \
           staging:${{ inputs.remote-base }}/${{ inputs.epoch }}/${{ inputs.distro }}/staged/
 
     - name: 'link new packages (passed)'
@@ -75,7 +71,7 @@ runs:
       run: |
         rsync -hvrt --ignore-existing \
           --link-dest=../staged/ \
-          ${{ env.rebuilt_channel_path }}/ \
+          ./rebuilt-channel/ \
           staging:${{ inputs.remote-base }}/${{ inputs.epoch }}/${{ inputs.distro }}/passed/
 
     - name: 'link new packages (released)'
@@ -84,7 +80,7 @@ runs:
       run: |
         rsync -hvrt --ignore-existing \
           --link-dest=../staged/ \
-          ${{ env.rebuilt_channel_path }}/ \
+          ./rebuilt-channel/ \
           staging:${{ inputs.remote-base }}/${{ inputs.epoch }}/${{ inputs.distro }}/released/
 
     # - name: 'Fetch patch instructions'
@@ -92,7 +88,7 @@ runs:
     #   uses: actions/download-artifact@v3
     #   with:
     #     name: ${{ inputs.repodata-patches-key }}
-    #     path: ${{ env.repodata_patches_path }}
+    #     path: ./repodata-patches
 
     # - name: 'merge patch instructions (passed)'
     #   if: ${{ inputs.repodata-patches-key != '' && inputs.passed-gate == 'true' }}
@@ -102,7 +98,7 @@ runs:
     #   shell: bash
     #   run: |
     #     rsync -hvrt \
-    #       ${{ env.repodata_patches_path }}/ \
+    #       ./repodata-patches \
     #       staging:${{ inputs.remote-base }}/${{ inputs.epoch }}/${{ inputs.distro }}/passed/
 
     - name: 'run conda index'
