@@ -16,8 +16,7 @@ def find_tests(package_path):
     return tests
 
 
-def install_requires(reqs):
-    channels = ['conda-forge', 'bioconda']
+def install_requires(reqs, channels):
     print(f'Installing: {" ".join(reqs)}', flush=True)
     channels = itertools.chain.from_iterable(
         [('-c', channel) for channel in channels])
@@ -40,11 +39,11 @@ def run_commands(commands):
         subprocess.run(cmd, shell=True, check=True)
 
 
-def main(package_path, conda_activate):
+def main(package_path, channels, conda_activate):
     tests = find_tests(package_path)
     print(tests, flush=True)
     if 'requires' in tests:
-        install_requires(tests['requires'])
+        install_requires(tests['requires'], channels)
     if 'imports' in tests:
         run_imports(tests['imports'])
     if 'commands' in tests:

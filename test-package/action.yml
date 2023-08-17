@@ -7,6 +7,10 @@ inputs:
   package-path:
     description: 'The path to the .tar.bz2 to test'
     required: true
+  channels:
+    required: false
+    description: "Channels to search for additional packages in"
+    default: '["conda-forge", "bioconda"]'
 runs:
   using: composite
   steps:
