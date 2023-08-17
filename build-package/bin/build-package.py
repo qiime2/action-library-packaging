@@ -97,10 +97,9 @@ def main(recipe_path, conda_build_config, channels,
             # one more time for tar
             build, ext = os.path.splitext(build)
             assert ext == '.tar'
-            subdir = ''
 
     return dict(name=name, version=version, filename=filename,
-                build=build, subdir=subdir)
+                build=build, conda_subdir=subdir)
 
 
 if __name__ == '__main__':
