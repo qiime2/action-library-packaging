@@ -99,7 +99,7 @@ def main(recipe_path, conda_build_config, channels,
             assert ext == '.tar'
 
     return dict(name=name, version=version, filename=filename,
-                build=build, conda_subdir=subdir)
+                build=build, subdir=subdir)
 
 
 if __name__ == '__main__':
