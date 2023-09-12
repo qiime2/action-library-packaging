@@ -6,7 +6,7 @@ import itertools
 from alp.common import ActionAdapter
 
 
-def main(channels, package_name, package_version, conda_prefix):
+def main(channels, package_name, package_version, conda_prefix, conda_activate):
 
     channels = itertools.chain.from_iterable(
         [('-c', channel) for channel in channels])
