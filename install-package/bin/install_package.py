@@ -12,7 +12,8 @@ def main(channels, package_name, package_version, conda_prefix, conda_activate):
         [('-c', channel) for channel in channels])
 
     cmd = [
-        'mamba', 'install',
+        'conda', 'install',
+        '--solver=libmamba',
         '-p', conda_prefix,
         f'{package_name}={package_version}',
         *channels, '--override-channels',
