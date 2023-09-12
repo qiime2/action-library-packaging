@@ -1,6 +1,10 @@
 name: 'QIIME 2 Library Packaging - Install'
 description: 'Install a conda package'
 inputs:
+  conda-activate:
+    description: 'An activation script for the conda env to use'
+    required: false
+    default: ''
   channels:
     description: 'A list of channels needed to build the package'
     required: true
@@ -29,6 +33,7 @@ runs:
     env:
       PYTHONPATH: "${{ github.action_path }}/../src/"
     run: |
+      ${{ inputs.conda-activate }}
       cat <<EOF | install_package.py
       ${{ toJSON(inputs) }}
       EOF
