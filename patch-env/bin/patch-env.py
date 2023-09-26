@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import shutil
 import yaml
 from packaging.version import parse
 
@@ -26,7 +27,13 @@ def versions_to_env(versions_file):
 
 def main(conda_activate, environment_file, versions_file,
          mask_environment_file):
-    env = load_env(environment_file)
+    try:
+        env = load_env(environment_file)
+    except FileNotFoundError:
+        # no file exists, so just copy the mask and return
+        shutil.copyfile(mask_environment_file, environment_file)
+        return
+
     deps = env['dependencies']
     package_versions = dict(split_spec(d) for d in deps)
     package_order = {split_spec(d)[0]: idx for idx, d in enumerate(deps)}
