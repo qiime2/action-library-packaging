@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import shutil
+import os
 import yaml
 from packaging.version import parse
 
@@ -31,6 +32,7 @@ def main(conda_activate, environment_file, versions_file,
         env = load_env(environment_file)
     except FileNotFoundError:
         # no file exists, so just copy the mask and return
+        os.makedirs(os.path.dirname(environment_file), exist_ok=True)
         shutil.copyfile(mask_environment_file, environment_file)
         return
 
