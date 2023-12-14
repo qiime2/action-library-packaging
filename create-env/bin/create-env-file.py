@@ -19,6 +19,8 @@ def main(conda_prefix, environment_file, package_name, **unused):
     stdout = io.BytesIO(result.stdout)
 
     env = yaml.safe_load(stdout)
+    for spec in env['dependencies']:
+        print(spec)
     env['dependencies'] = [
         spec for spec in env['dependencies']
         if not spec.startswith(package_name)
