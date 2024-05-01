@@ -6,7 +6,7 @@ import yaml
 from alp.common import ActionAdapter
 
 def main(environment_fp, pip_spec, epoch, distro):
-    if os.path.exits(environment_fp):
+    if os.path.exists(environment_fp):
         with open(environment_fp, 'r') as f:
             env = yaml.safe_load(f)
     else:
