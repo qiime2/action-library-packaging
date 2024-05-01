@@ -1,0 +1,31 @@
+name: 'QIIME 2 Library Packaging - Setup Plugin Environment File'
+description: 'Setup or update the environment file for a QIIME 2 plugin'
+inputs:
+  environment-fp:
+    description: 'Path to the environment file'
+    required: true
+  pip-spec:
+    description: 'Pip command to use'
+    required: true
+  epoch:
+    description: 'Target QIIME 2 epoch'
+    required: true
+  distro:
+    description: 'Target QIIME 2 distribution'
+    required: true
+
+runs:
+  using: composite
+  steps:
+  - id: 'setup-environment-file'
+    shell: bash
+    run: |
+      echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
+  - id: 'setup-plugin-env-file'
+    shell: bash
+    env:
+      PYTHONPATH: "${{ github.action_path }}/../src/"
+    run: |
+      cat <<EOF | setup-plugin-env-file.py
+      ${{ toJSON(inputs) }}
+      EOF
