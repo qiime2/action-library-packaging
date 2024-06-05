@@ -17,6 +17,15 @@ runs:
   - id: 'setup-path'
     shell: bash
     run: echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
+  - id: 'install-package'
+    shell: bash
+    env:
+      PYTHONPATH: "${{ github.action_path }}/../src/"
+    run: |
+      ${{ inputs.conda-activate }}
+      cat <<EOF | install-package.py
+      ${{ toJSON(inputs) }}
+      EOF
   - id: 'test-package'
     shell: bash
     env:
