@@ -31,5 +31,6 @@ runs:
     env:
       PYTHONPATH: "${{ github.action_path }}/../src/"
     run: |
-      ${{ inputs.conda-activate }}
-      echo "$(toJSON(inputs))" | test-package.py
+      cat <<EOF | test-package.py
+      ${{ toJSON(inputs) }}
+      EOF
