@@ -26,4 +26,3 @@ runs:
       cat <<EOF | test-package.py
       ${{ toJSON(inputs) }}
       EOF
-z
