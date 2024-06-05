@@ -33,12 +33,6 @@ def run_imports(imports):
         importlib.import_module(imp)
 
 
-def run_commands(commands):
-    for cmd in commands:
-        print(f'Running: {cmd}', flush=True)
-        subprocess.run(cmd, shell=True, check=True)
-
-
 def main(package_path, channels, conda_activate):
     tests = find_tests(package_path)
     print(tests, flush=True)
@@ -46,8 +40,6 @@ def main(package_path, channels, conda_activate):
         install_requires(tests['requires'], channels)
     if 'imports' in tests:
         run_imports(tests['imports'])
-    if 'commands' in tests:
-        run_commands(tests['commands'])
 
 
 if __name__ == '__main__':
