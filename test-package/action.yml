@@ -14,22 +14,16 @@ inputs:
 runs:
   using: composite
   steps:
-  - id: 'install-package'
+  - id: 'setup-path'
     shell: bash
-    env:
-      PYTHONPATH: "${{ github.action_path }}/../src/"
-    run: |
-      echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
-      ${{ inputs.conda-activate }}
-      cat <<EOF | install-package.py
-      ${{ toJSON(inputs) }}
-      EOF
+    run: echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
   - id: 'test-package'
     shell: bash
     env:
       PYTHONPATH: "${{ github.action_path }}/../src/"
     run: |
-      conda activate -p ./test-env
+      ${{ inputs.conda-activate }}
       cat <<EOF | test-package.py
       ${{ toJSON(inputs) }}
       EOF
+z

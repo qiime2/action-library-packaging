@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import importlib
+import itertools
 import subprocess
 import tarfile
 import yaml
@@ -13,6 +14,17 @@ def find_tests(package_path):
         recipe_fh = fh.extractfile('info/recipe/meta.yaml')
         tests = yaml.safe_load(recipe_fh).get('test')
     return tests
+
+
+def install_requires(reqs, channels):
+    print(f'Installing: {" ".join(reqs)}', flush=True)
+    channels = itertools.chain.from_iterable(
+        [('-c', channel) for channel in channels])
+    subprocess.run(['conda', 'install',
+                    *channels,
+                    '-y', '-q',
+                    *reqs],
+                   check=True)
 
 
 def run_imports(imports):
@@ -30,6 +42,8 @@ def run_commands(commands):
 def main(package_path, channels, conda_activate):
     tests = find_tests(package_path)
     print(tests, flush=True)
+    if 'requires' in tests:
+        install_requires(tests['requires'], channels)
     if 'imports' in tests:
         run_imports(tests['imports'])
     if 'commands' in tests:
