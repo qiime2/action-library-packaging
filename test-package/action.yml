@@ -26,3 +26,12 @@ runs:
       cat <<EOF | test-package.py
       ${{ toJSON(inputs) }}
       EOF
+  - id: 'test-package2-electric-boogaloo'
+    shell: bash
+    env:
+      PYTHONPATH: "${{ github.action_path }}/../src/"
+    run: |
+      ${{ inputs.conda-activate }}
+      cat <<EOF | test-package2-electric-boogaloo.py
+      ${{ toJSON(inputs) }}
+      EOF
