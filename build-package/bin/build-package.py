@@ -73,6 +73,7 @@ def main(recipe_path, conda_build_config, channels,
             recipe = yaml.safe_load(head(fh, 4))
         name = recipe['package']['name']
         version = recipe['package']['version']
+
     else:
         if os.path.exists(recipe_path, '..', '..', 'setup.py'):
             name = get_setup_info(recipe_path, 'name')
@@ -84,6 +85,7 @@ def main(recipe_path, conda_build_config, channels,
             pyproj_data = toml.load(pyproj_path)
             name = pyproj_data.get('project', {}).get('name')
             version = versioneer.get_version()
+
         else:
             raise FileNotFoundError(
                 'Python setup file not found.'
