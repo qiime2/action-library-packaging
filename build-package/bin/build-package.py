@@ -5,9 +5,11 @@ import os
 import io
 import subprocess
 import glob
+import versioneer
 
 import yaml
 import json
+import toml
 
 from alp.common import ActionAdapter
 
@@ -72,8 +74,20 @@ def main(recipe_path, conda_build_config, channels,
         name = recipe['package']['name']
         version = recipe['package']['version']
     else:
-        name = get_setup_info(recipe_path, 'name')
-        version = get_setup_info(recipe_path, 'version')
+        if os.path.exists(recipe_path, '..', '..', 'setup.py'):
+            name = get_setup_info(recipe_path, 'name')
+            version = get_setup_info(recipe_path, 'version')
+
+        elif os.path.exists(recipe_path, '..', '..', 'pyproject.toml'):
+            pyproj_path = \
+                os.path.join(recipe_path, '..', '..', 'pyproject.toml')
+            pyproj_data = toml.load(pyproj_path)
+            name = pyproj_data.get('project', {}).get('name')
+            version = versioneer.get_version()
+        else:
+            raise FileNotFoundError(
+                'Python setup file not found.'
+                ' Package must either include `setup.py` or `pyproject.toml`.')
 
     if not dry_run:
         print(f'Running: {" ".join(cmd)}', flush=True)
