@@ -35,7 +35,8 @@ def get_setup_info(recipe_path, key):
     result = subprocess.run(['cat', 'report.json'], check=True,
                             capture_output=True, text=True)
 
-    raise ValueError(result.stdout.decode().strip())
+    result_json = json.loads(result.stdout)
+    raise ValueError(result_json['install']['metadata']['name'])
 
     return result.stdout.decode().strip()
 
