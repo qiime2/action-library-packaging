@@ -25,14 +25,14 @@ def get_setup_info(recipe_path, key):
     if not os.path.isdir(recipe_path):
         raise Exception(f'{recipe_path} is not a directory')
 
-    setup_path = os.path.join(recipe_path, '..', '..', 'setup.py')
+    pip_install_path = os.path.join(recipe_path, '..', '..')
     cmd = [
-        'python',
-        setup_path,
-        f'--{key}'
+        'pip', 'install', '--dry-run',
+        '--report', 'report.json', pip_install_path
     ]
 
     result = subprocess.run(cmd, check=True, capture_output=True)
+    raise ValueError(result)
     return result.stdout.decode().strip()
 
 

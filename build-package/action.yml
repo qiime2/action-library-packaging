@@ -53,9 +53,6 @@ runs:
         PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
         ${{ inputs.conda-activate }}
-        pip install versioneer toml
-        echo $(pwd)
-        echo $(ls repo/)
         cat <<EOF | build-package.py
         ${{ toJSON(inputs) }}
         EOF
