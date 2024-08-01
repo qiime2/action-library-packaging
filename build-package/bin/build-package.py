@@ -24,14 +24,15 @@ def get_setup_info(recipe_path, key):
         raise Exception(f'{recipe_path} is not a directory')
 
     pip_install_path = os.path.join(recipe_path, '..', '..')
+
     cmd = [
         'pip', 'install', '--dry-run',
         '--report', 'report.json',
-        pip_install_path,
-        'cat', 'report.json'
+        pip_install_path
     ]
 
-    result = subprocess.run(cmd, check=True,
+    subprocess.run(cmd, check=True, capture_output=True)
+    result = subprocess.run(['cat', 'report.json'], shell=True, check=True,
                             capture_output=True).stdout.decode('utf-8')
     raise ValueError(result)
     return result.stdout.decode().strip()
@@ -93,7 +94,7 @@ def main(recipe_path, conda_build_config, channels,
         # else:
         #     raise FileNotFoundError(
         #         'Python setup file not found.'
-        #         ' Package must either include `setup.py` or `pyproject.toml`.')
+        #         ' Package must include `setup.py` or `pyproject.toml`.')
 
     if not dry_run:
         print(f'Running: {" ".join(cmd)}', flush=True)
