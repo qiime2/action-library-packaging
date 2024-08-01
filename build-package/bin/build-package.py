@@ -5,11 +5,9 @@ import os
 import io
 import subprocess
 import glob
-import versioneer
 
 import yaml
 import json
-import toml
 
 from alp.common import ActionAdapter
 
@@ -75,19 +73,19 @@ def main(recipe_path, conda_build_config, channels,
         version = recipe['package']['version']
 
     else:
-        setup_path = os.path.join(recipe_path, '..', '..', 'setup.py')
-        pyproj_path = os.path.join(recipe_path, '..', '..', 'pyproject.toml')
+        # setup_path = os.path.join(recipe_path, '..', '..', 'setup.py')
+        # pyproj_path = os.path.join(recipe_path, '..', '..', 'pyproject.toml')
 
-        if os.path.exists(setup_path):
-            name = get_setup_info(recipe_path, 'name')
-            version = get_setup_info(recipe_path, 'version')
+        # if os.path.exists(setup_path):
+        name = get_setup_info(recipe_path, 'name')
+        version = get_setup_info(recipe_path, 'version')
 
-        elif os.path.exists(pyproj_path):
-            pyproj_data = toml.load(pyproj_path)
-            name = pyproj_data.get('project', {}).get('name')
-            cmd = ['bash', '$PWD']
-            subprocess.run(cmd, check=True)
-            version = versioneer.get_version()
+        # elif os.path.exists(pyproj_path):
+        #     pyproj_data = toml.load(pyproj_path)
+        #     name = pyproj_data.get('project', {}).get('name')
+        #     cmd = ['bash', '$PWD']
+        #     subprocess.run(cmd, check=True)
+        #     version = versioneer.get_version()
 
         else:
             raise FileNotFoundError(
