@@ -62,7 +62,7 @@ runs:
         python-version: '3.8'
 
     - shell: bash
-      run: pip install pyyaml toml versioneer
+      run: pip install pyyaml
 
     - id: 'prefix'
       name: 'Determine full path to prefix'
