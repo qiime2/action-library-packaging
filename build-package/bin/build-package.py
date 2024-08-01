@@ -19,7 +19,7 @@ def head(fh, n):
     return io.StringIO(''.join(lines))
 
 
-def get_setup_info(recipe_path, key):
+def get_pkg_name_and_version(recipe_path):
     if not os.path.isdir(recipe_path):
         raise Exception(f'{recipe_path} is not a directory')
 
@@ -36,9 +36,10 @@ def get_setup_info(recipe_path, key):
                             capture_output=True, text=True)
 
     result_json = json.loads(result.stdout)
-    raise ValueError(result_json['install'][0]['metadata']['version'])
+    pkg_name = result_json['install'][0]['metadata']['name']
+    pkg_version = result_json['install'][0]['metadata']['version']
 
-    return result.stdout.decode().strip()
+    return pkg_name, pkg_version
 
 
 def main(recipe_path, conda_build_config, channels,
@@ -80,24 +81,7 @@ def main(recipe_path, conda_build_config, channels,
         version = recipe['package']['version']
 
     else:
-        # setup_path = os.path.join(recipe_path, '..', '..', 'setup.py')
-        # pyproj_path = os.path.join(recipe_path, '..', '..', 'pyproject.toml')
-
-        # if os.path.exists(setup_path):
-        name = get_setup_info(recipe_path, 'name')
-        version = get_setup_info(recipe_path, 'version')
-
-        # elif os.path.exists(pyproj_path):
-        #     pyproj_data = toml.load(pyproj_path)
-        #     name = pyproj_data.get('project', {}).get('name')
-        #     cmd = ['bash', '$PWD']
-        #     subprocess.run(cmd, check=True)
-        #     version = versioneer.get_version()
-
-        # else:
-        #     raise FileNotFoundError(
-        #         'Python setup file not found.'
-        #         ' Package must include `setup.py` or `pyproject.toml`.')
+        name, version = get_pkg_name_and_version(recipe_path)
 
     if not dry_run:
         print(f'Running: {" ".join(cmd)}', flush=True)
