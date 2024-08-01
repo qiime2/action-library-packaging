@@ -85,7 +85,7 @@ def main(recipe_path, conda_build_config, channels,
         elif os.path.exists(pyproj_path):
             pyproj_data = toml.load(pyproj_path)
             name = pyproj_data.get('project', {}).get('name')
-            cmd = ['bash', 'cd', 'repo']
+            cmd = ['bash', 'pwd']
             subprocess.run(cmd, check=True)
             version = versioneer.get_version()
 
