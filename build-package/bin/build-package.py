@@ -31,8 +31,10 @@ def get_setup_info(recipe_path, key):
         pip_install_path
     ]
 
+    report_path = os.path.join(pip_install_path, 'report.json')
+
     subprocess.run(cmd, check=True, capture_output=True)
-    result = subprocess.run(['cat', 'report.json'], shell=True, check=True,
+    result = subprocess.run(['cat', report_path], shell=True, check=True,
                             capture_output=True, text=True)
     raise ValueError(result.stdout)
     return result.stdout.decode().strip()
