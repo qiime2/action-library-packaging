@@ -32,8 +32,7 @@ def get_setup_info(recipe_path, key):
     ]
 
     subprocess.run(cmd, check=True, capture_output=True)
-    result = subprocess.run(['cat', 'report.json'], shell=True, check=True,
-                            capture_output=True).stdout.decode('utf-8')
+    result = subprocess.run(['cat', 'report.json'], shell=True, check=True)
     raise ValueError(result)
     return result.stdout.decode().strip()
 
