@@ -87,10 +87,10 @@ def main(recipe_path, conda_build_config, channels,
         #     subprocess.run(cmd, check=True)
         #     version = versioneer.get_version()
 
-        else:
-            raise FileNotFoundError(
-                'Python setup file not found.'
-                ' Package must either include `setup.py` or `pyproject.toml`.')
+        # else:
+        #     raise FileNotFoundError(
+        #         'Python setup file not found.'
+        #         ' Package must either include `setup.py` or `pyproject.toml`.')
 
     if not dry_run:
         print(f'Running: {" ".join(cmd)}', flush=True)
