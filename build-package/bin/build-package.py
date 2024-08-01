@@ -26,7 +26,8 @@ def get_setup_info(recipe_path, key):
     pip_install_path = os.path.join(recipe_path, '..', '..')
     cmd = [
         'pip', 'install', '--dry-run',
-        '--report', 'report.json', pip_install_path
+        '--report', 'report.json', pip_install_path,
+        'cat', 'report.json'
     ]
 
     result = subprocess.run(cmd, check=True, capture_output=True)
