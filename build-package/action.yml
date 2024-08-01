@@ -54,6 +54,7 @@ runs:
       run: |
         ${{ inputs.conda-activate }}
         pip install versioneer toml
+        echo '$(pwd)'
         cat <<EOF | build-package.py
         ${{ toJSON(inputs) }}
         EOF
