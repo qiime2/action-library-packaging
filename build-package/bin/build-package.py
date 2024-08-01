@@ -85,7 +85,6 @@ def main(recipe_path, conda_build_config, channels,
         elif os.path.exists(pyproj_path):
             pyproj_data = toml.load(pyproj_path)
             name = pyproj_data.get('project', {}).get('name')
-            raise ValueError(name)
             version = versioneer.get_version()
 
         else:
