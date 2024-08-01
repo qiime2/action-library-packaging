@@ -18,9 +18,7 @@ def main(environment_fp, pip_spec, epoch, distro):
                'dependencies': [
                    f'qiime2-{distro}',
                    'pip',
-                   {'pip': [pip_spec]},
-                   'toml',
-                   'versioneer'
+                   {'pip': [pip_spec]}
                ]}
     channel = f'https://packages.qiime2.org/qiime2/{epoch}/{distro}/passed'
     env['channels'][0] = channel
