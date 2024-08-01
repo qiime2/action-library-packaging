@@ -34,6 +34,10 @@ def get_setup_info(recipe_path, key):
     report_path = os.path.join(pip_install_path, 'report.json')
 
     subprocess.run(cmd, check=True, capture_output=True)
+    if not os.path.exists('report.json'):
+        raise ValueError("report.json file was not created.")
+    elif os.path.getsize('report.json') == 0:
+        raise ValueError("report.json file is empty.")
     result = subprocess.run(['cat', report_path], shell=True, check=True,
                             capture_output=True, text=True)
     raise ValueError(result.stdout)
