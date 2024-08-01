@@ -75,13 +75,14 @@ def main(recipe_path, conda_build_config, channels,
         version = recipe['package']['version']
 
     else:
-        if os.path.exists(recipe_path, '..', '..', 'setup.py'):
+        setup_path = os.path.join(recipe_path, '..', '..', 'setup.py')
+        pyproj_path = os.path.join(recipe_path, '..', '..', 'pyproject.toml')
+
+        if os.path.exists(setup_path):
             name = get_setup_info(recipe_path, 'name')
             version = get_setup_info(recipe_path, 'version')
 
-        elif os.path.exists(recipe_path, '..', '..', 'pyproject.toml'):
-            pyproj_path = \
-                os.path.join(recipe_path, '..', '..', 'pyproject.toml')
+        elif os.path.exists(pyproj_path):
             pyproj_data = toml.load(pyproj_path)
             name = pyproj_data.get('project', {}).get('name')
             raise ValueError(name)
