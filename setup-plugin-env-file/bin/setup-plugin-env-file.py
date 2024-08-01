@@ -5,6 +5,7 @@ import yaml
 
 from alp.common import ActionAdapter
 
+
 def main(environment_fp, pip_spec, epoch, distro):
     if os.path.exists(environment_fp):
         with open(environment_fp, 'r') as f:
@@ -17,12 +18,15 @@ def main(environment_fp, pip_spec, epoch, distro):
                'dependencies': [
                    f'qiime2-{distro}',
                    'pip',
-                   {'pip': [pip_spec]}
+                   {'pip': [pip_spec]},
+                   'toml',
+                   'versioneer'
                ]}
     channel = f'https://packages.qiime2.org/qiime2/{epoch}/{distro}/passed'
     env['channels'][0] = channel
     with open(environment_fp, 'w') as f:
         yaml.safe_dump(env, f, default_flow_style=False)
+
 
 if __name__ == '__main__':
     ActionAdapter(main)
