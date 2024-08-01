@@ -36,7 +36,7 @@ def get_setup_info(recipe_path, key):
                             capture_output=True, text=True)
 
     result_json = json.loads(result.stdout)
-    raise ValueError(result_json['install']['metadata']['name'])
+    raise ValueError(result_json['install'][0]['metadata']['name'])
 
     return result.stdout.decode().strip()
 
