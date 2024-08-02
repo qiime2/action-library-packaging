@@ -36,6 +36,7 @@ def get_pkg_name_and_version(recipe_path):
                             capture_output=True, text=True)
 
     result_json = json.loads(result.stdout)
+
     pkg_name = result_json['install'][0]['metadata']['name']
     pkg_version = result_json['install'][0]['metadata']['version']
 
