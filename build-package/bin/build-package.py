@@ -40,8 +40,8 @@ def get_pkg_name_and_version(recipe_path):
     pkg_name = result_json['install'][0]['metadata']['name']
     pkg_version = result_json['install'][0]['metadata']['version']
 
-    subprocess.run(['ls', '|', 'grep', 'report.json'], check=True)
-    raise ValueError('stahp')
+    subprocess.run(['ls', pip_install_path], check=True)
+    raise ValueError(pip_install_path)
 
     return pkg_name, pkg_version
 
