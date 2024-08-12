@@ -32,8 +32,8 @@ def get_pkg_name_and_version(recipe_path):
     ]
 
     subprocess.run(cmd, check=True, capture_output=True)
-    result = subprocess.run(['cat', 'report.json', '>', './report.json'],
-                            check=True, capture_output=True, text=True)
+    result = subprocess.run(['cat', 'report.json'], check=True,
+                            capture_output=True, text=True)
 
     result_json = json.loads(result.stdout)
 
