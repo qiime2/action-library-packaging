@@ -53,8 +53,7 @@ runs:
         PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
         ${{ inputs.conda-activate }}
-        pwd
-        ls -al
+        ls alp-base-env/
         cat <<EOF | build-package.py
         ${{ toJSON(inputs) }}
         EOF
