@@ -41,7 +41,7 @@ def get_pkg_name_and_version(recipe_path):
     pkg_version = result_json['install'][0]['metadata']['version']
 
     pwd = ['pwd']
-    subprocess.run(pwd, check=True, capture_output=True, flush=True)
+    subprocess.run(pwd, check=True, capture_output=True)
     raise ValueError('stahp')
 
     return pkg_name, pkg_version
