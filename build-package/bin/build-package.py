@@ -36,12 +36,13 @@ def get_pkg_name_and_version(recipe_path):
                             capture_output=True, text=True)
 
     result_json = json.loads(result.stdout)
+    json_fp = './report.json'
 
     pkg_name = result_json['install'][0]['metadata']['name']
     pkg_version = result_json['install'][0]['metadata']['version']
 
-    subprocess.run(f'echo "{result_json}" > ./report.json',
-                   shell=True, check=True)
+    subprocess.run(['bash', '-c', f'echo "{result_json}" > {json_fp}'],
+                   check=True)
 
     return pkg_name, pkg_version
 
