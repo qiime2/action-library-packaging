@@ -35,8 +35,8 @@ def get_pkg_name_and_version(recipe_path):
     result = subprocess.run(['cat', 'report.json'], check=True,
                             capture_output=True, text=True)
 
-    subprocess.run('pwd', capture_output=True, text=True)
-    raise ValueError('stahp')
+    pwd = subprocess.run('pwd', capture_output=True, text=True)
+    raise ValueError(pwd.stdout)
 
     result_json = json.loads(result.stdout)
 
