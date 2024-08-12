@@ -35,9 +35,6 @@ def get_pkg_name_and_version(recipe_path):
     result = subprocess.run(['cat', 'report.json'], check=True,
                             capture_output=True, text=True)
 
-    pwd = subprocess.run('ls', capture_output=True, text=True)
-    raise ValueError(pwd.stdout)
-
     result_json = json.loads(result.stdout)
 
     pkg_name = result_json['install'][0]['metadata']['name']
