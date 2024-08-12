@@ -53,6 +53,7 @@ runs:
         PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
         ${{ inputs.conda-activate }}
+        ls
         cat <<EOF | build-package.py
         ${{ toJSON(inputs) }}
         EOF
