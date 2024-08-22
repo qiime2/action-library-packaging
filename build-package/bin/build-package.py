@@ -88,6 +88,7 @@ def main(recipe_path, conda_build_config, channels,
         print(f'Running: {" ".join(cmd)}', flush=True)
         env = os.environ.copy()
         env['PKG_VERSION'] = version
+        raise ValueError(env)
         subprocess.run(cmd, env=env, check=True)
         print('done.', flush=True)
 
