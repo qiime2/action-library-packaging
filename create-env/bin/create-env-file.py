@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 
 import subprocess
-import os
 import io
-import itertools
 
 import yaml
 
@@ -35,6 +33,3 @@ def main(conda_prefix, environment_file, package_name, **unused):
 
 if __name__ == '__main__':
     ActionAdapter(main)
-
-
-

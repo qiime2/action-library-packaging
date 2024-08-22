@@ -83,12 +83,12 @@ def main(recipe_path, conda_build_config, channels,
 
     else:
         name, version = get_pkg_name_and_version(recipe_path)
+        env = os.environ.copy()
+        env['PKG_VERSION'] = version
+        print(f'PKG_VERSION: {env["PKG_VERSION"]}')
 
     if not dry_run:
         print(f'Running: {" ".join(cmd)}', flush=True)
-        env = os.environ.copy()
-        env['PKG_VERSION'] = version
-        print(env['PKG_VERSION'])
         subprocess.run(cmd, env=env, check=True)
         print('done.', flush=True)
 
