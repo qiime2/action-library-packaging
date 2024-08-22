@@ -88,7 +88,8 @@ def main(recipe_path, conda_build_config, channels,
         print(f'Running: {" ".join(cmd)}', flush=True)
         env = os.environ.copy()
         env['PKG_VERSION'] = version
-        subprocess.run(cmd, env=env, shell=True, check=True)
+        print(env['PKG_VERSION'])
+        subprocess.run(cmd, env=env, check=True)
         print('done.', flush=True)
 
         found = glob.glob(os.path.join(output_channel, platform,

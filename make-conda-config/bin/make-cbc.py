@@ -7,7 +7,8 @@ from alp.cbc import process_seed_env_deps
 from alp.common import ActionAdapter
 
 
-def main(seed_environment, conda_build_config, channels, skip_first_channel, conda_activate=None):
+def main(seed_environment, conda_build_config, channels, skip_first_channel,
+         conda_activate=None):
     with open(seed_environment) as fh:
         env = yaml.safe_load(fh)
 
