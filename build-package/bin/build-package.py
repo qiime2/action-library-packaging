@@ -80,6 +80,7 @@ def main(recipe_path, conda_build_config, channels,
             recipe = yaml.safe_load(head(fh, 4))
         name = recipe['package']['name']
         version = recipe['package']['version']
+        env_args = {}
 
     else:
         name, version = get_pkg_name_and_version(recipe_path)
