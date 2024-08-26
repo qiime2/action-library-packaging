@@ -85,10 +85,12 @@ def main(recipe_path, conda_build_config, channels,
         name, version = get_pkg_name_and_version(recipe_path)
         env = os.environ.copy()
         env['PLUGIN_VERSION'] = version
+        # only want to include env arg for pkgs, not metapkg
+        env_args = {'env': env}
 
     if not dry_run:
         print(f'Running: {" ".join(cmd)}', flush=True)
-        subprocess.run(cmd, env=env, check=True)
+        subprocess.run(cmd, check=True, **env_args)
         print('done.', flush=True)
 
         found = glob.glob(os.path.join(output_channel, platform,
