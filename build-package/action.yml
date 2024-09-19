@@ -47,6 +47,10 @@ runs:
     - id: 'setup-path'
       shell: bash
       run: echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
+    - id: 'remove-defaults-channel'
+      shell: bash
+      run: |
+        conda config --remove channels defaults
     - id: 'build-package'
       shell: bash
       env:
