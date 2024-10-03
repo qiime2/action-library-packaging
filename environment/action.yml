@@ -30,3 +30,12 @@ runs:
         environment-file: ${{ github.action_path }}/conda-environment.yml
         # conda-build etc can't be conda-packed (or conda create --cloned)
         skip-cache: true
+    - id: 'set config'
+      shell: bash
+      env:
+        PYTHONPATH: "${{ github.action_path }}/../src/"
+      run: |
+        ${{ steps.create-env.outputs.conda-activate }}
+        conda config --set channel_priority strict
+        conda config --remove channels defaults
+        conda config --show

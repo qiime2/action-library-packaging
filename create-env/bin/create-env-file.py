@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import subprocess
+import itertools
 import io
 
 import yaml
@@ -9,9 +10,12 @@ import yaml
 from alp.common import ActionAdapter
 
 
-def main(conda_prefix, environment_file, package_name, **unused):
+def main(conda_prefix, environment_file, package_name, channels, **unused):
+    channels = itertools.chain.from_iterable(
+        [('-c', channel) for channel in channels])
+
     cmd = [
-        'conda', 'env', 'export', '--no-builds', '-p', conda_prefix
+        'conda', 'env', 'export', *channels, '--override-channels', '--no-builds', '-p', conda_prefix
     ]
     result = subprocess.run(cmd, check=True, capture_output=True)
     stdout = io.BytesIO(result.stdout)
