@@ -36,6 +36,6 @@ runs:
         PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
         ${{ steps.create-env.outputs.conda-activate }}
-        conda config --set channel_priority strict
+        conda config --set channel_priority flexible
         conda config --remove channels defaults
         conda config --show
