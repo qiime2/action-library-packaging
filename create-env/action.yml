@@ -109,6 +109,15 @@ runs:
           (${{ runner.os }})
           (${{ steps.hash-provided-env.outputs.hash }})
 
+    - name: 'setup miniconda'
+      if: ${{ steps.check-cache.outputs.cache-hit }}
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        activate-environment: ''
+        architecture: 'x64'
+        auto-activate-base: true
+        miniconda-version: 'latest'
+
     - id: 'extract-env'
       if: ${{ steps.check-cache.outputs.cache-hit }}
       name: 'Untar and reinstall cached environment'

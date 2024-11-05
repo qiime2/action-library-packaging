@@ -21,8 +21,7 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: 'Install conda on mac runner'
-      if: ${{ runner.os == 'macOS' }}
+    - name: 'setup miniconda'
       uses: conda-incubator/setup-miniconda@v3
       with:
         activate-environment: ''
