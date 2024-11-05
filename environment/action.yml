@@ -23,6 +23,7 @@ runs:
   steps:
     - name: 'Install conda on mac runner'
       if: ${{ runner.os == 'macOS' }}
+      shell: bash
       run: |
         brew update
         brew install --cask miniconda
