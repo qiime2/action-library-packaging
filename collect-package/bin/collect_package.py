@@ -8,7 +8,7 @@ from alp.common import ActionAdapter
 def _os_detector(runner):
     if runner == 'ubuntu-latest':
         subdir = 'linux-64'
-    elif runner == 'macos-12':
+    elif runner == 'macos-latest':
         subdir = 'osx-64'
     else:
         raise ValueError('Unexpected operating system detected: %s' % runner)
