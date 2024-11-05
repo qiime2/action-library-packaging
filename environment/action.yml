@@ -23,10 +23,10 @@ runs:
   steps:
     - name: 'Install conda on mac runner'
       if: ${{ runner.os == 'macOS' }}
-      shell: bash
-      run: |
-        brew update
-        brew install --cask miniconda
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        auto-activate-base: true
+        activate-environment: ''
     - id: 'create-env'
       name: 'Create base environment for ALP'
       uses: qiime2/action-library-packaging/create-env@beta

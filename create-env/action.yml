@@ -53,7 +53,7 @@ runs:
   using: composite
   steps:
     - id: 'setup-path'
-      shell: bash
+      shell: bash -el {0}
       run: |
         echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
 
@@ -61,12 +61,12 @@ runs:
       with:
         python-version: '3.8'
 
-    - shell: bash
+    - shell: bash -el {0}
       run: pip install pyyaml
 
     - id: 'prefix'
       name: 'Determine full path to prefix'
-      shell: bash
+      shell: bash -el {0}
       run: |
         echo "path=$( \
           python -c 'import os, sys; print(os.path.abspath(sys.argv[1]))' \
@@ -75,7 +75,7 @@ runs:
 
     - id: 'env-file'
       name: 'Check if environment file exists'
-      shell: bash
+      shell: bash -el {0}
       run: |
         echo "exists=$([ -f '${{ inputs.environment-file }}' ] && echo 'true' \
           )" >> $GITHUB_OUTPUT
@@ -83,7 +83,7 @@ runs:
     - id: 'cache-key'
       if: ${{ inputs.skip-cache == 'false' }}
       name: 'Determine cache key basename'
-      shell: bash
+      shell: bash -el {0}
       run: |
         echo "key=$( \
           [ -n '${{ inputs.cache-name }}' ] \
@@ -112,7 +112,7 @@ runs:
     - id: 'extract-env'
       if: ${{ steps.check-cache.outputs.cache-hit }}
       name: 'Untar and reinstall cached environment'
-      shell: bash
+      shell: bash -el {0}
       run: |
         mkdir -p '${{ steps.prefix.outputs.path }}'
         tar -xzf 'alp.create-env.${{ steps.cache-key.outputs.key }}.tar.gz' \
@@ -122,7 +122,7 @@ runs:
     - id: 'install-conda-env'
       if: ${{ !steps.check-cache.outputs.cache-hit && steps.env-file.outputs.exists == 'true' }}
       name: 'Install environment ${{ inputs.conda-prefix }}'
-      shell: bash
+      shell: bash -el {0}
       run: |
         conda env create -q \
           -p '${{ steps.prefix.outputs.path }}' \
@@ -131,7 +131,7 @@ runs:
     - id: 'install-conda-pkg'
       if: ${{ !steps.check-cache.outputs.cache-hit && steps.env-file.outputs.exists != 'true' }}
       name: 'Install package ${{ inputs.conda-prefix }}'
-      shell: bash
+      shell: bash -el {0}
       env:
         PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
@@ -142,7 +142,7 @@ runs:
     - id: 'add-activate'
       if: ${{ !steps.check-cache.outputs.cache-hit }}
       name: 'Add activate for ${{ inputs.conda-prefix }}'
-      shell: bash
+      shell: bash -el {0}
       run: |
         cat <<EOF > '${{ steps.prefix.outputs.path }}/etc/activate.sh'
           . "$CONDA/etc/profile.d/conda.sh"
@@ -152,7 +152,7 @@ runs:
 
     - id: 'add-conda-pack'
       if: ${{ !steps.check-cache.outputs.cache-hit && inputs.skip-cache == 'false' }}
-      shell: bash
+      shell: bash -el {0}
       run: |
         source '${{ steps.prefix.outputs.path }}/etc/activate.sh'
         conda install -c conda-forge conda-pack=0.7.0
@@ -160,7 +160,7 @@ runs:
     - id: 'create-env-file'
       if: ${{ steps.env-file.outputs.exists != 'true' }}
       name: 'Create environment file'
-      shell: bash
+      shell: bash -el {0}
       env:
         PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
@@ -176,7 +176,7 @@ runs:
     - id: 'pack-conda'
       if: ${{ inputs.skip-cache == 'false' && !steps.check-cache.outputs.cache-hit }}
       name: 'Pack up conda environment for cache'
-      shell: bash
+      shell: bash -el {0}
       run: |
         source '${{ steps.prefix.outputs.path }}/etc/activate.sh'
         conda pack --format tar.gz --quiet \
@@ -198,5 +198,5 @@ runs:
     - id: 'cleanup'
       if: ${{ inputs.skip-cache == 'false' }}
       name: 'Cleanup'
-      shell: bash
+      shell: bash -el {0}
       run: rm alp.create-env.${{ steps.cache-key.outputs.key }}.tar.gz
