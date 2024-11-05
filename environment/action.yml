@@ -33,8 +33,6 @@ runs:
       with:
         conda-prefix: ${{ inputs.conda-prefix }}
         environment-file: ${{ github.action_path }}/conda-environment.yml
-        # conda-build etc can't be conda-packed (or conda create --cloned)
-        skip-cache: true
     - id: 'set-config'
       shell: bash
       env:
