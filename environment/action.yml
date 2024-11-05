@@ -42,5 +42,5 @@ runs:
       run: |
         ${{ steps.create-env.outputs.conda-activate }}
         conda config --set channel_priority flexible
-        conda config --remove channels defaults
+        conda config --remove channels defaults || true
         conda config --show
