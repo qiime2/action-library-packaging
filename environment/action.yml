@@ -21,7 +21,11 @@ outputs:
 runs:
   using: composite
   steps:
-
+    - name: 'Install conda on mac runner'
+      if: ${{ runner.os == 'macOS' }}
+      run: |
+        brew update
+        brew install --cask miniconda
     - id: 'create-env'
       name: 'Create base environment for ALP'
       uses: qiime2/action-library-packaging/create-env@beta
