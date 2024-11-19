@@ -46,7 +46,7 @@ runs:
         SSH_HOST: ${{ inputs.ssh-host }}
 
     - name: 'Fetch rebuilt channel'
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v3
       with:
         name: ${{ inputs.rebuilt-channel-key }}
         path: ./rebuilt-channel
