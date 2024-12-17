@@ -36,25 +36,6 @@ def get_pkg_name_and_version(recipe_path):
         pip_install_path
     ]
 
-    print(f"Debug: Running command: {cmd}")
-    print(f"Debug: Working directory: {os.getcwd()}")
-    print(f"Debug: Checking if {pip_install_path} exists..."
-          f" {os.path.exists(pip_install_path)}")
-
-    try:
-        completed = subprocess.run(
-            cmd, check=True, capture_output=True, text=True
-        )
-        print("Debug: pip install output:", completed.stdout)
-        print("Debug: pip install errors:", completed.stderr)
-    except subprocess.CalledProcessError as e:
-        print("Error: pip install command failed!")
-        print("Command:", e.cmd)
-        print("Return code:", e.returncode)
-        print("Output:", e.stdout)
-        print("Error output:", e.stderr)
-        raise
-
     subprocess.run(cmd, check=True, capture_output=True)
     result = subprocess.run(['cat', 'report.json'], check=True,
                             capture_output=True, text=True)
