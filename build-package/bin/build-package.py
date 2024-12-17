@@ -23,7 +23,7 @@ def get_pkg_name_and_version(recipe_path):
     if not os.path.isdir(recipe_path):
         raise Exception(f'{recipe_path} is not a directory')
 
-    if recipe_path.endswith('ci/recipe'):
+    if recipe_path.endswith('ci/recipe') or recipe_path.endswith('ci/recipe/'):
         pip_install_path = os.path.join(recipe_path, '..', '..')
     elif recipe_path.endswith('conda-recipe'):
         pip_install_path = os.path.join(recipe_path, '..')
