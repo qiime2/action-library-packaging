@@ -23,7 +23,10 @@ def get_pkg_name_and_version(recipe_path):
     if not os.path.isdir(recipe_path):
         raise Exception(f'{recipe_path} is not a directory')
 
-    pip_install_path = os.path.join(recipe_path, '..', '..')
+    if recipe_path == 'ci/recipe':
+        pip_install_path = os.path.join(recipe_path, '..', '..')
+    else:
+        pip_install_path = os.path.join(recipe_path, '..')
 
     cmd = [
         'pip', 'install', '--dry-run',
