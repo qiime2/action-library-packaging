@@ -53,6 +53,8 @@ def main(conda_activate, environment_file, versions_file,
         if pkg in package_order:
             idx = package_order[pkg]
             version = package_versions[pkg]
+            print(new_version)
+            raise ValueError(version)
             # We want to use the new version in the case of a partial order
             if not parse(new_version) < parse(version):
                 deps[idx] = spec
