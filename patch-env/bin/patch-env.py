@@ -52,13 +52,11 @@ def main(conda_activate, environment_file, versions_file,
     for (pkg, new_version), spec in zip(map(split_spec, mask_deps), mask_deps):
         if pkg in package_order:
             idx = package_order[pkg]
-            version = package_versions[pkg]
-            print('New Version----------')
-            print(new_version)
-            print('Current Version------')
-            print(version)
+            # Modify versions for PEP compliance when parsing
+            pep_version = package_versions[pkg].replace('_', '.')
+            pep_new_version = new_version.replace('_', '.')
             # We want to use the new version in the case of a partial order
-            if not parse(new_version) < parse(version):
+            if not parse(pep_new_version) < parse(pep_version):
                 deps[idx] = spec
         else:
             deps.append(spec)
