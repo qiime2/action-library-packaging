@@ -58,3 +58,4 @@ runs:
         cat <<EOF | build-package.py
         ${{ toJSON(inputs) }}
         EOF
+        find ${{ inputs.recipe-path}}/.. -type f
