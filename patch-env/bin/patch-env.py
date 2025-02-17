@@ -55,9 +55,8 @@ def main(conda_activate, environment_file, versions_file,
             # Modify versions for PEP compliance when parsing
             pep_version = package_versions[pkg].replace('_', '.')
             pep_new_version = new_version.replace('_', '.')
-            # We want to use the new version in the case of a partial order
-            if not parse(pep_new_version) < parse(pep_version):
-                deps[idx] = spec
+            # always use the most recently _built_ entry
+            deps[idx] = spec
         else:
             deps.append(spec)
 
