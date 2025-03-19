@@ -22,7 +22,8 @@ runs:
   using: composite
   steps:
     - name: 'setup miniconda'
-      uses: conda-incubator/setup-miniconda@v3
+      # Replaces conda-incubator/setup-miniconda@v3
+      uses: qiime2-cutlery/setup-miniconda@v3
       with:
         activate-environment: ''
         architecture: 'x64'
