@@ -117,7 +117,7 @@ runs:
         activate-environment: ''
         architecture: 'x64'
         auto-activate-base: true
-        miniconda-version: 'latest'
+        miniforge-version: 'latest'
 
     - id: 'extract-env'
       if: ${{ steps.check-cache.outputs.cache-hit }}

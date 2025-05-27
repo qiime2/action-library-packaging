@@ -28,7 +28,7 @@ runs:
         activate-environment: ''
         architecture: 'x64'
         auto-activate-base: true
-        miniconda-version: 'latest'
+        miniforge-version: 'latest'
     - id: 'create-env'
       name: 'Create base environment for ALP'
       uses: qiime2/action-library-packaging/create-env@beta
