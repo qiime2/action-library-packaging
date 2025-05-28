@@ -123,7 +123,7 @@ runs:
     - name: 'add miniforge to PATH'
       shell: bash
       run: |
-        echo "${{ github.workspace }}/miniforge/bin" >> $$GITHUB_PATH
+        echo "${{ github.workspace }}/miniforge/bin" >> $GITHUB_PATH
         which conda
         conda info
 
