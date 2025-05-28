@@ -163,6 +163,7 @@ runs:
       shell: bash -el {0}
       run: |
         cat <<EOF > '${{ steps.prefix.outputs.path }}/etc/activate.sh'
+          set -ex
           source "$CONDA/etc/profile.d/conda.sh"
           conda activate '${{ steps.prefix.outputs.path }}'
         EOF
@@ -172,6 +173,7 @@ runs:
       if: ${{ !steps.check-cache.outputs.cache-hit && inputs.skip-cache == 'false' }}
       shell: bash -el {0}
       run: |
+        set -x
         source '${{ steps.prefix.outputs.path }}/etc/activate.sh'
         conda install -c conda-forge conda-pack=0.7.0
 
