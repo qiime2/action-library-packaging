@@ -163,7 +163,7 @@ runs:
       shell: bash -el {0}
       run: |
         cat <<EOF > '${{ steps.prefix.outputs.path }}/etc/activate.sh'
-          . "$CONDA/etc/profile.d/conda.sh"
+          source "$CONDA/etc/profile.d/conda.sh"
           conda activate '${{ steps.prefix.outputs.path }}'
         EOF
         chmod +x '${{ steps.prefix.outputs.path }}/etc/activate.sh'
