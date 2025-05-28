@@ -25,10 +25,15 @@ runs:
       # Replaces conda-incubator/setup-miniconda@v3
       uses: qiime2-cutlery/setup-miniconda@v3
       with:
-        activate-environment: ''
+        # activate-environment: ''
         architecture: 'x64'
         auto-activate-base: true
+        installation-dir: $${{ github.workspace }}/miniforge
         miniforge-version: 'latest'
+      run: |
+        export PATH="${{ github.workspace }}/miniforge/bin:$PATH"
+        which conda
+        conda info
     - id: 'create-env'
       name: 'Create base environment for ALP'
       uses: qiime2/action-library-packaging/create-env@beta
