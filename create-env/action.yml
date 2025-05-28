@@ -109,7 +109,7 @@ runs:
           (${{ runner.os }})
           (${{ steps.hash-provided-env.outputs.hash }})
 
-    - name: 'setup miniconda'
+    - name: 'setup miniforge'
       if: ${{ steps.check-cache.outputs.cache-hit }}
       # Replaces conda-incubator/setup-miniconda@v3
       uses: qiime2-cutlery/setup-miniconda@v3
@@ -119,8 +119,10 @@ runs:
         auto-activate-base: true
         installation-dir: ${{ github.workspace }}/miniforge
         miniforge-version: 'latest'
+
+    - name: 'add miniforge to PATH'
       run: |
-        export PATH="${{ github.workspace }}/miniforge/bin:$PATH"
+        echo "${{ github.workspace }}/miniforge/bin" >> $$GITHUB_PATH
         which conda
         conda info
 
