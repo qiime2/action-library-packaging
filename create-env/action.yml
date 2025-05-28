@@ -164,7 +164,7 @@ runs:
       run: |
         cat <<EOF > '${{ steps.prefix.outputs.path }}/etc/activate.sh'
           set -ex
-          source "$CONDA/etc/profile.d/conda.sh"
+          source "${{ github.workspace }}/miniforge/etc/profile.d/conda.sh"
           conda activate '${{ steps.prefix.outputs.path }}'
         EOF
         chmod +x '${{ steps.prefix.outputs.path }}/etc/activate.sh'
