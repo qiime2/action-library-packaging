@@ -157,6 +157,11 @@ runs:
         ${{ toJSON(inputs) }}
         EOF
 
+    - name: 'I AM DEBUGGGGGGGGGGGGGGGGGGGGO'
+      shell: bash
+      run: |
+        ls ${{ github.workspace }}/miniforge/*/*
+
     - id: 'add-activate'
       if: ${{ !steps.check-cache.outputs.cache-hit }}
       name: 'Add activate for ${{ inputs.conda-prefix }}'
