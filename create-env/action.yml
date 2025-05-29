@@ -116,7 +116,7 @@ runs:
       with:
         # activate-environment: ''
         architecture: 'x64'
-        auto-activate-base: false
+        auto-activate-base: true
         installation-dir: ${{ github.workspace }}/miniforge
         miniforge-version: 'latest'
 
@@ -157,19 +157,12 @@ runs:
         ${{ toJSON(inputs) }}
         EOF
 
-    - name: 'I AM DEBUGGGGGGGGGGGGGGGGGGGGO'
-      shell: bash
-      run: |
-        ls ${{ github.workspace }}/miniforge/*/*
-
     - id: 'add-activate'
       if: ${{ !steps.check-cache.outputs.cache-hit }}
       name: 'Add activate for ${{ inputs.conda-prefix }}'
       shell: bash -el {0}
       run: |
         cat <<EOF > '${{ steps.prefix.outputs.path }}/etc/activate.sh'
-          set -ex
-          source "${{ github.workspace }}/miniforge/etc/profile.d/conda.sh"
           conda activate '${{ steps.prefix.outputs.path }}'
         EOF
         chmod +x '${{ steps.prefix.outputs.path }}/etc/activate.sh'
@@ -178,7 +171,6 @@ runs:
       if: ${{ !steps.check-cache.outputs.cache-hit && inputs.skip-cache == 'false' }}
       shell: bash -el {0}
       run: |
-        set -x
         source '${{ steps.prefix.outputs.path }}/etc/activate.sh'
         conda install -c conda-forge conda-pack=0.7.0
 
