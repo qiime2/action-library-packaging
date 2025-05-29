@@ -110,7 +110,7 @@ runs:
           (${{ steps.hash-provided-env.outputs.hash }})
 
     - name: 'setup miniforge'
-      if: ${{ steps.check-cache.outputs.cache-hit }}
+      # if: ${{ steps.check-cache.outputs.cache-hit }}
       # Replaces conda-incubator/setup-miniconda@v3
       uses: qiime2-cutlery/setup-miniconda@v3
       with:
