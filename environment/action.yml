@@ -21,14 +21,6 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: 'setup miniconda'
-      # Replaces conda-incubator/setup-miniconda@v3
-      uses: qiime2-cutlery/setup-miniconda@v3
-      with:
-        activate-environment: ''
-        architecture: 'x64'
-        auto-activate-base: true
-        miniconda-version: 'latest'
     - id: 'create-env'
       name: 'Create base environment for ALP'
       uses: qiime2/action-library-packaging/create-env@beta
