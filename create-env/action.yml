@@ -109,8 +109,8 @@ runs:
           (${{ runner.os }})
           (${{ steps.hash-provided-env.outputs.hash }})
 
-    - name: 'setup miniconda'
-      if: ${{ steps.check-cache.outputs.cache-hit }}
+    - name: 'setup miniforge'
+      # if: ${{ steps.check-cache.outputs.cache-hit }}
       # Replaces conda-incubator/setup-miniconda@v3
       uses: qiime2-cutlery/setup-miniconda@v3
       with:
