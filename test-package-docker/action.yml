@@ -10,9 +10,9 @@ inputs:
 runs:
   using: composite
   steps:
-  - id: 'setup-path'
-    shell: bash
-    run: echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
+  # - id: 'setup-path'
+  #   shell: bash
+  #   run: echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
 
   - id: 'test-package'
     shell: bash
@@ -20,6 +20,6 @@ runs:
       PYTHONPATH: "${{ github.action_path }}/../src/"
     run: |
       ${{ inputs.conda-activate }}
-      cat <<EOF | test-package.py
+      cat <<EOF | "${{ github.action_path }}/bin/test-package.py"
       ${{ toJSON(inputs) }}
       EOF
