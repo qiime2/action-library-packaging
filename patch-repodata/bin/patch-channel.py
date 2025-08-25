@@ -77,7 +77,7 @@ def patch_channels(channel_dir, rev_deps, new_versions):
             json.dump(patch_instructions, fh, indent=2,
                       sort_keys=True, separators=(",", ": "))
 
-    subprocess.run(['conda', 'index', channel_dir], check=True)
+    subprocess.run(['python', '-m', 'conda_index', channel_dir], check=True)
 
 
 if __name__ == '__main__':
