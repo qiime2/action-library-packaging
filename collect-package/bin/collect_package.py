@@ -6,7 +6,7 @@ from alp.common import ActionAdapter
 
 
 def _os_detector(runner):
-    if runner == 'ubuntu-latest':
+    if runner == 'ubuntu-22.04':
         subdir = 'linux-64'
     elif runner == 'macos-15-intel':
         subdir = 'osx-64'
