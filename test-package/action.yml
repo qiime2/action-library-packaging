@@ -1,4 +1,4 @@
-name: 'QIIME 2 Library Packaging - Test'
+name: 'Rachis Library Packaging - Test'
 description: 'Test a conda package'
 inputs:
   conda-activate:

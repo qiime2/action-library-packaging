@@ -1,4 +1,4 @@
-name: 'QIIME 2 Library Packaging - Make conda_build_config.yml (build variants)'
+name: 'Rachis Library Packaging - Make conda_build_config.yml (build variants)'
 description: 'Create a conda_build_config.yml file for use with conda build.'
 inputs:
   seed-environment:

@@ -1,5 +1,5 @@
 
-name: 'QIIME 2 Library Packaging - Clean Disk'
+name: 'Rachis Library Packaging - Clean Disk'
 description: 'Clean the workers disk of unneeded packages (linux only)'
 
 runs:

@@ -1,4 +1,4 @@
-name: 'QIIME 2 Library Packaging - Configure Distro Matrix'
+name: 'Rachis Library Packaging - Configure Distro Matrix'
 description: ''
 inputs:
   package-name:

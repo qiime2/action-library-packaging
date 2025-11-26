@@ -1,4 +1,4 @@
-name: 'QIIME 2 Library Packaging - Setup Plugin Environment File'
+name: 'Rachis Library Packaging - Setup Plugin Environment File'
 description: 'Setup or update the environment file for a QIIME 2 plugin'
 inputs:
   environment-fp:
