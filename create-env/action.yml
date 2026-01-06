@@ -109,24 +109,23 @@ runs:
           (${{ runner.os }})
           (${{ steps.hash-provided-env.outputs.hash }})
 
-    - id: 'has-conda'
-      name: 'check for an existing conda installation on $PATH'
+    - name: 'check for existing conda present on path'
       shell: bash -el {0}
       run: |
+        set +e
+        found=false
+
         if [ -n "${CONDA:-}" ] && [ -x "${CONDA}/bin/conda" ]; then
-          echo "found=true" >> "$GITHUB_OUTPUT"
-          exit 0
+          found=true
+        elif command -v conda >/dev/null 2>&1; then
+          found=true
         fi
 
-        if command -v conda >/dev/null 2>&1; then
-          echo "found=true" >> "$GITHUB_OUTPUT"
-          exit 0
-        fi
-
-        echo "found=false" >> "$GITHUB_OUTPUT"
+        echo "HAS_CONDA=$found" >> "$GITHUB_ENV"
+        echo "Detected HAS_CONDA=$found"
 
     - name: 'setup miniforge'
-      if: ${{ steps.has-conda.outputs.found != 'true' }}
+      if: ${{ env.HAS_CONDA != 'true' }}
       # if: ${{ steps.check-cache.outputs.cache-hit }}
       # Replaces conda-incubator/setup-miniconda@v3
       uses: qiime2-cutlery/setup-miniconda@v3
