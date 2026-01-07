@@ -109,6 +109,15 @@ runs:
           (${{ runner.os }})
           (${{ steps.hash-provided-env.outputs.hash }})
 
+    # This became necessary as of 07.01.2026 because a particular miniforge
+    # release no longer provided the necessary cache files to subvert an error
+    # if an existing installation was present on path
+    # https://github.com/conda/conda-libmamba-solver/issues/798#issuecomment-3616086846
+    # https://github.com/snakemake/snakemake-github-action/pull/48
+    # rather than wait for this to resolve itself when another version of
+    # miniforge is released with the fix, this acts as a guard to always
+    # prevent a duplicate miniconda install attempt from occuring if one
+    # already exists on path
     - name: 'check for existing conda present on path'
       shell: bash -el {0}
       run: |
@@ -125,8 +134,9 @@ runs:
         echo "Detected HAS_CONDA=$found"
 
     - name: 'setup miniforge'
+      # now we check for the above step to ensure we do not run into any
+      # path collisions for a pre-existing conda on the runner
       if: ${{ env.HAS_CONDA != 'true' }}
-      # if: ${{ steps.check-cache.outputs.cache-hit }}
       # Replaces conda-incubator/setup-miniconda@v3
       uses: qiime2-cutlery/setup-miniconda@v3
       with:
