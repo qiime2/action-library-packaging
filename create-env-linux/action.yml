@@ -62,8 +62,10 @@ runs:
       run: |
         if command -v conda >/dev/null 2>&1; then
           echo "has_conda=true" >> "$GITHUB_OUTPUT"
+          echo "CONDA PRESENT"
         else
           echo "has_conda=false" >> "$GITHUB_OUTPUT"
+          echo "CONDA NOT PRESENT"
         fi
 
     - name: install micromamba
@@ -80,10 +82,12 @@ runs:
         if command -v conda >/dev/null 2>&1; then
           conda install -y -c conda-forge python pyyaml
           conda run -n base python -V
+          echo "CONDA INSTALLED PYTHON"
         else
           micromamba create -y -n _bootstrap -c conda-forge python pyyaml
           echo "$(micromamba info --base)/envs/_bootstrap/bin" >> "$GITHUB_PATH"
           micromamba run -n _bootstrap python -V
+          echo "MICROMAMBA INSTALLED PYTHON"
         fi
 
     # - uses: actions/setup-python@v4
