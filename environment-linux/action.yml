@@ -1,0 +1,40 @@
+name: 'QIIME 2 Library Packaging - Setup Environment'
+description: 'Install and configure conda-build and libmamba'
+
+inputs:
+  conda-prefix:
+    description: 'The conda prefix environment to set up'
+    required: false
+    default: ${{ github.workspace }}/alp-base-env/
+
+outputs:
+  conda-prefix:
+    description: 'The conda prefix environment which has been set up'
+    value: ${{ inputs.conda-prefix }}
+  conda-activate:
+    description: 'Activates this environment via sourcing (e.g. `. foo`)'
+    value: ${{ steps.create-env.outputs.conda-activate }}
+  env-hash:
+    description: 'Hash of the build environment'
+    value: ${{ steps.create-env.outputs.env-hash }}
+
+runs:
+  using: composite
+  steps:
+    - id: 'create-env'
+      name: 'Create base environment for ALP'
+      uses: qiime2/action-library-packaging/create-env-linux@beta
+      with:
+        conda-prefix: ${{ inputs.conda-prefix }}
+        environment-file: ${{ github.action_path }}/conda-environment.yml
+        # conda-build etc can't be conda-packed (or conda create --cloned)
+        skip-cache: true
+    - id: 'set-config'
+      shell: bash
+      env:
+        PYTHONPATH: "${{ github.action_path }}/../src/"
+      run: |
+        ${{ steps.create-env.outputs.conda-activate }}
+        conda config --set channel_priority flexible
+        conda config --remove channels defaults || true
+        conda config --show
