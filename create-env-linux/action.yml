@@ -173,7 +173,9 @@ runs:
       env:
         PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
-        cat <<EOF | install-package.py
+        set -euo pipefail
+        install_pkg="${{ github.action_path }}/bin/install-package.py"
+        cat <<EOF | conda run -n base python "$install_pkg"
         ${{ toJSON(inputs) }}
         EOF
 
