@@ -62,7 +62,9 @@ runs:
         python-version: '3.10'
 
     - shell: bash -el {0}
-      run: pip install pyyaml
+      run: |
+        python -m install --upgrade pip
+        python -m pip install pyyaml
 
     - id: 'prefix'
       name: 'Determine full path to prefix'
