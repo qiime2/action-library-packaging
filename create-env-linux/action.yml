@@ -176,6 +176,9 @@ runs:
         echo "GITHUB WORKSPACE!!!"
         ls -LR $GITHUB_WORKSPACE
 
+        echo "HELLO IS ANYONE IN THERE???"
+        find "$GITHUB_WORKSPACE/../_actions" -name install-package.py -print
+
         cat <<EOF | python "${{ github.action_path }}/bin/install-package.py"
         ${{ toJSON(inputs) }}
         EOF
