@@ -173,6 +173,9 @@ runs:
       env:
         PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
+        echo "GITHUB ACTION PATH!!!"
+        echo "${{ github.action_path }}"
+        echo "GITHUB WORKSPACE!!!"
         echo "workspace=$GITHUB_WORKSPACE"; ls -la /__w/_actions 2>/dev/null || ls -la "${GITHUB_WORKSPACE}/../_actions" 2>/dev/null || true
 
         cat <<EOF | python "${{ github.action_path }}/bin/install-package.py"
