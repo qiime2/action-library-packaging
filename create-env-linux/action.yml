@@ -57,12 +57,12 @@ runs:
       run: |
         echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
 
-    # - uses: actions/setup-python@v4
-    #   with:
-    #     python-version: '3.8'
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
 
-    # - shell: bash -el {0}
-    #   run: pip install pyyaml
+    - shell: bash -el {0}
+      run: pip install pyyaml
 
     - id: 'prefix'
       name: 'Determine full path to prefix'
