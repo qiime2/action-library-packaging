@@ -60,18 +60,18 @@ runs:
     - name: setup python
       shell: bash -el {0}
       run: |
-        set -euo pipefail
-
         conda install -y -c conda-forge python pyyaml
-        conda run -n base python -V
-        echo "CONDA INSTALLED PYTHON"
+        CONDA_BASE="$(conda info --base)"
+        echo "$CONDA_BASE/bin" >> "$GITHUB_PATH"
+        echo "CONDA_BASE=$CONDA_BASE" >> "$GITHUB_ENV"
+        "$CONDA_BASE/bin/python" -V
 
     - id: 'prefix'
       name: 'Determine full path to prefix'
       shell: bash -el {0}
       run: |
         echo "path=$( \
-          conda run -n base python -c 'import os, sys; print(os.path.abspath(sys.argv[1]))' \
+          python -c 'import os, sys; print(os.path.abspath(sys.argv[1]))' \
             '${{ inputs.conda-prefix }}' \
           )" >> $GITHUB_OUTPUT
 
@@ -173,9 +173,7 @@ runs:
       env:
         PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
-        set -euo pipefail
-        install_pkg="${{ github.action_path }}/bin/install-package.py"
-        cat <<EOF | conda run -n base python "$install_pkg"
+        cat <<EOF | install-package.py
         ${{ toJSON(inputs) }}
         EOF
 
