@@ -173,11 +173,10 @@ runs:
       env:
         PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
-        echo "GITHUB WORKSPACE!!!"
-        ls -LR $GITHUB_WORKSPACE
-
-        echo "HELLO IS ANYONE IN THERE???"
-        find "$GITHUB_WORKSPACE/../_actions" -name install-package.py -print
+        echo "===== ACTIONS CHECKOUT ROOT ====="
+        ls -la /__w/_actions
+        echo "Searching for install-package.py under /__w/_actions"
+        find /__w/_actions -name install-package.py -print
 
         cat <<EOF | python "${{ github.action_path }}/bin/install-package.py"
         ${{ toJSON(inputs) }}
