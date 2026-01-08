@@ -57,54 +57,21 @@ runs:
       run: |
         echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
 
-    - id: detect-conda
-      shell: bash -el {0}
-      run: |
-        if command -v conda >/dev/null 2>&1; then
-          echo "has_conda=true" >> "$GITHUB_OUTPUT"
-          echo "CONDA PRESENT"
-        else
-          echo "has_conda=false" >> "$GITHUB_OUTPUT"
-          echo "CONDA NOT PRESENT"
-        fi
-
-    - name: install micromamba
-      if: ${{ steps.detect-conda.outputs.has-conda != 'true' }}
-      shell: bash -el {0}
-      run: |
-        curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xvj bin/micromamba
-        install -m 0755 bin/micromamba /usr/local/bin/micromamba
-
     - name: setup python
       shell: bash -el {0}
       run: |
         set -euo pipefail
-        if command -v conda >/dev/null 2>&1; then
-          conda install -y -c conda-forge python pyyaml
-          conda run -n base python -V
-          echo "CONDA INSTALLED PYTHON"
-        else
-          micromamba create -y -n _bootstrap -c conda-forge python pyyaml
-          echo "$(micromamba info --base)/envs/_bootstrap/bin" >> "$GITHUB_PATH"
-          micromamba run -n _bootstrap python -V
-          echo "MICROMAMBA INSTALLED PYTHON"
-        fi
 
-    # - uses: actions/setup-python@v4
-    #   with:
-    #     python-version: '3.10'
-
-    # - shell: bash -el {0}
-    #   run: |
-    #     python -m install --upgrade pip
-    #     python -m pip install pyyaml
+        conda install -y -c conda-forge python pyyaml
+        conda run -n base python -V
+        echo "CONDA INSTALLED PYTHON"
 
     - id: 'prefix'
       name: 'Determine full path to prefix'
       shell: bash -el {0}
       run: |
         echo "path=$( \
-          python -c 'import os, sys; print(os.path.abspath(sys.argv[1]))' \
+          conda run -n base python -c 'import os, sys; print(os.path.abspath(sys.argv[1]))' \
             '${{ inputs.conda-prefix }}' \
           )" >> $GITHUB_OUTPUT
 
