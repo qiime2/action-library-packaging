@@ -173,15 +173,7 @@ runs:
       env:
         PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
-        set -euo pipefail
-        echo "github.action_path=${{ github.action_path }}"
-        echo "action_path:"
-        ls -la "${{ github.action_path }}"
-        echo "Listing action_path/bin:"
-        ls -la "${{ github.action_path }}/bin" || true
-
-        echo "Searching for install-package.py under _actions/qiime2/action-library-packaging:"
-        find /home/runner/work/_actions/qiime2/action-library-packaging -maxdepth 5 -name install-package.py -print
+        echo "workspace=$GITHUB_WORKSPACE"; ls -la /__w/_actions 2>/dev/null || ls -la "${GITHUB_WORKSPACE}/../_actions" 2>/dev/null || true
 
         cat <<EOF | python "${{ github.action_path }}/bin/install-package.py"
         ${{ toJSON(inputs) }}
