@@ -57,14 +57,42 @@ runs:
       run: |
         echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
 
+    - id: detect-conda
+      shell: bash -el {0}
+      run: |
+        if command -v conda >/dev/null 2>&1; then
+          echo "has_conda=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "has_conda=false" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: install micromamba
+      if: ${{ steps.detect-conda.outputs.has-conda != 'true' }}
+      shell: bash -el {0}
+      run: |
+        curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xvj bin/micromamba
+        install -m 0755 bin/micromamba /usr/local/bin/micromamba
+
+    - name: setup python
+      shell: bash -el {0}
+      run: |
+        set -euo pipefail
+        if command -v conda >/dev/null 2>&1; then
+          conda install -y -c conda-forge python pyyaml
+        else
+          micromamba create -y -n _bootstrap -c conda-forge python pyyaml
+          echo "$(micromamba info --base)/envs/_bootstrap/bin" >> "$GITHUB_PATH"
+        fi
+        python -v
+
     # - uses: actions/setup-python@v4
     #   with:
     #     python-version: '3.10'
 
-    - shell: bash -el {0}
-      run: |
-        python -m install --upgrade pip
-        python -m pip install pyyaml
+    # - shell: bash -el {0}
+    #   run: |
+    #     python -m install --upgrade pip
+    #     python -m pip install pyyaml
 
     - id: 'prefix'
       name: 'Determine full path to prefix'
