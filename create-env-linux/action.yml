@@ -173,6 +173,8 @@ runs:
       env:
         PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
+        echo "PYTHON VERSION:"
+        python -V
         cat <<EOF | install-package.py
         ${{ toJSON(inputs) }}
         EOF
