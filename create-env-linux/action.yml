@@ -174,9 +174,9 @@ runs:
         PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
         echo "GITHUB ACTION PATH!!!"
-        echo "ls -LR ${{ github.action_path }}"
+        ls -LR ${{ github.action_path }}
         echo "GITHUB WORKSPACE!!!"
-        echo "ls -LR $GITHUB_WORKSPACE"
+        ls -LR $GITHUB_WORKSPACE
 
         cat <<EOF | python "${{ github.action_path }}/bin/install-package.py"
         ${{ toJSON(inputs) }}
