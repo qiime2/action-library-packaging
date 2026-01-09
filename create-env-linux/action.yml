@@ -210,6 +210,14 @@ runs:
           -p '${{ steps.prefix.outputs.path }}' \
           --file '${{ inputs.environment-file }}'
 
+    - name: 'if you do not know where you are how can you find anything'
+      shell: bash -el {0}
+      run: |
+        echo "IS SRC AVAILABLE????????????????"
+        echo $GITHUB_ACTION_PATH/../src/
+        echo "IS THERE ANYTHING IN THERE?????????????"
+        ls -la $GITHUB_ACTION_PATH/../src/
+
     - id: 'install-conda-pkg'
       if: ${{ !steps.check-cache.outputs.cache-hit && steps.env-file.outputs.exists != 'true' }}
       name: 'Install package ${{ inputs.conda-prefix }}'
