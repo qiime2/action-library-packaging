@@ -86,7 +86,8 @@ runs:
         }
 
         echo "ACTION_PATH=$(normalize '${{ github.action_path }}')" | tee >> "$GITHUB_ENV"
-        echo $GITHUB_ACTION_PATH
+        echo "ROLL CALL!!!!!!!!!!!"
+        ls -la $GITHUB_ACTION_PATH
       # echo "ENV_FILE=$(normalize '${{ inputs.environment-file }}')" >> "$GITHUB_ENV"
       # echo "CONDA_PREFIX_IN=$(normalize '${{ inputs.conda-prefix }}')" >> "$GITHUB_ENV"
 
