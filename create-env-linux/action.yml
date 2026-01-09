@@ -62,7 +62,7 @@ runs:
       shell: bash -el {0}
       run: |
         echo "===== SETUP PYTHON ====="
-        conda install -y -c conda-forge python pyyaml git=2.50.1
+        conda install -y -c conda-forge python pyyaml
         CONDA_BASE="$(conda info --base)"
         echo "$CONDA_BASE/bin" >> "$GITHUB_PATH"
         echo "CONDA_BASE=$CONDA_BASE" >> "$GITHUB_ENV"
