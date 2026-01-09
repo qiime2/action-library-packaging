@@ -55,11 +55,13 @@ runs:
     - id: 'setup-path'
       shell: bash -el {0}
       run: |
+        echo "===== SETUP PATH ====="
         echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
 
     - name: setup python
       shell: bash -el {0}
       run: |
+        echo "===== SETUP PYTHON ====="
         conda install -y -c conda-forge python pyyaml
         CONDA_BASE="$(conda info --base)"
         echo "$CONDA_BASE/bin" >> "$GITHUB_PATH"
@@ -73,6 +75,7 @@ runs:
       # whether we are running inside of a container or not
       shell: bash -el {0}
       run: |
+        echo "===== NORMALIZE PATHS ====="
         normalize() {
           local p="$1"
           if [[ "$p" == /home/runner/work/* ]]; then
@@ -91,6 +94,9 @@ runs:
       name: 'Determine full path to prefix'
       shell: bash -el {0}
       run: |
+        echo "===== DETERMINE FULL PATH TO PREFIX ====="
+        echo ${{ inputs.conda-prefix }}
+
         echo "path=$( \
           python -c 'import os, sys; print(os.path.abspath(sys.argv[1]))' \
             '${{ inputs.conda-prefix }}' \
@@ -100,6 +106,9 @@ runs:
       name: 'Check if environment file exists'
       shell: bash -el {0}
       run: |
+        echo "===== CHECK IF ENV FILE EXISTS ====="
+        echo ${{ inputs.environment-file }}
+
         echo "exists=$([ -f '${{ inputs.environment-file }}' ] && echo 'true' \
           )" >> $GITHUB_OUTPUT
 
@@ -108,6 +117,9 @@ runs:
       name: 'Determine cache key basename'
       shell: bash -el {0}
       run: |
+        echo "===== DETERMINE CACHE KEY BASENAME ====="
+        echo ${{ inputs.cache-name }}
+
         echo "key=$( \
           [ -n '${{ inputs.cache-name }}' ] \
             && echo '${{inputs.cache-name }}' \
@@ -144,6 +156,8 @@ runs:
     - name: 'check for existing conda present on path'
       shell: bash -el {0}
       run: |
+        echo "===== CHECK FOR EXISTING CONDA ON PATH ====="
+
         set +e
         found=false
 
@@ -173,6 +187,9 @@ runs:
       name: 'Untar and reinstall cached environment'
       shell: bash -el {0}
       run: |
+        echo "===== EXTRACT ENV ====="
+        echo ${{ steps.prefix.outputs.path }}
+
         mkdir -p '${{ steps.prefix.outputs.path }}'
         tar -xzf 'alp.create-env.${{ steps.cache-key.outputs.key }}.tar.gz' \
             -C '${{ steps.prefix.outputs.path }}'
@@ -183,6 +200,10 @@ runs:
       name: 'Install environment ${{ inputs.conda-prefix }}'
       shell: bash -el {0}
       run: |
+        echo "===== INSTALL CONDA ENV ====="
+        echo ${{ inputs.conda-prefix }}
+        echo ${{ inputs.environment-file }}
+
         conda env create -q \
           -p '${{ steps.prefix.outputs.path }}' \
           --file '${{ inputs.environment-file }}'
@@ -194,10 +215,7 @@ runs:
       env:
         PYTHONPATH: "${{ env.ACTION_PATH }}/../src/"
       run: |
-        echo "===== ACTIONS CHECKOUT ROOT ====="
-        ls -la /__w/_actions
-        echo "Searching for install-package.py under /__w/_actions"
-        find /__w/_actions -name install-package.py -print
+        echo "===== INSTALL CONDA PACKAGE ====="
 
         cat <<EOF | python "${{ env.ACTION_PATH }}/bin/install-package.py"
         ${{ toJSON(inputs) }}
