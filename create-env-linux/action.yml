@@ -83,8 +83,8 @@ runs:
         }
 
         echo "ACTION_PATH=$(normalize '${{ github.action_path }}')" >> "$GITHUB_ENV"
-        echo "ENV_FILE=$(normalize '${{ inputs.environment-file }}')" >> "$GITHUB_ENV"
-        echo "CONDA_PREFIX_IN=$(normalize '${{ inputs.conda-prefix }}')" >> "$GITHUB_ENV"
+      # echo "ENV_FILE=$(normalize '${{ inputs.environment-file }}')" >> "$GITHUB_ENV"
+      # echo "CONDA_PREFIX_IN=$(normalize '${{ inputs.conda-prefix }}')" >> "$GITHUB_ENV"
 
 
     - id: 'prefix'
@@ -93,14 +93,14 @@ runs:
       run: |
         echo "path=$( \
           python -c 'import os, sys; print(os.path.abspath(sys.argv[1]))' \
-            '${{ env.CONDA_PREFIX_IN }}' \
+            '${{ inputs.conda-prefix }}' \
           )" >> $GITHUB_OUTPUT
 
     - id: 'env-file'
       name: 'Check if environment file exists'
       shell: bash -el {0}
       run: |
-        echo "exists=$([ -f '${{ env.ENV_FILE }}' ] && echo 'true' \
+        echo "exists=$([ -f '${{ inputs.environment-file }}' ] && echo 'true' \
           )" >> $GITHUB_OUTPUT
 
     - id: 'cache-key'
@@ -111,18 +111,18 @@ runs:
         echo "key=$( \
           [ -n '${{ inputs.cache-name }}' ] \
             && echo '${{inputs.cache-name }}' \
-            || basename '${{ env.CONDA_PREFIX_IN }}' \
+            || basename '${{ inputs.conda-prefix }}' \
         )" >> $GITHUB_OUTPUT
 
     - id: 'hash-provided-env'
       if: ${{ steps.env-file.outputs.exists == 'true' }}
       uses: qiime2/action-library-packaging/_hash@beta
       with:
-        file: ${{ env.ENV_FILE }}
+        file: ${{ inputs.environment-file }}
 
     - id: 'check-cache'
       if: ${{ steps.env-file.outputs.exists == 'true' && inputs.skip-cache == 'false' }}
-      name: 'Try loading environment ${{ env.CONDA_PREFIX_IN }} from cache'
+      name: 'Try loading environment ${{ inputs.conda-prefix }} from cache'
       uses: actions/cache/restore@v3
       with:
         path: alp.create-env.${{ steps.cache-key.outputs.key }}.tar.gz
@@ -180,16 +180,16 @@ runs:
 
     - id: 'install-conda-env'
       if: ${{ !steps.check-cache.outputs.cache-hit && steps.env-file.outputs.exists == 'true' }}
-      name: 'Install environment ${{ env.CONDA_PREFIX_IN }}'
+      name: 'Install environment ${{ inputs.conda-prefix }}'
       shell: bash -el {0}
       run: |
         conda env create -q \
           -p '${{ steps.prefix.outputs.path }}' \
-          --file '${{ env.ENV_FILE }}'
+          --file '${{ inputs.environment-file }}'
 
     - id: 'install-conda-pkg'
       if: ${{ !steps.check-cache.outputs.cache-hit && steps.env-file.outputs.exists != 'true' }}
-      name: 'Install package ${{ env.CONDA_PREFIX_IN }}'
+      name: 'Install package ${{ inputs.conda-prefix }}'
       shell: bash -el {0}
       env:
         PYTHONPATH: "${{ env.ACTION_PATH }}/../src/"
@@ -205,7 +205,7 @@ runs:
 
     - id: 'add-activate'
       if: ${{ !steps.check-cache.outputs.cache-hit }}
-      name: 'Add activate for ${{ env.CONDA_PREFIX_IN }}'
+      name: 'Add activate for ${{ inputs.conda-prefix }}'
       shell: bash -el {0}
       run: |
         cat <<EOF > '${{ steps.prefix.outputs.path }}/etc/activate.sh'
@@ -235,7 +235,7 @@ runs:
     - id: 'hash-result-env'
       uses: qiime2/action-library-packaging/_hash@beta
       with:
-        file: ${{ env.ENV_FILE }}
+        file: ${{ inputs.environment-file }}
 
     - id: 'pack-conda'
       if: ${{ inputs.skip-cache == 'false' && !steps.check-cache.outputs.cache-hit }}
