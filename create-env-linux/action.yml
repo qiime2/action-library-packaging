@@ -68,26 +68,26 @@ runs:
         echo "CONDA_BASE=$CONDA_BASE" >> "$GITHUB_ENV"
         "$CONDA_BASE/bin/python" -V
 
-    - name: Normalize paths for container runners
-      # In container jobs, real filesystem is mounted under /__w
-      # however, github context vars will show /home/runner/work
-      # this helper ensures we resolve the right path regardless of
-      # whether we are running inside of a container or not
-      shell: bash -el {0}
-      run: |
-        echo "===== NORMALIZE PATHS!!!!!!!!!!!!!!!!!!!!! ====="
-        normalize() {
-          local p="$1"
-          if [[ "$p" == /home/runner/work/* ]]; then
-            echo "/__w/${p#/home/runner/work/}"
-          else
-            echo "$p"
-          fi
-        }
+    # - name: Normalize paths for container runners
+    #   # In container jobs, real filesystem is mounted under /__w
+    #   # however, github context vars will show /home/runner/work
+    #   # this helper ensures we resolve the right path regardless of
+    #   # whether we are running inside of a container or not
+    #   shell: bash -el {0}
+    #   run: |
+    #     echo "===== NORMALIZE PATHS!!!!!!!!!!!!!!!!!!!!! ====="
+    #     normalize() {
+    #       local p="$1"
+    #       if [[ "$p" == /home/runner/work/* ]]; then
+    #         echo "/__w/${p#/home/runner/work/}"
+    #       else
+    #         echo "$p"
+    #       fi
+    #     }
 
-        echo "ACTION_PATH=$(normalize '${{ github.action_path }}')" | tee >> "$GITHUB_ENV"
-        echo "ROLL CALL!!!!!!!!!!!"
-        ls -la $GITHUB_ACTION_PATH
+    #     echo "ACTION_PATH=$(normalize '${{ github.action_path }}')" | tee >> "$GITHUB_ENV"
+    #     echo "ROLL CALL!!!!!!!!!!!"
+    #     ls -la $GITHUB_ACTION_PATH
       # echo "ENV_FILE=$(normalize '${{ inputs.environment-file }}')" >> "$GITHUB_ENV"
       # echo "CONDA_PREFIX_IN=$(normalize '${{ inputs.conda-prefix }}')" >> "$GITHUB_ENV"
 
@@ -215,11 +215,11 @@ runs:
       name: 'Install package ${{ inputs.conda-prefix }}'
       shell: bash -el {0}
       env:
-        PYTHONPATH: "${{ env.ACTION_PATH }}/../src/"
+        PYTHONPATH: "$GITHUB_ACTION_PATH/../src/"
       run: |
         echo "===== INSTALL CONDA PACKAGE ====="
 
-        cat <<EOF | python "${{ env.ACTION_PATH }}/bin/install-package.py"
+        cat <<EOF | python "$GITHUB_ACTION_PATH/bin/install-package.py"
         ${{ toJSON(inputs) }}
         EOF
 
@@ -246,7 +246,7 @@ runs:
       name: 'Create environment file'
       shell: bash -el {0}
       env:
-        PYTHONPATH: "${{ env.ACTION_PATH }}/../src/"
+        PYTHONPATH: "$GITHUB_ACTION_PATH/../src/"
       run: |
         cat <<EOF | create-env-file.py
         ${{ toJSON(inputs) }}
