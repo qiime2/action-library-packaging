@@ -72,15 +72,23 @@ runs:
       run: |
         normalize () {
           local p="$1"
-          if [[ "$p" == /home/runner/work/* ]]; then
-            echo "/__w/${p#home/runner/work/}"
+          if [[ "$p" == /__w/* ]]; then
+            echo "$p"
+          elif [[ "$p" == /home/runner/work/* ]]; then
+            echo "__w/${p#/home/runner/work/}"
           else
             echo "$p"
           fi
         }
 
         echo "ALP_CONDA_PREFIX=$(normalize '${{ inputs.conda-prefix }}')" >> "$GITHUB_ENV"
-        echo "ALP_ENV_FILE=$(normalize '${{ inputs.environment-file }}')" >> "$GITHUB_ENV"
+        echo "ALP_CONDA_PREFIX=$ALP_CONDA_PREFIX"
+
+        echo "ALP_ENV_FILE=$GITHUB_ACTION_PATH/conda-environment.yml" >> "$GITHUB_ENV"
+        echo "ALP_ENV_FILE=$GITHUB_ACTION_PATH/conda-environment.yml"
+
+        ls -la "$GITHUB_ACTION_PATH" || true
+        la -la "$GITHUB_ACTION_PATH/conda-environment.yml" || true
 
     - id: 'prefix'
       name: 'Determine full path to prefix'
