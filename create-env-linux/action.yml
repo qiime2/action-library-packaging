@@ -174,7 +174,6 @@ runs:
         echo "===== INSTALL CONDA PACKAGE ====="
 
         export PYTHONPATH="$GITHUB_ACTION_PATH/../src${PYTHONPATH:+:$PYTHONPATH}"
-        python -c "import os,sys; print('PYTHONPATH=', os.environ.get('PYTHONPATH'))"
 
         cat <<EOF | python "$GITHUB_ACTION_PATH/bin/install-package.py"
         ${{ toJSON(inputs) }}
@@ -202,11 +201,8 @@ runs:
       if: ${{ steps.env-file.outputs.exists != 'true' }}
       name: 'Create environment file'
       shell: bash -el {0}
-      # env:
-      #   PYTHONPATH: "$GITHUB_ACTION_PATH/../src/"
       run: |
         export PYTHONPATH="$GITHUB_ACTION_PATH/../src${PYTHONPATH:+:$PYTHONPATH}"
-        python -c "import os,sys; print('PYTHONPATH=', os.environ.get('PYTHONPATH'))"
 
         cat <<EOF | create-env-file.py
         ${{ toJSON(inputs) }}

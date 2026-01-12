@@ -26,16 +26,13 @@ runs:
       uses: qiime2/action-library-packaging/create-env-linux@beta
       with:
         conda-prefix: ${{ inputs.conda-prefix }}
-        environment-file: ${{ github.action_path }}/conda-environment.yml
+        environment-file: $GITHUB_ACTION_PATH/conda-environment.yml
         # conda-build etc can't be conda-packed (or conda create --cloned)
         skip-cache: true
     - id: 'set-config'
       shell: bash
-      # env:
-      #   PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
         export PYTHONPATH="$GITHUB_ACTION_PATH/../src${PYTHONPATH:+:$PYTHONPATH}"
-        python -c "import os,sys; print('PYTHONPATH=', os.environ.get('PYTHONPATH'))"
 
         ${{ steps.create-env.outputs.conda-activate }}
         conda config --set channel_priority flexible
