@@ -55,13 +55,11 @@ runs:
     - id: 'setup-path'
       shell: bash -el {0}
       run: |
-        echo "===== SETUP PATH ====="
         echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
 
     - name: setup python & friends
       shell: bash -el {0}
       run: |
-        echo "===== SETUP PYTHON ====="
         conda install -y -c conda-forge python pyyaml
         CONDA_BASE="$(conda info --base)"
         echo "$CONDA_BASE/bin" >> "$GITHUB_PATH"
@@ -96,9 +94,6 @@ runs:
       name: 'Determine full path to prefix'
       shell: bash -el {0}
       run: |
-        echo "===== DETERMINE FULL PATH TO PREFIX ====="
-        echo ${{ inputs.conda-prefix }}
-
         echo "path=$( \
           python -c 'import os, sys; print(os.path.abspath(sys.argv[1]))' \
             '${{ inputs.conda-prefix }}' \
@@ -108,9 +103,6 @@ runs:
       name: 'Check if environment file exists'
       shell: bash -el {0}
       run: |
-        echo "===== CHECK IF ENV FILE EXISTS ====="
-        echo ${{ inputs.environment-file }}
-
         echo "exists=$([ -f '${{ inputs.environment-file }}' ] && echo 'true' \
           )" >> $GITHUB_OUTPUT
 
@@ -119,9 +111,6 @@ runs:
       name: 'Determine cache key basename'
       shell: bash -el {0}
       run: |
-        echo "===== DETERMINE CACHE KEY BASENAME ====="
-        echo ${{ inputs.cache-name }}
-
         echo "key=$( \
           [ -n '${{ inputs.cache-name }}' ] \
             && echo '${{inputs.cache-name }}' \
@@ -158,8 +147,6 @@ runs:
     - name: 'check for existing conda present on path'
       shell: bash -el {0}
       run: |
-        echo "===== CHECK FOR EXISTING CONDA ON PATH ====="
-
         set +e
         found=false
 
@@ -189,9 +176,6 @@ runs:
       name: 'Untar and reinstall cached environment'
       shell: bash -el {0}
       run: |
-        echo "===== EXTRACT ENV ====="
-        echo ${{ steps.prefix.outputs.path }}
-
         mkdir -p '${{ steps.prefix.outputs.path }}'
         tar -xzf 'alp.create-env.${{ steps.cache-key.outputs.key }}.tar.gz' \
             -C '${{ steps.prefix.outputs.path }}'
@@ -202,24 +186,20 @@ runs:
       name: 'Install environment ${{ inputs.conda-prefix }}'
       shell: bash -el {0}
       run: |
-        echo "===== INSTALL CONDA ENV ====="
-        echo ${{ inputs.conda-prefix }}
-        echo ${{ inputs.environment-file }}
-
         conda env create -q \
           -p '${{ steps.prefix.outputs.path }}' \
           --file '${{ inputs.environment-file }}'
 
-    - name: 'if you do not know where you are how can you find anything'
-      shell: bash -el {0}
-      run: |
-        echo "IS SRC AVAILABLE????????????????"
-        echo $GITHUB_ACTION_PATH/../src/
-        echo "IS THERE ANYTHING IN THERE?????????????"
-        ls -la $GITHUB_ACTION_PATH/../src/
-        echo "WHAT IS MY PYTHONPATH ANYWAY?????????????"
-        python -c "import os,sys; print('PYTHONPATH=', os.environ.get('PYTHONPATH')); print('sys.path[0:5]=', sys.path[:5])"
-        ls -la "$GITHUB_ACTION_PATH/../src/alp"
+    # - name: 'if you do not know where you are how can you find anything'
+    #   shell: bash -el {0}
+    #   run: |
+    #     echo "IS SRC AVAILABLE????????????????"
+    #     echo $GITHUB_ACTION_PATH/../src/
+    #     echo "IS THERE ANYTHING IN THERE?????????????"
+    #     ls -la $GITHUB_ACTION_PATH/../src/
+    #     echo "WHAT IS MY PYTHONPATH ANYWAY?????????????"
+    #     python -c "import os,sys; print('PYTHONPATH=', os.environ.get('PYTHONPATH')); print('sys.path[0:5]=', sys.path[:5])"
+    #     ls -la "$GITHUB_ACTION_PATH/../src/alp"
 
     - id: 'install-conda-pkg'
       if: ${{ !steps.check-cache.outputs.cache-hit && steps.env-file.outputs.exists != 'true' }}
@@ -229,7 +209,9 @@ runs:
       #   PYTHONPATH: "$GITHUB_ACTION_PATH/../src/"
       run: |
         echo "===== INSTALL CONDA PACKAGE ====="
+
         export PYTHONPATH="$GITHUB_ACTION_PATH/../src${PYTHONPATH:+:$PYTHONPATH}"
+        python -c "import os,sys; print('PYTHONPATH=', os.environ.get('PYTHONPATH'))"
 
         cat <<EOF | python "$GITHUB_ACTION_PATH/bin/install-package.py"
         ${{ toJSON(inputs) }}
