@@ -79,6 +79,13 @@ runs:
       name: 'Check if environment file exists'
       shell: bash -el {0}
       run: |
+        echo "===== DOES ENV FILE EXIST????????? ====="
+        if [ -f '${{ inputs.environment-file }}' ]; then
+          echo "FOUND!!!!!!"
+        else
+          echo "NOT FOUND :("
+        fi
+
         echo "exists=$([ -f '${{ inputs.environment-file }}' ] && echo 'true' \
           )" >> $GITHUB_OUTPUT
 
