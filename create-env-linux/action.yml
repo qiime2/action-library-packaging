@@ -75,20 +75,23 @@ runs:
           if [[ "$p" == /__w/* ]]; then
             echo "$p"
           elif [[ "$p" == /home/runner/work/* ]]; then
-            echo "__w/${p#/home/runner/work/}"
+            echo "/__w/${p#/home/runner/work/}"
           else
             echo "$p"
           fi
         }
 
-        echo "ALP_CONDA_PREFIX=$(normalize '${{ inputs.conda-prefix }}')" >> "$GITHUB_ENV"
+        ALP_CONDA_PREFIX="$(normalize '${{ inputs.conda-prefix }}')"
+        echo "ALP_CONDA_PREFIX=$ALP_CONDA_PREFIX" >> "$GITHUB_ENV"
+        echo "CONDA PREFIX??????????????????"
         echo "ALP_CONDA_PREFIX=$ALP_CONDA_PREFIX"
 
-        echo "ALP_ENV_FILE=$GITHUB_ACTION_PATH/conda-environment.yml" >> "$GITHUB_ENV"
-        echo "ALP_ENV_FILE=$GITHUB_ACTION_PATH/conda-environment.yml"
+        ALP_ENV_FILE="$(normalize '${{ inputs.environment-file }}')"
+        echo "ALP_ENV_FILE=$ALP_ENV_FILE" >> "$GITHUB_ENV"
+        echo "ENV FILE????????????????????????"
+        echo "ALP_ENV_FILE=$ALP_ENV_FILE"
 
-        ls -la "$GITHUB_ACTION_PATH" || true
-        la -la "$GITHUB_ACTION_PATH/conda-environment.yml" || true
+        ls -la "$ALP_ENV_FILE"
 
     - id: 'prefix'
       name: 'Determine full path to prefix'
