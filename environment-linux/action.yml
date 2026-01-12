@@ -10,7 +10,7 @@ inputs:
 outputs:
   conda-prefix:
     description: 'The conda prefix environment which has been set up'
-    value: ${{ inputs.conda-prefix }}
+    value: ${{ steps.create-env.outputs.conda-prefix }}
   conda-activate:
     description: 'Activates this environment via sourcing (e.g. `. foo`)'
     value: ${{ steps.create-env.outputs.conda-activate }}
@@ -26,7 +26,7 @@ runs:
       uses: qiime2/action-library-packaging/create-env-linux@beta
       with:
         conda-prefix: ${{ inputs.conda-prefix }}
-        environment-file: $GITHUB_ACTION_PATH/conda-environment.yml
+        environment-file: ${{ github.action_path }}/conda-environment.yml
         # conda-build etc can't be conda-packed (or conda create --cloned)
         skip-cache: true
     - id: 'set-config'

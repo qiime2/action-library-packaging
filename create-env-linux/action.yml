@@ -66,13 +66,29 @@ runs:
         echo "CONDA_BASE=$CONDA_BASE" >> "$GITHUB_ENV"
         "$CONDA_BASE/bin/python" -V
 
+    - id: 'normalize-paths'
+      name: 'normalize host paths for container runners'
+      shell: bash -el {0}
+      run: |
+        normalize () {
+          local p="$1"
+          if [[ "$p" == /home/runner/work/* ]]; then
+            echo "/__w/${p#home/runner/work/}"
+          else
+            echo "$p"
+          fi
+        }
+
+        echo "ALP_CONDA_PREFIX=$(normalize '${{ inputs.conda-prefix }}')" >> "$GITHUB_ENV"
+        echo "ALP_ENV_FILE=$(normalize '${{ inputs.environment-file }}')" >> "$GITHUB_ENV"
+
     - id: 'prefix'
       name: 'Determine full path to prefix'
       shell: bash -el {0}
       run: |
         echo "path=$( \
           python -c 'import os, sys; print(os.path.abspath(sys.argv[1]))' \
-            '${{ inputs.conda-prefix }}' \
+            '${{ env.ALP_CONDA_PREFIX }}' \
           )" >> $GITHUB_OUTPUT
 
     - id: 'env-file'
@@ -80,13 +96,13 @@ runs:
       shell: bash -el {0}
       run: |
         echo "===== DOES ENV FILE EXIST????????? ====="
-        if [ -f '${{ inputs.environment-file }}' ]; then
+        if [ -f '${{ env.ALP_ENV_FILE }}' ]; then
           echo "FOUND!!!!!!"
         else
           echo "NOT FOUND :("
         fi
 
-        echo "exists=$([ -f '${{ inputs.environment-file }}' ] && echo 'true' \
+        echo "exists=$([ -f '${{ env.ALP_ENV_FILE }}' ] && echo 'true' \
           )" >> $GITHUB_OUTPUT
 
     - id: 'cache-key'
@@ -97,14 +113,14 @@ runs:
         echo "key=$( \
           [ -n '${{ inputs.cache-name }}' ] \
             && echo '${{inputs.cache-name }}' \
-            || basename '${{ inputs.conda-prefix }}' \
+            || basename '${{ env.ALP_CONDA_PREFIX }}' \
         )" >> $GITHUB_OUTPUT
 
     - id: 'hash-provided-env'
       if: ${{ steps.env-file.outputs.exists == 'true' }}
       uses: qiime2/action-library-packaging/_hash@beta
       with:
-        file: ${{ inputs.environment-file }}
+        file: ${{ env.ALP_ENV_FILE }}
 
     - id: 'check-cache'
       if: ${{ steps.env-file.outputs.exists == 'true' && inputs.skip-cache == 'false' }}
@@ -171,7 +187,7 @@ runs:
       run: |
         conda env create -q \
           -p '${{ steps.prefix.outputs.path }}' \
-          --file '${{ inputs.environment-file }}'
+          --file '${{ env.ALP_ENV_FILE }}'
 
     - id: 'install-conda-pkg'
       if: ${{ !steps.check-cache.outputs.cache-hit && steps.env-file.outputs.exists != 'true' }}
@@ -211,14 +227,14 @@ runs:
       run: |
         export PYTHONPATH="$GITHUB_ACTION_PATH/../src${PYTHONPATH:+:$PYTHONPATH}"
 
-        cat <<EOF | create-env-file.py
+        cat <<EOF | python "$GITHUB_ACTION_PATH/bin/create-env-file.py"
         ${{ toJSON(inputs) }}
         EOF
 
     - id: 'hash-result-env'
       uses: qiime2/action-library-packaging/_hash@beta
       with:
-        file: ${{ inputs.environment-file }}
+        file: ${{ env.ALP_ENV_FILE }}
 
     - id: 'pack-conda'
       if: ${{ inputs.skip-cache == 'false' && !steps.check-cache.outputs.cache-hit }}
