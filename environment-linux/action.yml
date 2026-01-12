@@ -31,9 +31,12 @@ runs:
         skip-cache: true
     - id: 'set-config'
       shell: bash
-      env:
-        PYTHONPATH: "${{ github.action_path }}/../src/"
+      # env:
+      #   PYTHONPATH: "${{ github.action_path }}/../src/"
       run: |
+        export PYTHONPATH="$GITHUB_ACTION_PATH/../src${PYTHONPATH:+:$PYTHONPATH}"
+        python -c "import os,sys; print('PYTHONPATH=', os.environ.get('PYTHONPATH'))"
+
         ${{ steps.create-env.outputs.conda-activate }}
         conda config --set channel_priority flexible
         conda config --remove channels defaults || true
