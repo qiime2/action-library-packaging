@@ -26,6 +26,7 @@ runs:
     env:
       PYTHONPATH: "$GITHUB_ACTION_PATH/../src/"
     run: |
+      export PYTHONPATH="$GITHUB_ACTION_PATH/../src${PYTHONPATH:+:$PYTHONPATH}"
       cat <<EOF | python "$GITHUB_ACTION_PATH/bin/collect_package.py"
       ${{ toJSON(inputs) }}
       EOF
