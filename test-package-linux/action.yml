@@ -33,6 +33,7 @@ runs:
       PYTHONPATH: "$GITHUB_ACTION_PATH/../src/"
     run: |
       ${{ inputs.conda-activate }}
+      export PYTHONPATH="$GITHUB_ACTION_PATH/../src${PYTHONPATH:+:$PYTHONPATH}"
       cat <<EOF | python "$GITHUB_ACTION_PATH/bin/test-package2-electric-boogaloo.py"
       ${{ toJSON(inputs) }}
       EOF
