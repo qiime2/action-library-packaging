@@ -83,15 +83,13 @@ runs:
 
         ALP_CONDA_PREFIX="$(normalize '${{ inputs.conda-prefix }}')"
         echo "ALP_CONDA_PREFIX=$ALP_CONDA_PREFIX" >> "$GITHUB_ENV"
-        echo "CONDA PREFIX??????????????????"
+        echo "===== CHECK: CONDA PREFIX? ====="
         echo "ALP_CONDA_PREFIX=$ALP_CONDA_PREFIX"
 
         ALP_ENV_FILE="$(normalize '${{ inputs.environment-file }}')"
         echo "ALP_ENV_FILE=$ALP_ENV_FILE" >> "$GITHUB_ENV"
-        echo "ENV FILE????????????????????????"
+        echo "===== CHECK: ENV FILE? ====="
         echo "ALP_ENV_FILE=$ALP_ENV_FILE"
-
-        ls -la "$ALP_ENV_FILE"
 
     - id: 'prefix'
       name: 'Determine full path to prefix'
@@ -106,9 +104,9 @@ runs:
       name: 'Check if environment file exists'
       shell: bash -el {0}
       run: |
-        echo "===== DOES ENV FILE EXIST????????? ====="
+        echo "===== CHECK: DOES ENV FILE EXIST? ====="
         if [ -f '${{ env.ALP_ENV_FILE }}' ]; then
-          echo "FOUND!!!!!!"
+          echo "FOUND!"
         else
           echo "NOT FOUND :("
         fi
@@ -167,7 +165,7 @@ runs:
         fi
 
         echo "HAS_CONDA=$found" >> "$GITHUB_ENV"
-        echo "Detected HAS_CONDA=$found"
+        echo "Existing conda present on path! Skipping miniforge setup."
 
     - name: 'setup miniforge'
       # now we check for the above step to ensure we do not run into any
