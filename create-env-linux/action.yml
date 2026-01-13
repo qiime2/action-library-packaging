@@ -60,7 +60,7 @@ runs:
     - name: setup python & friends
       shell: bash -el {0}
       run: |
-        conda install -y -c conda-forge python pyyaml make nodejs
+        conda install -y -c conda-forge python pyyaml make
         CONDA_BASE="$(conda info --base)"
         echo "$CONDA_BASE/bin" >> "$GITHUB_PATH"
         echo "CONDA_BASE=$CONDA_BASE" >> "$GITHUB_ENV"
