@@ -214,7 +214,7 @@ runs:
     - id: 'add-activate'
       if: ${{ !steps.check-cache.outputs.cache-hit }}
       name: 'Add activate for ${{ inputs.conda-prefix }}'
-      shell: bash -el {0}
+      shell: bash -xel {0}
       run: |
         cat <<EOF > '${{ steps.prefix.outputs.path }}/etc/activate.sh'
           . "$CONDA/etc/profile.d/conda.sh"
