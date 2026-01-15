@@ -216,12 +216,10 @@ runs:
       name: 'Add activate for ${{ inputs.conda-prefix }}'
       shell: bash -xel {0}
       run: |
-        echo "CONDA=$CONDA"
-        echo "CONDA_BASE=$CONDA_BASE"
-        conda info --base
+        CONDA_BASE="${CONDA_BASE:-$(conda info --base)}"
 
         cat <<EOF > '${{ steps.prefix.outputs.path }}/etc/activate.sh'
-          . "$CONDA/etc/profile.d/conda.sh"
+          . "$CONDA_BASE/etc/profile.d/conda.sh"
           conda activate '${{ steps.prefix.outputs.path }}'
         EOF
         chmod +x '${{ steps.prefix.outputs.path }}/etc/activate.sh'
