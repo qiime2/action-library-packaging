@@ -229,7 +229,8 @@ runs:
       shell: bash -el {0}
       run: |
         echo "DELETE MEEEEEEEEEEEEEEeeeeEEEeeeeEEEeeeeEEEeeeEEEEeeeee"
-        sudo rm -rf '${{ steps.prefix.outputs.path }}/etc/conda/activate.d/hooks/50_activate_q2cli_tab_completion.sh'
+        rm '${{ steps.prefix.outputs.path }}/etc/conda/activate.d/hooks/50_activate_q2cli_tab_completion.sh'
+        echo "I AM DELETEDDDDDDDDDDDDDDdddddddDDDDddDDdddDddDDdd"
 
         source '${{ steps.prefix.outputs.path }}/etc/activate.sh'
         conda install -c conda-forge conda-pack=0.8.1
