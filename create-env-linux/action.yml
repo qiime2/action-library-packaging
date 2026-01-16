@@ -228,6 +228,8 @@ runs:
       run: |
         echo "hellOOOOooooOOOOoooOOOOooooOOOOooooOOO???????"
 
+        rm '/__w/distributions/distributions/test-env/etc/conda/activate.d/50_activate_q2cli_tab_completion.sh'
+
         source '${{ steps.prefix.outputs.path }}/etc/activate.sh'
         conda install -c conda-forge conda-pack=0.8.1
 
