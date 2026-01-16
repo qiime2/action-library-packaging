@@ -214,23 +214,19 @@ runs:
     - id: 'add-activate'
       if: ${{ !steps.check-cache.outputs.cache-hit }}
       name: 'Add activate for ${{ inputs.conda-prefix }}'
-      shell: bash -xel {0}
+      shell: bash -el {0}
       run: |
-        CONDA_BASE="${CONDA_BASE:-$(conda info --base)}"
-
         cat <<EOF > '${{ steps.prefix.outputs.path }}/etc/activate.sh'
-          . "$CONDA_BASE/etc/profile.d/conda.sh"
+          . "$CONDA/etc/profile.d/conda.sh"
           conda activate '${{ steps.prefix.outputs.path }}'
         EOF
         chmod +x '${{ steps.prefix.outputs.path }}/etc/activate.sh'
 
     - id: 'add-conda-pack'
       if: ${{ !steps.check-cache.outputs.cache-hit && inputs.skip-cache == 'false' }}
-      shell: bash -el {0}
+      shell: bash -xel {0}
       run: |
-        echo "DELETE MEEEEEEEEEEEEEEeeeeEEEeeeeEEEeeeeEEEeeeEEEEeeeee"
-        rm '${{ steps.prefix.outputs.path }}/etc/conda/activate.d/hooks/50_activate_q2cli_tab_completion.sh'
-        echo "I AM DELETEDDDDDDDDDDDDDDdddddddDDDDddDDdddDddDDdd"
+        echo "hellOOOOooooOOOOoooOOOOooooOOOOooooOOO???????"
 
         source '${{ steps.prefix.outputs.path }}/etc/activate.sh'
         conda install -c conda-forge conda-pack=0.8.1
