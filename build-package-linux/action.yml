@@ -51,13 +51,9 @@ runs:
       shell: bash
       env:
         PYTHONPATH: "$GITHUB_ACTION_PATH/../src/"
-      # TODO: remove this rm after qa2cli debugging is complete
       run: |
         ${{ inputs.conda-activate }}
         export PYTHONPATH="$GITHUB_ACTION_PATH/../src${PYTHONPATH:+:$PYTHONPATH}"
-
-        rm -f '/__w/distributions/distributions/test-env/etc/conda/activate.d/50_activate_q2cli_tab_completion.sh' || true
-
         cat <<EOF | python "$GITHUB_ACTION_PATH/bin/build-package.py"
         ${{ toJSON(inputs) }}
         EOF
