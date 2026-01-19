@@ -13,6 +13,9 @@ def find_tests(package_path):
         tests = yaml.safe_load(recipe_fh).get('test')
     return tests
 
+def uses_selenium(tests):
+    if 'requires' in tests:
+        raise ValueError(tests['requires'])
 
 def run_commands(commands):
     for cmd in commands:

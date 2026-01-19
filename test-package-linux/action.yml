@@ -20,17 +20,11 @@ runs:
     shell: bash
     run: echo "$GITHUB_ACTION_PATH/bin/" >> $GITHUB_PATH
 
-  - name: install browsers & set tmpdirs for Selenium tests
-    shell: bash
-    run: |
-      dnf -y install epel-release
-      dnf -y install chromium firefox
-
-      echo "HOME=$PWD/.home" >> $GITHUB_ENV
-      echo "XDG_CACHE_HOME=$PWD/.cache" >> $GITHUB_ENV
-      echo "XDG_CONFIG_HOME=$PWD/.config" >> $GITHUB_ENV
-      echo "TMPDIR=$PWD/.tmp" >> $GITHUB_ENV
-      mkdir -p .home .cache .config .tmp
+  # - name: install browsers for Selenium tests
+  #   shell: bash
+  #   run: |
+  #     dnf -y install epel-release
+  #     dnf -y install chromium firefox
 
   - id: 'test-package'
     shell: bash
