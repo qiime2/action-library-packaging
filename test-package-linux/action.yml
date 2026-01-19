@@ -1,5 +1,6 @@
 name: 'QIIME 2 Library Packaging - Test'
 description: 'Test a conda package'
+
 inputs:
   conda-activate:
     description: 'An activation script for the conda env to use'
@@ -11,12 +12,19 @@ inputs:
     required: false
     description: "Channels to search for additional packages in"
     default: '["conda-forge", "bioconda"]'
+
 runs:
   using: composite
   steps:
   - id: 'setup-path'
     shell: bash
     run: echo "$GITHUB_ACTION_PATH/bin/" >> $GITHUB_PATH
+
+  - name: install browsers for Selenium tests
+    shell: bash
+    run: |
+      dnf -y install chromium firefox
+
   - id: 'test-package'
     shell: bash
     env:
@@ -27,6 +35,7 @@ runs:
       cat <<EOF | python "$GITHUB_ACTION_PATH/bin/test-package.py"
       ${{ toJSON(inputs) }}
       EOF
+
   - id: 'test-package2-electric-boogaloo'
     shell: bash
     env:
