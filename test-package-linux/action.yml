@@ -28,7 +28,7 @@ runs:
 
       echo "HOME=$PWD/.home" >> $GITHUB_ENV
       echo "XDG_CACHE_HOME=$PWD/.cache" >> $GITHUB_ENV
-      echo "XDG_CACHE_HOME=$PWD/.config" >> $GITHUB_ENV
+      echo "XDG_CONFIG_HOME=$PWD/.config" >> $GITHUB_ENV
       echo "TMPDIR=$PWD/.tmp" >> $GITHUB_ENV
       mkdir -p .home .cache .config .tmp
 
