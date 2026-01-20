@@ -19,6 +19,7 @@ def find_tests(package_path):
             for req in tests['requires']:
                 if 'selenium' in req:
                     selenium = True
+                    raise ValueError(req)
                     break
 
     return tests, selenium
