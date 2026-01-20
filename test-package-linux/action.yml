@@ -20,12 +20,6 @@ runs:
     shell: bash
     run: echo "$GITHUB_ACTION_PATH/bin/" >> $GITHUB_PATH
 
-  - name: install browsers for Selenium tests
-    shell: bash
-    run: |
-      dnf -y install epel-release
-      dnf -y install chromium firefox
-
   - id: 'test-package'
     shell: bash
     env:
