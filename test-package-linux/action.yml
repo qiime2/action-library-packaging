@@ -20,13 +20,7 @@ runs:
     shell: bash
     run: echo "$GITHUB_ACTION_PATH/bin/" >> $GITHUB_PATH
 
-  - name: install firefox for selenium tests
-    shell: bash
-    run: |
-      dnf -y install epel-release
-      dnf -y install firefox chromium
-
-  - name: set env var to skip chrome-based selenium tests
+  - name: set env var to skip selenium tests
     shell: bash
     run: |
       echo "SKIP_SELENIUM=1" >> $GITHUB_ENV
