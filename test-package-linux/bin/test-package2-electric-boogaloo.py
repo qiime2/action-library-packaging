@@ -40,7 +40,8 @@ def run_commands(commands, selenium):
         env['TEMP'] = env['TMPDIR']
 
         for dir in (env['HOME'], env['XDG_CONFIG_HOME'], env['XDG_CACHE_HOME'],
-                    env['TMPDIR'], env['SELENIUM_MANAGER_CACHE_PATH']):
+                    env['XDG_RUNTIME_DIR'], env['SELENIUM_MANAGER_CACHE_PATH'],
+                    env['TMPDIR']):
             os.makedirs(dir, exist_ok=True)
 
         os.chmod(env['XDG_RUNTIME_DIR'], 0o700)
