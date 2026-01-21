@@ -24,7 +24,7 @@ runs:
     shell: bash
     run: |
       dnf -y install epel-release
-      dnf -y install firefox
+      dnf -y install firefox geckodriver
 
   - name: set env var to skip chrome-based selenium tests
     shell: bash
