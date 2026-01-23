@@ -5,3 +5,4 @@ dependencies:
   - conda-build=24.5.1
   - conda-pack=0.8.1
   - pyyaml=6.0.2
+  - python=3.10
