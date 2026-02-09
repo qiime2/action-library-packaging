@@ -191,7 +191,7 @@ runs:
       shell: bash -el {0}
       run: |
         source '${{ steps.prefix.outputs.path }}/etc/activate.sh'
-        conda install -c conda-forge conda-pack=0.8.1
+        conda install -c conda-forge conda-pack=0.9.1
 
     - id: 'create-env-file'
       if: ${{ steps.env-file.outputs.exists != 'true' }}
