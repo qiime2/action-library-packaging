@@ -143,7 +143,7 @@ runs:
         activate-environment: ''
         architecture: 'x64'
         auto-activate-base: true
-        miniforge-version: '25.11.0-1'
+        miniforge-version: '24.11.3-2'
 
     - id: 'extract-env'
       if: ${{ steps.check-cache.outputs.cache-hit }}
