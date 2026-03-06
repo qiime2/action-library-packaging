@@ -22,21 +22,18 @@ def main(conda_prefix, environment_file, package_name, channels, **unused):
     stdout = io.BytesIO(result.stdout)
 
     env = yaml.safe_load(stdout)
-
-    print("=== dependencies debug start ===")
-    for i, spec in enumerate(env['dependencies']):
-        print(f"[{i}] type={type(spec).__name__} repr={spec!r}")
-    print("=== dependencies debug end ===")
-
+    for spec in env['dependencies']:
+        print(spec)
+    # isinstance(spec, str) ensures we are only retaining conda package specs
+    # and omitting structured dependency entries such as pip blocks, etc.
+    # this was added in response to rpy2>=3.6.0, which is now a namespace pkg
+    # and pulls in rpy2-rinterface & rpy2-robjects as pip dependencies
+    # changelog xref:
+    # https://rpy2.github.io/doc/latest/html/changes.html#id3
     env['dependencies'] = [
         spec for spec in env['dependencies']
-        if not (isinstance(spec, str) and spec.startswith(package_name))
+        if isinstance(spec, str) and not spec.startswith(package_name)
     ]
-
-    print("=== filtered dependencies debug start ===")
-    for i, spec in enumerate(env['dependencies']):
-        print(f"[{i}] type={type(spec).__name__} repr={spec!r}")
-    print("=== filtered dependencies debug end ===")
 
     del env['name']
     del env['prefix']
