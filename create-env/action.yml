@@ -193,22 +193,6 @@ runs:
         source '${{ steps.prefix.outputs.path }}/etc/activate.sh'
         conda install -c conda-forge conda-pack=0.9.1
 
-    - name: 'debugZZZZ'
-      shell: bash
-      run: |
-        ./test-env/bin/python - <<'PY'
-        import sys
-        import importlib.metadata as md
-
-        print("sys.executable:", sys.executable)
-
-        for name in ["rpy2", "rpy2-rinterface", "rpy2-robjects"]:
-            try:
-                print(name, md.version(name))
-            except Exception as e:
-                print(name, repr(e))
-        PY
-
     - id: 'create-env-file'
       if: ${{ steps.env-file.outputs.exists != 'true' }}
       name: 'Create environment file'
