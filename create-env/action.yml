@@ -196,14 +196,18 @@ runs:
     - name: 'debugZZZZ'
       shell: bash
       run: |
-        conda list | grep rpy2
-        python - <<'PY'
-        import importlib.metadata as md
-        for name in ["rpy2", "rpy2-rinterface", "rpy2-robjects"]:
-            try:
-                print(name, md.version(name))
-            except Exception as e:
-                print(name, repr(e))
+        conda run -p ./test-env python - <<'PY'
+        import subprocess
+        import yaml
+
+        text = subprocess.check_output(
+            ["conda", "env", "export", "-p", "./test-env"],
+            text=True
+        )
+        env = yaml.safe_load(text)
+
+        for dep in env["dependencies"]:
+            print(type(dep), repr(dep))
         PY
 
     - id: 'create-env-file'
