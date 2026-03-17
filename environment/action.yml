@@ -33,9 +33,9 @@ runs:
       shell: bash
       env:
         PYTHONPATH: "${{ github.action_path }}/../src/"
+        CONDA_OVERRIDE_GLIBC: "2.28"
       run: |
         ${{ steps.create-env.outputs.conda-activate }}
         conda config --set channel_priority flexible
-        conda config --set CONDA_OVERRIDE_GLIBC=2.28
         conda config --remove channels defaults || true
         conda config --show
