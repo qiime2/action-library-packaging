@@ -32,6 +32,7 @@ runs:
     shell: bash
     env:
       PYTHONPATH: "$GITHUB_ACTION_PATH/../src/"
+      CONDA_OVERRIDE_ARCHSPEC: 'x86_64'
     run: |
       ${{ inputs.conda-activate }}
       export PYTHONPATH="$GITHUB_ACTION_PATH/../src${PYTHONPATH:+:$PYTHONPATH}"
