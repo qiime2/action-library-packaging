@@ -34,10 +34,6 @@ runs:
       PYTHONPATH: "$GITHUB_ACTION_PATH/../src/"
       CONDA_OVERRIDE_ARCHSPEC: 'x86_64'
     run: |
-      echo "CONDA_OVERRIDE_ARCHSPEC=$CONDA_OVERRIDE_ARCHSPEC"
-      conda info
-      mamba info || true
-
       ${{ inputs.conda-activate }}
       export PYTHONPATH="$GITHUB_ACTION_PATH/../src${PYTHONPATH:+:$PYTHONPATH}"
       cat <<EOF | install_package.py
