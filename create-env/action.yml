@@ -160,6 +160,7 @@ runs:
       name: 'Install environment ${{ inputs.conda-prefix }}'
       shell: bash -el {0}
       run: |
+        export CONDA_OVERRIDE_ARCHSPEC="x86_64"
         conda env create -q \
           -p '${{ steps.prefix.outputs.path }}' \
           --file '${{ inputs.environment-file }}'
@@ -170,6 +171,7 @@ runs:
       shell: bash -el {0}
       env:
         PYTHONPATH: "${{ github.action_path }}/../src/"
+        CONDA_OVERRIDE_ARCHSPEC: "x86_64"
       run: |
         cat <<EOF | install-package.py
         ${{ toJSON(inputs) }}
