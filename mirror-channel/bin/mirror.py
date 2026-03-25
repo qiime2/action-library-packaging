@@ -5,7 +5,7 @@ import subprocess
 
 from alp.common import ActionAdapter
 
-SUBDIRS = ['linux-64', 'noarch', 'osx-64']
+SUBDIRS = ['linux-64', 'noarch', 'osx-64', 'osx-arm64']
 
 
 def write_config(pkgs_in_distro, dest):

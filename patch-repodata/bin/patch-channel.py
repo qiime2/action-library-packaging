@@ -9,7 +9,7 @@ import os
 from alp.common import ActionAdapter
 from alp.cbc import split_spec
 
-SUBDIRS = ['linux-64', 'noarch', 'osx-64']
+SUBDIRS = ['linux-64', 'noarch', 'osx-64', 'osx-arm64']
 
 
 def main(conda_activate, channel, rev_deps, versions_file):
