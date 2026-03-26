@@ -87,10 +87,22 @@ def make_conda_build_cmd(recipe_path, conda_build_config, channels,
     return cmd
 
 
+def normalize_local_path(path):
+    if not path:
+        return path
+
+    if '://' in path:
+        return path
+
+    return os.path.abspath(path)
+
+
 def get_output_metadata(recipe_path, conda_build_config, channels,
                         output_channel, env_args):
-    recipe_path = os.path.abspath(recipe_path)
-    output_channel = os.path.abspath(output_channel)
+    recipe_path = normalize_local_path(recipe_path)
+    conda_build_config = normalize_local_path(conda_build_config)
+    output_channel = normalize_local_path(output_channel)
+    channels = [normalize_local_path(channel) for channel in channels]
 
     with tempfile.TemporaryDirectory() as tmpdir:
         cmd = make_conda_build_cmd(
