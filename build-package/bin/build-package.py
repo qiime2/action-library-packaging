@@ -63,22 +63,38 @@ def get_pkg_name_and_version(recipe_path):
     return pkg_name, pkg_version
 
 
+def make_conda_build_cmd(recipe_path, conda_build_config, channels,
+                         output_channel, output_only=False):
+    cmd = ['conda', 'build']
+
+    if channels:
+        cmd.extend(itertools.chain.from_iterable(
+            [('-c', channel) for channel in channels]
+        ))
+        cmd.append('--override-channels')
+
+    cmd.extend(['--quiet', '--no-test'])
+
+    if conda_build_config:
+        cmd.extend(['-m', conda_build_config])
+
+    cmd.extend(['--output-folder', output_channel])
+
+    if output_only:
+        cmd.append('--output')
+
+    cmd.append(recipe_path)
+    return cmd
+
+
 def get_output_metadata(recipe_path, conda_build_config, channels,
                         output_channel, env_args):
-    channels = itertools.chain.from_iterable(
-        [('-c', channel) for channel in channels])
     with tempfile.TemporaryDirectory() as tmpdir:
-        cmd = [
-            'conda', 'build',
-            *channels,
-            '--override-channels',
-            '--quiet',
-            '--no-test',
-            '-m', conda_build_config,
-            '--output-folder', output_channel,
-            '--output',
-            recipe_path,
-        ]
+        cmd = make_conda_build_cmd(
+            recipe_path, conda_build_config, channels, output_channel,
+            output_only=True
+        )
+
         result = subprocess.run(
             cmd, check=True, capture_output=True, text=True, cwd=tmpdir,
             **env_args
@@ -103,17 +119,14 @@ def main(recipe_path, conda_build_config, channels,
     if type(metapackage) is str:
         metapackage = metapackage == 'true'
 
-    channels = itertools.chain.from_iterable(
-        [('-c', channel) for channel in channels])
-    cmd = [
-        'conda', 'build',
-        *channels,
-        '--override-channels',
-        '--quiet',
-        '--no-test',
-        '-m', conda_build_config,
-        '--output-folder', output_channel,
-        recipe_path]
+    if not channels:
+        channels = []
+    elif isinstance(channels, str):
+        channels = [channels]
+
+    cmd = make_conda_build_cmd(
+        recipe_path, conda_build_config, channels, output_channel
+    )
 
     name = ''
     version = ''
