@@ -2,7 +2,6 @@
 
 import json
 import subprocess
-from collections import defaultdict
 import copy
 import os
 

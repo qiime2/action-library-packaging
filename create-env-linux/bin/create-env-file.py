@@ -15,7 +15,8 @@ def main(conda_prefix, environment_file, package_name, channels, **unused):
         [('-c', channel) for channel in channels])
 
     cmd = [
-        'conda', 'env', 'export', *channels, '--override-channels', '--no-builds', '-p', conda_prefix
+        'conda', 'env', 'export', *channels, '--override-channels',
+        '--no-builds', '-p', conda_prefix
     ]
     result = subprocess.run(cmd, check=True, capture_output=True)
     stdout = io.BytesIO(result.stdout)

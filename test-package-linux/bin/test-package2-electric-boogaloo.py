@@ -14,10 +14,12 @@ def find_tests(package_path):
 
     return tests
 
+
 def run_commands(commands):
     for cmd in commands:
         print(f'Running: {cmd}', flush=True)
         subprocess.run(cmd, shell=True, check=True)
+
 
 def main(package_path, channels, conda_activate):
     tests = find_tests(package_path)
