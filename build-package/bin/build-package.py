@@ -5,8 +5,6 @@ import os
 import io
 import subprocess
 import glob
-import tempfile
-
 import yaml
 import json
 
@@ -62,85 +60,6 @@ def get_pkg_name_and_version(recipe_path):
 
     return pkg_name, pkg_version
 
-
-def make_conda_build_cmd(recipe_path, conda_build_config, channels,
-                         output_channel, output_only=False):
-    cmd = ['conda', 'build']
-
-    if channels:
-        cmd.extend(itertools.chain.from_iterable(
-            [('-c', channel) for channel in channels]
-        ))
-        cmd.append('--override-channels')
-
-    cmd.extend(['--quiet', '--no-test'])
-
-    if conda_build_config:
-        cmd.extend(['-m', conda_build_config])
-
-    cmd.extend(['--output-folder', output_channel])
-
-    if output_only:
-        cmd.append('--output')
-
-    cmd.append(recipe_path)
-    return cmd
-
-
-def normalize_local_path(path):
-    if not path:
-        return path
-
-    if '://' in path:
-        return path
-
-    if os.path.isabs(path):
-        return path
-
-    if path.startswith('.'):
-        return os.path.abspath(path)
-
-    if path.startswith('~'):
-        return os.path.expanduser(path)
-
-    if os.sep in path:
-        return os.path.abspath(path)
-
-    return path
-
-
-def get_output_metadata(recipe_path, conda_build_config, channels,
-                        output_channel, env_args):
-    recipe_path = normalize_local_path(recipe_path)
-    conda_build_config = normalize_local_path(conda_build_config)
-    output_channel = normalize_local_path(output_channel)
-    channels = [normalize_local_path(channel) for channel in channels]
-
-    with tempfile.TemporaryDirectory() as tmpdir:
-        cmd = make_conda_build_cmd(
-            recipe_path, conda_build_config, channels, output_channel,
-            output_only=True
-        )
-
-        try:
-            result = subprocess.run(
-                cmd, check=True, capture_output=True, text=True, cwd=tmpdir,
-                **env_args
-            )
-        except subprocess.CalledProcessError as e:
-            print("Error: conda build --output command failed!")
-            print("Command:", e.cmd)
-            print("Return code:", e.returncode)
-            print("Output:", e.stdout)
-            print("Error output:", e.stderr)
-            raise
-
-    path = result.stdout.strip().splitlines()[-1]
-    output_info = os.path.relpath(path, output_channel)
-    subdir, filename = os.path.split(output_info)
-    return subdir, filename
-
-
 def main(recipe_path, conda_build_config, channels,
          output_channel, conda_activate=None, dry_run=False,
          metapackage=False):
@@ -155,14 +74,17 @@ def main(recipe_path, conda_build_config, channels,
     if type(metapackage) is str:
         metapackage = metapackage == 'true'
 
-    if not channels:
-        channels = []
-    elif isinstance(channels, str):
-        channels = [channels]
-
-    cmd = make_conda_build_cmd(
-        recipe_path, conda_build_config, channels, output_channel
-    )
+    channels = itertools.chain.from_iterable(
+        [('-c', channel) for channel in channels])
+    cmd = [
+        'conda', 'build',
+        *channels,
+        '--override-channels',
+        '--quiet',
+        '--no-test',
+        '-m', conda_build_config,
+        '--output-folder', output_channel,
+        recipe_path]
 
     name = ''
     version = ''
@@ -183,19 +105,6 @@ def main(recipe_path, conda_build_config, channels,
         env['PLUGIN_VERSION'] = version
         # only want to include env arg for pkgs, not metapkg
         env_args = {'env': env}
-
-    if dry_run:
-        subdir, filename = get_output_metadata(
-            recipe_path, conda_build_config, channels, output_channel, env_args
-        )
-        name_from_file, version_from_file, build = filename.rsplit('-', 2)
-        assert name == name_from_file
-        assert version == version_from_file
-
-        build, ext = os.path.splitext(build)
-        if ext == '.bz2':
-            build, ext = os.path.splitext(build)
-            assert ext == '.tar'
 
     if not dry_run:
         print(f'Running: {" ".join(cmd)}', flush=True)
