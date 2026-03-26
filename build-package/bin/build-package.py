@@ -94,7 +94,19 @@ def normalize_local_path(path):
     if '://' in path:
         return path
 
-    return os.path.abspath(path)
+    if os.path.isabs(path):
+        return path
+
+    if path.startswith('.'):
+        return os.path.abspath(path)
+
+    if path.startswith('~'):
+        return os.path.expanduser(path)
+
+    if os.sep in path:
+        return os.path.abspath(path)
+
+    return path
 
 
 def get_output_metadata(recipe_path, conda_build_config, channels,
