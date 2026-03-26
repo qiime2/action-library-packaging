@@ -89,16 +89,28 @@ def make_conda_build_cmd(recipe_path, conda_build_config, channels,
 
 def get_output_metadata(recipe_path, conda_build_config, channels,
                         output_channel, env_args):
+    recipe_path = os.path.abspath(recipe_path)
+    output_channel = os.path.abspath(output_channel)
+
     with tempfile.TemporaryDirectory() as tmpdir:
         cmd = make_conda_build_cmd(
             recipe_path, conda_build_config, channels, output_channel,
             output_only=True
         )
 
-        result = subprocess.run(
-            cmd, check=True, capture_output=True, text=True, cwd=tmpdir,
-            **env_args
-        )
+        try:
+            result = subprocess.run(
+                cmd, check=True, capture_output=True, text=True, cwd=tmpdir,
+                **env_args
+            )
+        except subprocess.CalledProcessError as e:
+            print("Error: conda build --output command failed!")
+            print("Command:", e.cmd)
+            print("Return code:", e.returncode)
+            print("Output:", e.stdout)
+            print("Error output:", e.stderr)
+            raise
+
     path = result.stdout.strip().splitlines()[-1]
     output_info = os.path.relpath(path, output_channel)
     subdir, filename = os.path.split(output_info)
