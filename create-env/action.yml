@@ -141,9 +141,19 @@ runs:
       uses: qiime2-cutlery/setup-miniconda@v3
       with:
         activate-environment: ''
-        architecture: 'x64'
+        architecture: ${{ runner.arch == 'ARM64' && 'arm64' || 'x64' }}
         auto-activate-base: true
         miniforge-version: '24.3.0-0'
+
+    - id: 'set-archspec-override'
+      name: 'Determine archspec override'
+      shell: bash -el {0}
+      run: |
+        if [ '${{ runner.arch }}' = 'ARM64' ]; then
+          echo "archspec=" >> $GITHUB_OUTPUT
+        else
+          echo "archspec=x86_64" >> $GITHUB_OUTPUT
+        fi
 
     - id: 'extract-env'
       if: ${{ steps.check-cache.outputs.cache-hit }}
@@ -160,7 +170,9 @@ runs:
       name: 'Install environment ${{ inputs.conda-prefix }}'
       shell: bash -el {0}
       run: |
-        export CONDA_OVERRIDE_ARCHSPEC="x86_64"
+        if [ -n '${{ steps.set-archspec-override.outputs.archspec }}' ]; then
+          export CONDA_OVERRIDE_ARCHSPEC='${{ steps.set-archspec-override.outputs.archspec }}'
+        fi
         conda env create -q \
           -p '${{ steps.prefix.outputs.path }}' \
           --file '${{ inputs.environment-file }}'
@@ -171,8 +183,10 @@ runs:
       shell: bash -el {0}
       env:
         PYTHONPATH: "${{ github.action_path }}/../src/"
-        CONDA_OVERRIDE_ARCHSPEC: "x86_64"
       run: |
+        if [ -n '${{ steps.set-archspec-override.outputs.archspec }}' ]; then
+          export CONDA_OVERRIDE_ARCHSPEC='${{ steps.set-archspec-override.outputs.archspec }}'
+        fi
         cat <<EOF | install-package.py
         ${{ toJSON(inputs) }}
         EOF
