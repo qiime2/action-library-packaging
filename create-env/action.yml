@@ -107,6 +107,7 @@ runs:
           [Conda Environment]
           ${{ steps.cache-key.outputs.key }}
           (${{ runner.os }})
+          (${{ runner.arch }})
           (${{ steps.hash-provided-env.outputs.hash }})
 
     # This became necessary as of 07.01.2026 because a particular miniforge
@@ -245,6 +246,7 @@ runs:
           [Conda Environment]
           ${{ steps.cache-key.outputs.key }}
           (${{ runner.os }})
+          (${{ runner.arch }})
           (${{ steps.hash-result-env.outputs.hash }})
 
     - id: 'cleanup'

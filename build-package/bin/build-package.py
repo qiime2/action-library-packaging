@@ -60,6 +60,7 @@ def get_pkg_name_and_version(recipe_path):
 
     return pkg_name, pkg_version
 
+
 def main(recipe_path, conda_build_config, channels,
          output_channel, conda_activate=None, dry_run=False,
          metapackage=False):
