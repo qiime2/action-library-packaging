@@ -5,6 +5,7 @@ import os
 import io
 import subprocess
 import glob
+import tempfile
 
 import yaml
 import json
@@ -62,6 +63,13 @@ def get_pkg_name_and_version(recipe_path):
     return pkg_name, pkg_version
 
 
+def make_build_number_append_file(build_number):
+    fd, path = tempfile.mkstemp(prefix='alp-build-number-', suffix='.yaml')
+    with os.fdopen(fd, 'w') as fh:
+        yaml.safe_dump({'build': {'number': int(build_number)}}, fh)
+    return path
+
+
 def main(recipe_path, conda_build_config, channels,
          output_channel, conda_activate=None, dry_run=False,
          metapackage=False, build_number=''):
@@ -85,13 +93,15 @@ def main(recipe_path, conda_build_config, channels,
         '--quiet',
         '--no-test',
         '-m', conda_build_config,
-        '--output-folder', output_channel,
-        recipe_path]
-
+    ]
+    build_number_append_file = None
     if build_number not in ('', None):
-        cmd[cmd.index('--output-folder'):cmd.index('--output-folder')] = [
-            '--build-number', str(build_number)
-        ]
+        build_number_append_file = make_build_number_append_file(build_number)
+        cmd.extend(['--append-file', build_number_append_file])
+    cmd.extend([
+        '--output-folder', output_channel,
+        recipe_path
+    ])
 
     name = ''
     version = ''
@@ -113,28 +123,32 @@ def main(recipe_path, conda_build_config, channels,
         # only want to include env arg for pkgs, not metapkg
         env_args = {'env': env}
 
-    if not dry_run:
-        print(f'Running: {" ".join(cmd)}', flush=True)
-        subprocess.run(cmd, check=True, **env_args)
-        print('done.', flush=True)
+    try:
+        if not dry_run:
+            print(f'Running: {" ".join(cmd)}', flush=True)
+            subprocess.run(cmd, check=True, **env_args)
+            print('done.', flush=True)
 
-        found = glob.glob(os.path.join(output_channel, platform,
-                                       '-'.join([name, version, '*'])))
-        path, = found
+            found = glob.glob(os.path.join(output_channel, platform,
+                                           '-'.join([name, version, '*'])))
+            path, = found
 
-        output_info = os.path.relpath(path, output_channel)
-        subdir, filename = os.path.split(output_info)
+            output_info = os.path.relpath(path, output_channel)
+            subdir, filename = os.path.split(output_info)
 
-        name_from_file, version_from_file, build = filename.rsplit('-', 2)
+            name_from_file, version_from_file, build = filename.rsplit('-', 2)
 
-        assert name == name_from_file
-        assert version == version_from_file
+            assert name == name_from_file
+            assert version == version_from_file
 
-        build, ext = os.path.splitext(build)
-        if ext == '.bz2':
-            # one more time for tar
             build, ext = os.path.splitext(build)
-            assert ext == '.tar'
+            if ext == '.bz2':
+                # one more time for tar
+                build, ext = os.path.splitext(build)
+                assert ext == '.tar'
+    finally:
+        if build_number_append_file:
+            os.unlink(build_number_append_file)
 
     return dict(name=name, version=version, filename=filename,
                 build=build, subdir=subdir)
