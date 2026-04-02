@@ -63,7 +63,7 @@ def get_pkg_name_and_version(recipe_path):
 
 def main(recipe_path, conda_build_config, channels,
          output_channel, conda_activate=None, dry_run=False,
-         metapackage=False):
+         metapackage=False, build_number=''):
 
     conda_info = subprocess.run(['conda', 'info', '--json'], check=True,
                                 capture_output=True).stdout.decode('utf-8')
@@ -86,6 +86,11 @@ def main(recipe_path, conda_build_config, channels,
         '-m', conda_build_config,
         '--output-folder', output_channel,
         recipe_path]
+
+    if build_number not in ('', None):
+        cmd[cmd.index('--output-folder'):cmd.index('--output-folder')] = [
+            '--build-number', str(build_number)
+        ]
 
     name = ''
     version = ''

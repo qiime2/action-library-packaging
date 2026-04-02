@@ -17,6 +17,10 @@ inputs:
   output-channel:
     description: 'Local (file-system) channel to place the built package'
     required: true
+  build-number:
+    description: 'Optional conda build number override'
+    required: false
+    default: ''
   dry-run:
     description: 'Produce action outputs without building'
     required: false
