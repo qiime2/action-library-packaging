@@ -51,12 +51,24 @@ runs:
     - id: 'setup-path'
       shell: bash
       run: echo "${{ github.action_path }}/bin/" >> $GITHUB_PATH
+    - id: 'set-archspec-override'
+      name: 'Determine archspec override'
+      shell: bash
+      run: |
+        if [ '${{ runner.arch }}' = 'ARM64' ]; then
+          echo "archspec=" >> $GITHUB_OUTPUT
+        else
+          echo "archspec=x86_64" >> $GITHUB_OUTPUT
+        fi
     - id: 'build-package'
       shell: bash
       env:
         PYTHONPATH: "${{ github.action_path }}/../src/"
         CONDA_OVERRIDE_GLIBC: '2.28'
       run: |
+        if [ -n '${{ steps.set-archspec-override.outputs.archspec }}' ]; then
+          export CONDA_OVERRIDE_ARCHSPEC='${{ steps.set-archspec-override.outputs.archspec }}'
+        fi
         ${{ inputs.conda-activate }}
         cat <<EOF | build-package.py
         ${{ toJSON(inputs) }}
