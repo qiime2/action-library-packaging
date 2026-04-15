@@ -1,5 +1,5 @@
-name: 'QIIME 2 Library Packaging - Setup Plugin Environment File'
-description: 'Setup or update the environment file for a QIIME 2 plugin'
+name: 'rachis Library Packaging - Setup Plugin Environment File'
+description: 'Setup or update the environment file for a rachis plugin'
 inputs:
   environment-fp:
     description: 'Path to the environment file'
@@ -8,10 +8,10 @@ inputs:
     description: 'Pip command to use'
     required: true
   epoch:
-    description: 'Target QIIME 2 epoch'
+    description: 'Target rachis epoch'
     required: true
   distro:
-    description: 'Target QIIME 2 distribution'
+    description: 'Target rachis distribution'
     required: true
 
 runs:

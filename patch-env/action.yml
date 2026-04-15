@@ -1,4 +1,4 @@
-name: 'QIIME 2 Library Packaging - Patch Environment File'
+name: 'rachis Library Packaging - Patch Environment File'
 description: 'Patch an environment file with different versions'
 inputs:
   conda-activate:

@@ -1,4 +1,4 @@
-name: 'QIIME 2 Library Packaging - Create Environment'
+name: 'rachis Library Packaging - Create Environment'
 description: 'Install and configure a conda environment'
 
 inputs:

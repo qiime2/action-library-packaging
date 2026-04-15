@@ -1,4 +1,4 @@
-name: 'QIIME 2 Library Packaging - Patch Conda Channel'
+name: 'rachis Library Packaging - Patch Conda Channel'
 description: ''
 inputs:
   conda-activate:

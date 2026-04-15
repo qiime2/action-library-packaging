@@ -16,7 +16,7 @@ def main(environment_fp, pip_spec, epoch, distro):
                 'conda-forge',
                 'bioconda'],
                'dependencies': [
-                   f'qiime2-{distro}',
+                   f'rachis-{distro}',
                    'pip',
                    {'pip': [pip_spec]}
                ]}

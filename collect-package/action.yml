@@ -1,4 +1,4 @@
-name: 'QIIME 2 Library Packaging - Collect Package Path'
+name: 'rachis Library Packaging - Collect Package Path'
 description: 'Collect package path'
 inputs:
   package:

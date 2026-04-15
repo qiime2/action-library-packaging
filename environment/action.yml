@@ -1,4 +1,4 @@
-name: 'QIIME 2 Library Packaging - Setup Environment'
+name: 'rachis Library Packaging - Setup Environment'
 description: 'Install and configure conda-build and libmamba'
 
 inputs:

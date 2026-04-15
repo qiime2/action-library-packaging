@@ -1,10 +1,10 @@
-name: 'QIIME 2 Library Packaging - Configure Distro Matrix'
+name: 'rachis Library Packaging - Configure Distro Matrix'
 description: ''
 inputs:
   package-name:
-    description: 'Name of QIIME 2 package'
+    description: 'Name of rachis package'
     required: true
   release-target:
-    description: 'Target QIIME 2 release cycle: "dev" or "release"'
+    description: 'Target rachis release cycle: "dev" or "release"'
     required: true
     default: 'release'
