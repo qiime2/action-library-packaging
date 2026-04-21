@@ -10,6 +10,16 @@ import yaml
 from alp.common import ActionAdapter
 
 
+def _keep_exported_spec(spec, package_name):
+    # These helper packages reflect the CI solver host rather than a portable
+    # user-facing environment requirement, so don't preserve them in exports.
+    ignored_prefixes = (
+        package_name,
+        '_x86_64-microarch-level',
+    )
+    return isinstance(spec, str) and not spec.startswith(ignored_prefixes)
+
+
 def main(conda_prefix, environment_file, package_name, channels, **unused):
     channels = itertools.chain.from_iterable(
         [('-c', channel) for channel in channels])
@@ -32,7 +42,7 @@ def main(conda_prefix, environment_file, package_name, channels, **unused):
     # https://rpy2.github.io/doc/latest/html/changes.html#id3
     env['dependencies'] = [
         spec for spec in env['dependencies']
-        if isinstance(spec, str) and not spec.startswith(package_name)
+        if _keep_exported_spec(spec, package_name)
     ]
 
     del env['name']
