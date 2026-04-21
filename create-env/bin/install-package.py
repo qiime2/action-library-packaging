@@ -12,6 +12,7 @@ def main(conda_prefix, package_name, package_version, channels, **unused):
 
     cmd = [
         'conda', 'create', '-p', conda_prefix, '-y', '-q', *channels,
+        '--override-channels',
         f'{package_name}={package_version}'
     ]
 

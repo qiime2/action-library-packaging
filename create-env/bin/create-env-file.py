@@ -20,6 +20,24 @@ def _keep_exported_spec(spec, package_name):
     return isinstance(spec, str) and not spec.startswith(ignored_prefixes)
 
 
+def _normalize_exported_channels(channels):
+    normalized = []
+    seen = set()
+
+    for channel in channels:
+        if not isinstance(channel, str):
+            continue
+
+        key = channel.lower()
+        if key == 'defaults' or key in seen:
+            continue
+
+        seen.add(key)
+        normalized.append(channel)
+
+    return normalized
+
+
 def main(conda_prefix, environment_file, package_name, channels, **unused):
     channels = itertools.chain.from_iterable(
         [('-c', channel) for channel in channels])
@@ -44,6 +62,8 @@ def main(conda_prefix, environment_file, package_name, channels, **unused):
         spec for spec in env['dependencies']
         if _keep_exported_spec(spec, package_name)
     ]
+    if 'channels' in env:
+        env['channels'] = _normalize_exported_channels(env['channels'])
 
     del env['name']
     del env['prefix']
