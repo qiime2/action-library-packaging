@@ -232,7 +232,7 @@ runs:
       shell: bash -el {0}
       run: |
         source '${{ steps.prefix.outputs.path }}/etc/activate.sh'
-        conda pack --format tar.gz --quiet \
+        conda-pack --format tar.gz --quiet \
           -p '${{ steps.prefix.outputs.path }}' \
           -o 'alp.create-env.${{ steps.cache-key.outputs.key }}.tar.gz'
 
