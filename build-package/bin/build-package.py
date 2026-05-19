@@ -8,6 +8,7 @@ import glob
 import tempfile
 import yaml
 import json
+import sys
 
 from alp.common import ActionAdapter
 
@@ -26,7 +27,7 @@ def get_pkg_name_and_version(recipe_path):
     pip_install_path = os.path.join(recipe_path, '..')
 
     cmd = [
-        'pip', 'install', '--dry-run',
+        sys.executable, '-m', 'pip', 'install', '--dry-run',
         '--report', 'report.json',
         pip_install_path
     ]
