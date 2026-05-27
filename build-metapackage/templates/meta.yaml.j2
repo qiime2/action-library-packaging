@@ -11,7 +11,9 @@ requirements:
   run:
 {%- raw %}
   {%- for package in resolved_packages('build') %}
+    {%- if not package.split(' ')[0].startswith('_x86_64-microarch-level') %}
     - {{ package.split(' ')[:2] | join(' ') }}.*
+    {%- endif %}
   {% endfor %}
 {%- endraw %}
 
