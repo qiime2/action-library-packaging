@@ -11,11 +11,12 @@ def pytest_runtest_makereport(item):
     report = outcome.get_result()
     _durations[item.nodeid][report.when] = report.duration
 
-# use this helper to sort the output with longest runtime first
+# sort the output with longest runtime first
 def _total_test_duration(item):
     nodeid, phases = item
     return sum(phases.get(p, 0) for p in ('setup', 'call', 'teardown'))
 
+# compute mean & stdev
 def _compute_duration_stats(durations):
     test_duration_times = []
     test_stats = {}
@@ -28,21 +29,21 @@ def _compute_duration_stats(durations):
 
     return test_stats
 
-# use this helper to determine the terminal color to highlight each test
-# green is < 3std of the mean total test time
-# yellow is within +/- 3std of the mean total test time
-# red is > 3std of the mean total test time
+# determine the terminal color (determinalor) to highlight for each test
+# green is test time < 1σ
+# yellow is test time within +/- 1σ
+# red is test time > 1σ
 def _compute_terminal_color(stats, duration):
     mean = stats['mean']
     stdev = stats['stdev']
 
     total_runtime = _total_test_duration(duration)
 
-    if (total_runtime < (mean - 3 * stdev)):
+    if (total_runtime < (mean - stdev)):
         terminal_color = 'green'
-    elif ((mean - 3 * stdev) <= total_runtime <= (mean + 3 * stdev)):
+    elif ((mean - stdev) <= total_runtime <= (mean + stdev)):
         terminal_color = 'yellow'
-    elif (total_runtime > (mean + 3 * stdev)):
+    elif (total_runtime > (mean + stdev)):
         terminal_color = 'red'
 
     return terminal_color
@@ -79,7 +80,7 @@ def pytest_terminal_summary(terminalreporter):
                 terminalreporter.write_line(f'  {phase:<10} {duration:.5f}s')
 
     terminalreporter.write_sep('=', 'Test Suite Runtime Statistical Summary')
-    terminalreporter.write_line(f'  -3σ:  {(mean - 3*stdev):.5f}')
-    terminalreporter.write_line(f'  Mean: {mean:.5f}')
-    terminalreporter.write_line(f'  +3σ:  {(mean + 3*stdev):.5f}')
-    terminalreporter.write_line(f'  Number of tests with > 3σ runtime: {reds}')
+    terminalreporter.write_line(f' -1σ:   {(mean - stdev):.5f}')
+    terminalreporter.write_line(f' Mean:  {mean:.5f}')
+    terminalreporter.write_line(f' +1σ:   {(mean + stdev):.5f}')
+    terminalreporter.write_line(f' Number of tests with > +1σ runtime: {reds}')
