@@ -36,12 +36,13 @@ def _compute_duration_stats(durations):
 def _compute_terminal_color(stats, duration):
     mean = stats['mean']
     stdev = stats['stdev']
+    lower_clamp = max(0, mean - stdev)
 
     total_runtime = _total_test_duration(duration)
 
-    if (total_runtime < (mean - stdev)):
+    if (total_runtime < lower_clamp):
         terminal_color = 'green'
-    elif ((mean - stdev) <= total_runtime <= (mean + stdev)):
+    elif (lower_clamp <= total_runtime <= (mean + stdev)):
         terminal_color = 'yellow'
     elif (total_runtime > (mean + stdev)):
         terminal_color = 'red'
@@ -80,7 +81,8 @@ def pytest_terminal_summary(terminalreporter):
                 terminalreporter.write_line(f'  {phase:<10} {duration:.5f}s')
 
     terminalreporter.write_sep('=', 'Test Suite Runtime Statistical Summary')
-    terminalreporter.write_line(f' -1σ:   {(mean - stdev):.5f}')
+    terminalreporter.write_line(f' NOTE: negative values are treated as zero')
+    terminalreporter.write_line(f' -1σ:   {max(0, mean - stdev):.5f}')
     terminalreporter.write_line(f' Mean:  {mean:.5f}')
     terminalreporter.write_line(f' +1σ:   {(mean + stdev):.5f}')
     terminalreporter.write_line(f' Number of tests with > +1σ runtime: {reds}')
