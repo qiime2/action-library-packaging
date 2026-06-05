@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+import os
 import subprocess
 import tarfile
 import yaml
@@ -15,9 +15,21 @@ def find_tests(package_path):
 
 
 def run_commands(commands):
-    for cmd in commands:
-        print(f'Running: {cmd}', flush=True)
-        subprocess.run(cmd, shell=True, check=True)
+    conf_src = os.path.join(os.path.dirname(__file__), 'conftest.py')
+    conf_dest = os.path.join(os.getcwd(), 'conftest.py')
+
+    try:
+        with open(conf_src) as src, open(conf_dest, 'w') as dest:
+            dest.write(src.read())
+
+        for cmd in commands:
+            print(f'Running: {cmd}', flush=True)
+            subprocess.run(cmd, shell=True, check=True,
+                           env={**os.environ, 'PY_COLORS': '1'})
+
+    finally:
+        if os.path.exists(conf_dest):
+            os.remove(conf_dest)
 
 
 def main(package_path, channels, conda_activate):
