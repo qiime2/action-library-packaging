@@ -1,15 +1,11 @@
 from collections import defaultdict
-import pytest
 import statistics
 
 _durations = defaultdict(dict)
 
 
-@pytest.hookimpl(hookwrapper=True)
-def pytest_runtest_makereport(item):
-    outcome = yield
-    report = outcome.get_result()
-    _durations[item.nodeid][report.when] = report.duration
+def pytest_runtest_logreport(report):
+    _durations[report.nodeid][report.when] = report.duration
 
 # sort the output with longest runtime first
 def _total_test_duration(item):
