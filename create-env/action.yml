@@ -195,8 +195,7 @@ runs:
     - id: 'probe-q2cli'
       shell: bash -el {0}
       run: |
-        conda run -p '${{ steps.prefix.outputs.path }}' python -c
-        "
+        conda run -p '${{ steps.prefix.outputs.path }}' python -c "
         import sys
         try:
             import q2cli.core.cache
