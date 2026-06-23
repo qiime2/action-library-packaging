@@ -193,14 +193,20 @@ runs:
         EOF
 
     - id: 'probe-q2cli'
+      if: ${{ !steps.check-cache.outputs.cache-hit }}
+      name: 'Probe q2cli cache initialization'
       shell: bash -el {0}
       run: |
         conda run -p '${{ steps.prefix.outputs.path }}' python -c "
         import sys
         try:
             import q2cli.core.cache
+        except ImportError:
+            pass  # q2cli not in this env, skip
         except Exception:
-            import traceback; traceback.print_exc(); sys.exit(1)
+            import traceback
+            traceback.print_exc()
+            sys.exit(1)
         "
 
     - id: 'add-activate'
