@@ -192,6 +192,18 @@ runs:
         ${{ toJSON(inputs) }}
         EOF
 
+    - id: 'probe-q2cli'
+      shell: bash -el {0}
+      run: |
+        conda run -p '${{ steps.prefix.outputs.path }}' python -c
+        "
+        import sys
+        try:
+            import q2cli.core.cache
+        except Exception:
+            import traceback; traceback.print_exc(); sys.exit(1)
+        "
+
     - id: 'add-activate'
       if: ${{ !steps.check-cache.outputs.cache-hit }}
       name: 'Add activate for ${{ inputs.conda-prefix }}'
