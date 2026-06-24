@@ -192,21 +192,37 @@ runs:
         ${{ toJSON(inputs) }}
         EOF
 
-    - id: 'probe-q2cli'
+    - id: 'probe-entrypoints'
       if: ${{ !steps.check-cache.outputs.cache-hit }}
-      name: 'Probe q2cli cache initialization'
+      name: 'Probe plugin entrypoints'
       shell: bash -el {0}
       run: |
         conda run -p '${{ steps.prefix.outputs.path }}' python -c "
+        import importlib
+        import importlib.metadata as meta
         import sys
+        import traceback
+
         try:
-            import q2cli.core.cache
-        except ImportError:
-            pass  # q2cli not in this env, skip
+            try:
+                eps = meta.entry_points(group='qiime2.plugins')
+            except TypeError:
+                # Python < 3.9 fallback
+                eps = meta.entry_points().get('qiime2.plugins', [])
         except Exception:
-            import traceback
-            traceback.print_exc()
-            sys.exit(1)
+            sys.exit(0)  # can't enumerate entry points, nothing to probe
+
+        for ep in eps:
+            module_name = ep.value.split(':')[0]
+            try:
+                importlib.import_module(module_name)
+            except Exception:
+                print(
+                    f'ERROR: failed to import QIIME 2 plugin module {module_name!r}',
+                    file=sys.stderr,
+                )
+                traceback.print_exc()
+                sys.exit(1)
         "
 
     - id: 'add-activate'
