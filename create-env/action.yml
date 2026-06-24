@@ -192,6 +192,9 @@ runs:
         ${{ toJSON(inputs) }}
         EOF
 
+    # this was added to provide better error handling for failure cases when
+    # one of the plugin entrypoints fails to load (i.e. in the case of a failed
+    # import due to an API change).
     - id: 'probe-entrypoints'
       if: ${{ !steps.check-cache.outputs.cache-hit }}
       name: 'Probe plugin entrypoints'
