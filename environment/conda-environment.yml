@@ -7,3 +7,4 @@ dependencies:
   - pip
   - pyyaml=6.0.2
   - python=3.10
+  - certifi<2026.10.18
